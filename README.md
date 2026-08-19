@@ -37,6 +37,10 @@ Run `/onboard-existing-project`. It performs repository discovery and sequences 
 
 Use `/tdd-csharp` before implementation. Load its required references, write a failing xUnit test first, make the smallest change that passes, refactor only after green, and finish with the full `dotnet test` suite.
 
+### Resuming after a lost session
+
+Cheapest first: run `git status`/`git diff` for any uncommitted work, then ask `Orchestrator` to continue — it reads only the main plan, active phase, and next slice. Only fall back to general chat exploration if no plan exists yet; it has no contract telling it where to look and is the most expensive option. See [docs/workflow.md](docs/workflow.md#resuming-after-context-loss).
+
 ## Workflow At A Glance
 
 ```mermaid

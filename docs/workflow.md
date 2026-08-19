@@ -59,6 +59,16 @@ For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 
 After a successful slice, `Orchestrator` records status in the main plan. It stops after each slice unless asked to continue. Use `/conventional-commit` to inspect the diff, keep unrelated changes separate, and create a Conventional Commit for the coherent change.
 
+## Resuming After Context Loss
+
+If a session ends mid-work (cleared context, new chat, restart), reconstruct state in this order, cheapest first:
+
+1. `git status` and `git diff` — free, ground-truth answer for any uncommitted change in progress. Check this before asking anything.
+2. Ask `Orchestrator` to continue (e.g. "run the next slice"). It reads only the main plan, active phase invariants, and next slice file — the minimum payload needed to resume, and the only path that knows the plan's status field is authoritative.
+3. Only if no plan exists yet, ask the general chat agent to look around. It has no contract pointing it at `docs/plans/`, so it will search broadly (files, git log, code) to guess at state. This is the most expensive and least reliable option, and should be a last resort, not a habit.
+
+Do not write a separate "session status" artifact to make step 3 cheaper: it would add a durable-write cost to every slice to save tokens on an infrequent event, and a written note can drift from the code while `git diff` cannot.
+
 ## Handoff Gates
 
 | Handoff | Required before proceeding |
