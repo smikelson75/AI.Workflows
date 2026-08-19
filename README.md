@@ -25,6 +25,10 @@ The repository separates decisions by ownership:
 7. Repeat the orchestrator loop until the plan is complete.
 8. Run `/conventional-commit` to journal each coherent change.
 
+### Small or mid-session change
+
+Stay in `Orchestrator` and describe the change. It dispatches directly if the change carries no target-truth impact, or tells you which of `prd-writer`, `work-planner`, or `brain-storm` to run first if it does (or if the tier is ambiguous). See the tiering table in [docs/workflow.md](docs/workflow.md).
+
 ### Existing codebase without planning artifacts
 
 Run `/onboard-existing-project`. It performs repository discovery and sequences the owning skills. It does not replace their interviews or write their artifacts directly.
@@ -51,6 +55,11 @@ flowchart LR
     K --> L[Focused verification]
     L --> J
     J --> M[conventional-commit]
+    N[Small/mid-session change request] --> J
+    J -->|no target-truth change| K
+    J -->|changes target truth| F
+    J -->|changes product truth| D
+    J -->|no next slice in phase| H
 ```
 
 The detailed handoffs, gates, and escalation rules are in [docs/workflow.md](docs/workflow.md).
@@ -59,6 +68,7 @@ The detailed handoffs, gates, and escalation rules are in [docs/workflow.md](doc
 
 - [Workflow and handoffs](docs/workflow.md): how skills and agents cooperate, including stop and escalation rules.
 - [Skills catalog](docs/skills.md): purpose, inputs, outputs, and when to invoke each skill.
+- [Workflow audit](.github/skills/workflow-audit/SKILL.md): on-demand review of token waste, contract drift, and artifact churn.
 - [Agents catalog](docs/agents.md): responsibilities, tools, dispatch boundaries, and reporting.
 - [Artifacts and lifecycle](docs/artifacts.md): canonical files, ownership, status rules, and links between artifacts.
 - [Extending the system](docs/extending.md): how to add or revise a skill, agent, or reference without breaking the operating model.
@@ -82,6 +92,7 @@ docs/                             Documentation for this workflow system
 - Keep the main plan as the routing table and single status record.
 - Dispatch one vertical slice at a time with explicit scope, verification, and acceptance checks.
 - Optimize each cycle for signal: load authoritative context once, pass only the slice payload needed for execution, and report compact outcomes.
+- Treat handoff briefs and chat reports as disposable: never echo durable artifact content or create a second status record.
 - Minimize artifact churn: update only the owning artifact and the smallest changed field or status; do not copy durable content between artifacts.
 - Prefer evidence and explicit escalation over guessed intent.
 - Keep changes surgical and report how they were verified.

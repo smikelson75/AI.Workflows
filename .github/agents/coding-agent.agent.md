@@ -17,6 +17,7 @@ Behavioral guidelines to reduce common LLM coding mistakes and provide instructi
 - Do not rescan the repository or reread unchanged artifacts after the controlling code path is known.
 - Make one focused edit at a time, then run the narrowest available verification before expanding the change.
 - Keep the report compact: changed files, verification, deviations, and risks. Do not repeat the full brief or emit unused implementation detail.
+- Treat the brief and repository files as the durable input; do not copy their contents into the report or create/update planning artifacts unless the brief explicitly requires it.
 
 ## 1. Think Before Coding
 **Don't assume. Don't hide confusion. Surface tradeoffs.**

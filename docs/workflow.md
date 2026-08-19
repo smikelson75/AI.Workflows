@@ -83,4 +83,14 @@ These rules prevent implementation discoveries from quietly changing product int
 
 ## Small Change Path
 
-For a small, well-defined code change in a repository with current artifacts, skip discovery and product planning. Start with the owning implementation agent or skill, preserve the existing plan boundary, run focused verification, and update the plan only if the change belongs to an active slice. Use the full staged path when the change affects product behavior, architecture, or sequencing.
+Every skill is independently invocable. Match the change to the skill that owns the kind of truth it touches; do not run earlier stages just because a later one is needed. Size of the diff is not the trigger — kind of truth is.
+
+| Change | Route |
+| --- | --- |
+| Typo, isolated bug fix, or refactor with no behavior/scope/architecture change | Implement directly (or via `Coding Agent` with an ad hoc brief), verify, then `/conventional-commit`. No context, PRD, or plan edit needed. |
+| Bug fix that changes observable behavior but not scope, constraints, or architecture | Same as above. Touch the plan only if the fix belongs to an active slice; update that slice's status in the main plan. |
+| Change to a required behavior, scope boundary, hard constraint, or target architecture, however small | `/prd-writer` alone, then `/work-planner` only if sequencing or dependencies shift. Skip `brain-storm` if the problem, users, workflow, and vocabulary are unchanged. |
+| Change to the problem, users, workflow, or vocabulary | `/brain-storm` alone. |
+| New idea, or product direction that is still unsettled | Full path: `brain-storm` -> `prd-writer` -> `work-planner` -> `Orchestrator`. |
+
+Mid-session realizations follow the same rule: if you discover a needed change while coding, stop and invoke only the skill that owns that kind of truth, then resume. You do not need to restart the whole workflow from `brain-storm`.

@@ -13,7 +13,10 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Coding Agent`;
 - confirms verification and records `completed`, or records a blocker;
-- advances phase status only after its final integration slice.
+- advances phase status only after its final integration slice;
+- dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
+- refuses to dispatch and names the redirect (`work-planner`, `prd-writer`, or `brain-storm`) when a request changes target truth, product truth, or is ambiguous between tiers;
+- stops and points to `work-planner` when the active phase has no next slice.
 
 It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
 

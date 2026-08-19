@@ -10,6 +10,8 @@ Add to this repository when a workflow gap is repeatable and deserves a named co
 4. Define which existing skill or agent owns adjacent decisions; do not duplicate an existing artifact owner.
 5. Add the skill to [the skills catalog](skills.md) and the README map if it changes the normal workflow.
 
+An audit or maintenance skill should remain on-demand. Do not add it to the normal product workflow unless its checks are cheaper than the context and execution cost they introduce.
+
 ## Adding An Agent
 
 1. Create `.github/agents/<agent-name>.agent.md` with `description`, `name`, tools, and any allowed child agents.

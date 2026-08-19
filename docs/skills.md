@@ -22,6 +22,10 @@ Invoke with `/prd-writer` after context is settled. It writes the target-state P
 
 Invoke with `/agent-instructions` to bootstrap or amend project-wide `AGENTS.md`. It uses verified repository evidence and links to detailed documentation. It must not compete with `.github/copilot-instructions.md`; choose one canonical project-wide instruction primitive.
 
+### `workflow-audit`
+
+Invoke with `/workflow-audit` when workflow definitions change or orchestration becomes repetitive or expensive. It audits token waste, duplicated authority, contradictions, oversized handoffs, and artifact churn. Audit mode is read-only; repair mode applies only approved minimal edits.
+
 ## Planning And Implementation
 
 ### `work-planner`

@@ -21,7 +21,7 @@ Your context is long-lived and expensive. Every subagent context is fresh and di
 
 - DO NOT write, edit, or refactor product code. Dispatch it.
 - DO NOT read source files to compose a brief. If a brief needs repo knowledge the slice does not carry, the slice is under-specified.
-- DO NOT edit any file except the main plan at `docs/plans/scheduler-implementation-plan.md`.
+- DO NOT edit any file except the main plan at `docs/plans/scheduler-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief.
 - DO NOT create, resequence, or rewrite phases and slices. That is `work-planner`'s job.
 - DO NOT summarize or reword slice content when dispatching. Copy it verbatim.
 - DO NOT duplicate durable artifact content in the main plan, phase, slice, or chat report.
@@ -59,7 +59,7 @@ Add nothing else. `coding-agent` supplies its own working rules; do not restate 
 
 ## Loop
 
-1. Read the main plan. Identify the active phase and the next slice by status.
+1. Read the main plan. Identify the active phase and the next slice by status. If no phase is `in progress` or the active phase has no remaining `planned` slice, stop and tell the user to run `/work-planner`; do not invent a slice.
 2. If the phase changed, load the new phase document for its invariants.
 3. Load the next slice. Apply the dispatch gate.
 4. Set the slice to `in progress` in the main plan.
@@ -85,6 +85,17 @@ Use this when the user implemented a slice outside the dispatch loop (by hand, i
 4. If verification fails, do not change status; report what failed.
 
 This still only ever writes the main plan (and, for a deviation, the slice's `Outcome` line) — it never dispatches to `coding-agent` and never edits phase/slice content beyond that.
+
+## Out-Of-Plan Small Changes
+
+The user may ask for a bug fix, typo, or no-op refactor that is not the next slice. Match it by kind of truth, not size:
+
+1. If it changes no required behavior, scope boundary, constraint, or architecture: dispatch it to `coding-agent` as an ad hoc brief (outcome, scope, verification command, acceptance checks you state yourself) without touching the main plan, unless it belongs to the active slice's scope, in which case treat it as part of that slice.
+2. If it does change target truth, however small: do not dispatch. Tell the user to run `/prd-writer` (and `/work-planner` if sequencing shifts) first.
+3. If it changes domain, users, workflow, or vocabulary: do not dispatch. Tell the user to run `/brain-storm` first.
+4. If you cannot tell which tier it is from the request alone: do not guess and do not dispatch. State the specific uncertainty (e.g., "this looks like it changes X behavior, not just its implementation") and tell the user which skill would resolve it. Ambiguous cases default to escalation, never to silent dispatch.
+
+An ad hoc brief still follows the dispatch gate and brief-composition rules; you are only skipping the plan-artifact lookup, not the verification discipline. Always name the redirect explicitly in your response; the user should never need to remember to leave the loop themselves.
 
 ## Escalation
 
