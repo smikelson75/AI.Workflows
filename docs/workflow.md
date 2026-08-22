@@ -6,7 +6,7 @@ This system is a staged workflow. Each stage owns a different kind of truth and 
 
 ### 1. Onboard a repository
 
-Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts.
+Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, the matching mutation-testing adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts.
 
 The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
 
@@ -60,6 +60,8 @@ For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 3. Refactor: improve the design while keeping tests green.
 4. Repeat for the remaining behavior.
 5. Finish with the full `dotnet test` suite.
+
+A phase's **final integration slice** additionally applies `/stryker-dotnet` (or the matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 
 ### 6. Record and commit
 

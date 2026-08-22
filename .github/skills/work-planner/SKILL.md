@@ -56,7 +56,7 @@ Before finalizing, check any newly settled sequencing or implementation-architec
 - Record every status in the main plan only. Phase and slice documents carry no status field, so they stay effectively write-once and the orchestrator updates one file per transition.
 - Keep roadmap at phase level; link to detail. Retain completed artifacts and update statuses rather than deleting/collapsing them.
 - Never duplicate a field across artifacts. The main plan links to phase detail rather than restating it, and phase detail lists slice links rather than restating slice content.
-- Size a slice as one vertical behavior. The final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended.
+- Size a slice as one vertical behavior. The final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended. When a mutation-testing adapter is configured for the stack, that slice's verification command also includes the phase-scoped mutation-testing run; route survivors and any required prerequisite test-writing phase per [`mutation-testing/protocol.md`](../mutation-testing/protocol.md).
 - Design coherent phases around end-to-end value; keep future phase detail sufficient for later slices and active slices execution-ready.
 - Do not use `Step`; use `Slice`. Do not add code-task lists, `Immediate start`, or execution checklists outside active slices.
 

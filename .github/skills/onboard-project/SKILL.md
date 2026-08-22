@@ -29,6 +29,8 @@ Read-only. Establish two independent facts before routing.
 | Manifest present, but source is only template output | `scaffold` |
 | Manifest plus real source and/or tests | `mature` |
 
+**Test-suite maturity** (only relevant once code maturity is `mature`) — whether a real unit test suite exists, versus no tests at all. This drives the `mutation-testing` dispatch in Rule 4 and is independent of code maturity: a mature codebase can still have zero tests.
+
 **Artifact maturity** — presence and currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
 
 Also record the detected **stack** from the manifest, and whether a code style config exists and is actually enforced.
@@ -67,8 +69,9 @@ Running the style adapter first is the point: this is the cheapest moment the re
 
 1. Style adapter at non-blocking severity, to measure the violation count without blocking anyone
 2. Discovery per [references/DISCOVERY-CHECKLIST.md](references/DISCOVERY-CHECKLIST.md)
-3. `brain-storm` -> `prd-writer` -> `work-planner`, handing the planner the violation count so remediation becomes real phases
-4. `agent-instructions`
+3. Mutation-testing check per Rule 4, handing its result to `work-planner` alongside the violation count
+4. `brain-storm` -> `prd-writer` -> `work-planner`, handing the planner the violation count so remediation becomes real phases
+5. `agent-instructions`
 
 ## Rule 3: Dispatch The Style Adapter By Stack
 
@@ -82,7 +85,24 @@ Match the detected stack to its adapter, which applies [`code-style/protocol.md`
 
 If no adapter exists for the detected stack, say so plainly and stop that step. Do not improvise a configuration; report the gap so an adapter can be added.
 
-## Rule 4: Ground The Product Skills In Evidence
+## Rule 4: Dispatch The Mutation-Testing Adapter By Stack And Test-Suite State
+
+Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only relevant once code maturity is `mature`; `empty` and `scaffold` defer per the protocol's repository maturity paths, with no action needed here.
+
+| Stack evidence | Adapter |
+| --- | --- |
+| `*.sln`, `*.csproj` | `stryker-dotnet` |
+| `package.json` | none yet |
+| `pyproject.toml` | none yet |
+
+For a `mature` repository, branch on test-suite maturity:
+
+- **No test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
+- **Existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
+
+If no adapter exists for the detected stack, say so plainly and stop that step, same as Rule 3.
+
+## Rule 5: Ground The Product Skills In Evidence
 
 For a `mature` repository, discovery produces a disposable findings draft: candidate problem/users/workflow, current architecture and stack, apparent conventions, glossary candidates, contradictions and unknowns.
 
@@ -92,7 +112,7 @@ For `prd-writer`, the target state of an existing project is normally "current a
 
 If discovery contradicts the stated purpose, surface the contradiction and let the user resolve it before anything is written.
 
-## Rule 5: `agent-instructions` Runs Last, Once
+## Rule 6: `agent-instructions` Runs Last, Once
 
 It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
 

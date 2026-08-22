@@ -11,6 +11,7 @@ The repository separates decisions by ownership:
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
+- **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` is the C#/.NET adapter.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
 - **Decision record**: `adr-writer` records a hard-to-reverse, surprising, trade-off-driven technical decision, gated from within `prd-writer` and `work-planner`.
@@ -43,6 +44,10 @@ Use `/tdd-csharp` before implementation. Load its required references, write a f
 ### C#/.NET code style setup
 
 Normally dispatched by `/onboard-project`, which knows when to run it and at what severity. To run it directly: `/dotnet-editorconfig`, answering `baseline` for industry defaults or `walkthrough` to choose rules group by group. It writes the root `.editorconfig` and `Directory.Build.props`, then verifies with `dotnet build` and `dotnet format --verify-no-changes`. Projects added later inherit both files by directory position. It finishes by giving you the exact text to pass to `/agent-instructions` — run that follow-up, or agents will keep overriding the shared settings in new `.csproj` files.
+
+### C#/.NET mutation testing setup
+
+Normally dispatched by `/onboard-project`, which knows the repository's test-suite maturity and offers the one-time full-repo baseline only when it applies. To run it directly: `/stryker-dotnet`. It writes `stryker-config.json` scoped to unit tests only (integration/e2e tests are always excluded), runs a guided walkthrough to propose score thresholds instead of picking them silently, and wires the mutation run into each phase's final integration slice. The first cycle is measure-only; blocking is a deliberate later step once the survivor backlog clears.
 
 ### Resuming after a lost session
 

@@ -44,6 +44,10 @@ Invoke for C# behavior changes. It requires xUnit and Moq references, a failing 
 
 The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, and the `agent-instructions` handoff live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
 
+### `stryker-dotnet`
+
+The C#/.NET adapter for the generic mutation-testing protocol. Invoke with `/stryker-dotnet` to write `stryker-config.json`, scoped to unit tests only (integration/e2e tests are permanently excluded), and to run a guided threshold walkthrough instead of silently picking a mutation-score bar. Cadence (phase's final integration slice, incremental scope), blocking policy, repository maturity paths, and survivor remediation live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
+
 ## Change Journaling
 
 ### `conventional-commit`
@@ -63,5 +67,6 @@ Use the references beside each skill for its format or protocol details:
 - [`code-style` protocol](../.github/skills/code-style/protocol.md)
 - [`dotnet-editorconfig` baseline](../.github/skills/dotnet-editorconfig/references/BASELINE.md)
 - [`dotnet-editorconfig` enforcement](../.github/skills/dotnet-editorconfig/references/ENFORCEMENT.md)
+- [`mutation-testing` protocol](../.github/skills/mutation-testing/protocol.md)
 - [`onboard-project` discovery checklist](../.github/skills/onboard-project/references/DISCOVERY-CHECKLIST.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)
