@@ -49,9 +49,9 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 ### 5. Execute a slice
 
-Use `Orchestrator` to execute an approved plan. It reads only the main plan, active phase invariants, and next slice, then copies those contents into a `Coding Agent` brief. It does not implement product code, invent slices, or rewrite the plan.
+Use `Orchestrator` to execute an approved plan. It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
-`Coding Agent` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
+`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
 
 For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 
@@ -83,7 +83,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 | Context to PRD | Context and glossary are current and confirmed |
 | PRD to plan | Target behavior, constraints, and acceptance signals are settled |
 | Plan to orchestrator | The next slice has outcome, scope, verification command, and acceptance checks |
-| Orchestrator to coding agent | Slice and active phase invariants are copied verbatim |
+| Orchestrator to engineer | Slice and active phase invariants are copied verbatim |
 | Slice completion | Verification passes and the result is reported |
 | Commit | Staging scope is coherent and the message follows Conventional Commits 1.0.0 |
 
@@ -104,7 +104,7 @@ Every skill is independently invocable. Match the change to the skill that owns 
 
 | Change | Route |
 | --- | --- |
-| Typo, isolated bug fix, or refactor with no behavior/scope/architecture change | Implement directly (or via `Coding Agent` with an ad hoc brief), verify, then `/conventional-commit`. No context, PRD, or plan edit needed. |
+| Typo, isolated bug fix, or refactor with no behavior/scope/architecture change | Implement directly (or via `Engineer` with an ad hoc brief), verify, then `/conventional-commit`. No context, PRD, or plan edit needed. |
 | Bug fix that changes observable behavior but not scope, constraints, or architecture | Same as above. Touch the plan only if the fix belongs to an active slice; update that slice's status in the main plan. |
 | Change to a required behavior, scope boundary, hard constraint, or target architecture, however small | `/prd-writer` alone, then `/work-planner` only if sequencing or dependencies shift. Skip `brain-storm` if the problem, users, workflow, and vocabulary are unchanged. |
 | Change to the problem, users, workflow, or vocabulary | `/brain-storm` alone. |

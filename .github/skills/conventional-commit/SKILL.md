@@ -1,6 +1,6 @@
 ---
 name: conventional-commit
-description: "Use for journaling coherent work with Conventional Commits and commitlint-compatible messages."
+description: "Journal coherent work with commitlint-compatible Conventional Commits."
 argument-hint: "Optional: describe your change to override the diff-based suggestion"
 ---
 

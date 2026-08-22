@@ -1,6 +1,6 @@
 ---
 name: prd-writer
-description: "Create or update a PRD from product context."
+description: "Create or update a target-state PRD from settled product context."
 argument-hint: "Describe the product or change."
 user-invocable: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: tdd-csharp
-description: "Use when implementing behavior changes in C# to enforce Red-Green-Refactor with xUnit and Moq while keeping tests readable and architecture-aligned."
+description: "Implement C# behavior changes with Red-Green-Refactor, xUnit, and Moq."
 argument-hint: "Describe the behavior change and target layer"
 user-invocable: true
 disable-model-invocation: false

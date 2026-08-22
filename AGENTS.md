@@ -10,7 +10,7 @@
   - Product truth changes (problem, users, workflow, vocabulary) -> `brain-storm`.
   - Target truth changes (required behavior, hard constraints, target architecture) -> `prd-writer`.
   - Implementation sequencing/status/slice readiness -> `work-planner`.
-- `Orchestrator` is a router and plan-status updater; it does not implement product code. `Coding Agent` implements dispatched scope and verifies outcomes.
+- `Orchestrator` is a router and plan-status updater; it does not implement product code. `Engineer` implements dispatched scope and verifies outcomes.
 
 ## Change Discipline
 - Keep edits surgical and scoped to the owning file(s).

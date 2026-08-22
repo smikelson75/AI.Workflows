@@ -1,6 +1,6 @@
 ---
 name: workflow-audit
-description: "Audit the workflow system for token waste, duplicated authority, contradictory contracts, oversized handoffs, and unnecessary artifact churn."
+description: "Audit workflow contracts for token waste, duplicated authority, contradictions, oversized handoffs, and artifact churn."
 argument-hint: "Optional: name a workflow area or ask for audit or repair mode"
 user-invocable: true
 ---

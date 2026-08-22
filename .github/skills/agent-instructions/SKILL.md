@@ -1,13 +1,13 @@
 ---
 name: agent-instructions
-description: "Create or update project-wide AGENTS.md instructions from product context, PRD, implementation plans, and repository evidence."
+description: "Create or update project-wide AGENTS.md guidance from product, plan, and repository context."
 argument-hint: "Optional: describe the project or instruction change"
 user-invocable: true
 ---
 
 # Agent Instructions
 
-Create or update the repository's durable, project-wide instructions for coding agents.
+Create or update the repository's durable, project-wide instructions for engineers.
 
 ## Purpose
 

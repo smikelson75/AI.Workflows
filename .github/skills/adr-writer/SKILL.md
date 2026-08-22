@@ -1,6 +1,6 @@
 ---
 name: adr-writer
-description: "Record an architecture or technical decision as an ADR when it is hard to reverse, would surprise a future reader without context, and reflects a real trade-off among alternatives."
+description: "Record hard-to-reverse or surprising architecture decisions and their trade-offs as ADRs."
 argument-hint: "Describe the decision and the alternatives considered."
 user-invocable: true
 ---

@@ -8,7 +8,7 @@ The repository separates decisions by ownership:
 - **Product truth**: `brain-storm` defines the problem, users, workflow, scope, and vocabulary.
 - **Target truth**: `prd-writer` defines what the finished v1 must do and the constraints it must satisfy.
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
-- **Implementation**: `Orchestrator` dispatches approved slices to `Coding Agent`.
+- **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
@@ -24,7 +24,7 @@ The repository separates decisions by ownership:
 3. Run `/prd-writer` to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
 4. Run `/work-planner` to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
 5. Ask `Orchestrator` to run the next slice.
-6. Let `Coding Agent` implement and verify the dispatched slice.
+6. Let `Engineer` implement and verify the dispatched slice.
 7. Repeat the orchestrator loop until the plan is complete.
 8. Run `/conventional-commit` to journal each coherent change.
 
@@ -62,7 +62,7 @@ flowchart LR
     G --> H[work-planner]
     H --> I[Main plan + phase + slice artifacts]
     I --> J[Orchestrator]
-    J --> K[Coding Agent]
+    J --> K[Engineer]
     K --> L[Focused verification]
     L --> J
     J --> M[conventional-commit]

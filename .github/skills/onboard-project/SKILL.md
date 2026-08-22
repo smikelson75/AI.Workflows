@@ -1,6 +1,6 @@
 ---
 name: onboard-project
-description: "Detect the current state of a repository - empty, scaffolded, or an existing codebase, with any mix of missing or stale workflow artifacts - and sequence the owning skills in the correct order."
+description: "Assess repository state and sequence the owning skills, including missing or stale workflow artifacts."
 argument-hint: "Ask to onboard this repo, or name the subtree to scope discovery to"
 user-invocable: true
 ---

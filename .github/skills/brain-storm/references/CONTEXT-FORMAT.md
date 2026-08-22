@@ -16,14 +16,19 @@ Purpose: compact domain context for later AI planning, with ubiquitous-language 
 - UI copy
 - speculative future scope
 - implementation tasks
+- physical schema detail: column/field names, source-to-target mappings, source or storage value types (these are target-architecture detail for `prd-writer`, not domain vocabulary)
 
 ## Rules
 - bullet-first; no narrative
 - each term gets 1 line when possible
 - keep `CONTEXT.md` compact; store the expanded glossary in `UBIQUITOUS-LANGUAGE.md` beside it
 - prefer canonical term + meaning + avoid-synonyms
+- default canonical term shape: singular domain noun (`Page`, `Invoice`, `Session`) unless another form carries different rules
+- prefer one word when it preserves meaning; use multi-word terms only for a distinct domain concept, not for a process step label
+- when both object and behavior matter, keep separate terms (`Page` object, `Paging` behavior); avoid hybrid labels like `Page Walk` unless it is truly a named business concept
 - use only stable v1-shaping concepts
 - if a term is unresolved, ask; do not invent
+- if an endpoint/table/field mapping surfaces, capture only the domain meaning as a term; park the column name, type, and mapping for `prd-writer`
 - prefer user vocabulary unless ambiguous
 - merge synonyms; split only when rules or lifecycle differ
 - ban generic drift terms like `item`, `thing`, `data`, `process`, `service` when a domain term exists

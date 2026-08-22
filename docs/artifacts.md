@@ -7,7 +7,7 @@ Each artifact has one owner and one purpose. Keeping those boundaries intact pre
 The workflow keeps context and diffs small by treating artifacts as references, not payloads to replicate:
 
 - Load only the artifacts required for the current handoff, once per cycle, and reuse unchanged content.
-- The orchestrator passes the slice and active phase invariants verbatim; the coding agent reads scoped repository context only as needed.
+- The orchestrator passes the slice and active phase invariants verbatim; the engineer reads scoped repository context only as needed.
 - Update only the owning artifact. Prefer a status or single outcome-line change over rewriting durable content.
 - Keep chat handoffs disposable and concise; durable detail belongs in its canonical artifact.
 

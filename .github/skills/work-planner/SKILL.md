@@ -22,7 +22,7 @@ Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, `docs/prd/<art
 
 ## Consumer Contract
 
-Plan artifacts exist to serve the `orchestrator` agent, which dispatches coding subagents governed by `.github/agents/coding-agent.agent.md`. The subagent never reads plan files; the orchestrator passes it a brief. Each artifact has one job:
+Plan artifacts exist to serve the `orchestrator` agent, which dispatches engineers governed by `.github/agents/engineer.agent.md`. The subagent never reads plan files; the orchestrator passes it a brief. Each artifact has one job:
 
 - main plan: routing table. Which phase is active, which slice is next, what is done.
 - phase detail: cross-slice invariants and boundaries that no single slice owns.

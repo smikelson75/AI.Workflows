@@ -1,6 +1,6 @@
 ---
-description: "Use when implementing or testing an assigned slice of work: write code, fix a bug, add a feature, or add and run tests for a specific scoped task. Expects an assigned file scope, a verification command, and acceptance checks. Returns a summary of what changed and how it was verified."
-name: "Coding Agent"
+description: "Implement and test an assigned work slice within its file scope, then report changes and verification."
+name: "Engineer"
 tools: [read, edit, search, execute, todo]
 argument-hint: "The slice brief: outcome, files in scope, verification command, acceptance checks."
 ---

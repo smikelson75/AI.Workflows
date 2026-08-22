@@ -1,6 +1,6 @@
 # AGENTS.md Format
 
-Purpose: a concise project-wide operating guide for coding agents. It applies to the repository root and, when placed elsewhere, to that subtree.
+Purpose: a concise project-wide operating guide for engineers. It applies to the repository root and, when placed elsewhere, to that subtree.
 
 ## Include Only When Verified
 
@@ -59,7 +59,7 @@ Omit empty sections. Use the repository's existing heading style when amending a
 
 ## Quality Bar
 
-A coding agent should be able to answer these questions without guessing:
+An engineer should be able to answer these questions without guessing:
 
 - Where does new code belong?
 - Which boundaries must it respect?

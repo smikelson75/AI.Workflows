@@ -11,7 +11,7 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - reads the main plan and active phase detail;
 - selects the next slice and applies the dispatch gate;
 - marks the slice `in progress` in the main plan;
-- dispatches exactly the slice plus phase invariants to `Coding Agent`;
+- dispatches exactly the slice plus phase invariants to `Engineer`;
 - confirms verification and records `completed`, or records a blocker;
 - advances phase status only after its final integration slice;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
@@ -20,11 +20,11 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 
 It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
 
-## Coding Agent
+## Engineer
 
-Definition: [`.github/agents/coding-agent.agent.md`](../.github/agents/coding-agent.agent.md)
+Definition: [`.github/agents/engineer.agent.md`](../.github/agents/engineer.agent.md)
 
-Use `Coding Agent` for an assigned vertical slice. Its brief must include the outcome, scope, verification command, and acceptance checks. It:
+Use `Engineer` for an assigned vertical slice. Its brief must include the outcome, scope, verification command, and acceptance checks. It:
 
 - states assumptions and surfaces ambiguity;
 - makes the smallest necessary, surgical change;
@@ -40,7 +40,7 @@ It must not expand scope or guess at unresolved intent. Its default behavior fol
 sequenceDiagram
     participant P as Work Planner
     participant O as Orchestrator
-    participant C as Coding Agent
+    participant C as Engineer
     P->>O: main plan, phase invariants, next slice
     O->>O: apply dispatch gate
     O->>C: copy slice and invariants verbatim

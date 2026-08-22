@@ -2,7 +2,7 @@
 
 Purpose: a living implementation plan set that carries current repo state and sequences work toward the target defined by `CONTEXT.md` and `docs/prd/<artifact-slug>-prd.md`. It keeps the main plan compact, stores full phase detail in separate phase documents, and carries slice detail only for the current in-progress phase.
 
-The artifact set serves the `orchestrator` agent, which dispatches coding subagents governed by `.github/agents/coding-agent.agent.md`. The main plan routes, the phase document constrains, the slice document is dispatched.
+The artifact set serves the `orchestrator` agent, which dispatches engineers governed by `.github/agents/engineer.agent.md`. The main plan routes, the phase document constrains, the slice document is dispatched.
 
 ## Include Always
 - main plan: problem and approach

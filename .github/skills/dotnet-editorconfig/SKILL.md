@@ -1,6 +1,6 @@
 ---
 name: dotnet-editorconfig
-description: "Use when a C#/.NET repository needs a root .editorconfig and build-enforced code style, either from an industry baseline or a guided per-rule walkthrough, and needs every new project to inherit and enforce it at compile time."
+description: "Set up a root, build-enforced .editorconfig for C#/.NET projects using a baseline or per-rule walkthrough."
 argument-hint: "Say 'baseline' to accept industry defaults, or 'walkthrough' to choose rules one at a time"
 user-invocable: true
 disable-model-invocation: false
