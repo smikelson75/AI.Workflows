@@ -4,20 +4,22 @@ This system is a staged workflow. Each stage owns a different kind of truth and 
 
 ## The Normal Path
 
-### 1. Discover or clarify
+### 1. Onboard a repository
 
-Use `/brain-storm` for a new idea or an unsettled product direction. It asks focused questions about the problem, users, desired outcome, workflow branches, scope, constraints, success, and vocabulary. When complete, it writes:
+Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts.
+
+The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
+
+If discovery contradicts the stated product purpose or behavior, surface the contradiction for resolution. Do not silently convert an inference into product truth.
+
+### 2. Discover or clarify
+
+If the repository is already known to be onboarded, start here directly with `/brain-storm` for a new idea or an unsettled product direction. It asks focused questions about the problem, users, desired outcome, workflow branches, scope, constraints, success, and vocabulary. When complete, it writes:
 
 - `CONTEXT.md`: current product and domain truth.
 - `UBIQUITOUS-LANGUAGE.md`: canonical terms and banned synonyms.
 
 Do not proceed to the PRD while product decisions remain unresolved.
-
-### 2. Onboard an existing repository
-
-Use `/onboard-existing-project` when real code exists but the standard context, PRD, plan, or agent guidance is missing. It discovers repository evidence first, then hands a findings draft to the owning skills. It may sequence `brain-storm`, `prd-writer`, `work-planner`, and `agent-instructions`, but those skills remain responsible for their own artifacts.
-
-If discovery contradicts the stated product purpose or behavior, surface the contradiction for resolution. Do not silently convert an inference into product truth.
 
 ### 3. Define the target
 

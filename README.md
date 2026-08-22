@@ -10,6 +10,7 @@ The repository separates decisions by ownership:
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Coding Agent`.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
+- **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
 - **Decision record**: `adr-writer` records a hard-to-reverse, surprising, trade-off-driven technical decision, gated from within `prd-writer` and `work-planner`.
@@ -31,13 +32,17 @@ The repository separates decisions by ownership:
 
 Stay in `Orchestrator` and describe the change. It dispatches directly if the change carries no target-truth impact, or tells you which of `prd-writer`, `work-planner`, or `brain-storm` to run first if it does (or if the tier is ambiguous). See the tiering table in [docs/workflow.md](docs/workflow.md).
 
-### Existing codebase without planning artifacts
+### Any repository not already in the loop
 
-Run `/onboard-existing-project`. It performs repository discovery and sequences the owning skills. It does not replace their interviews or write their artifacts directly.
+Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, or a mature codebase, plus which artifacts exist and which stack is in use, then sequences the owning skills in the right order for that state. It does not replace their interviews or write their artifacts directly.
 
 ### C# behavior change
 
 Use `/tdd-csharp` before implementation. Load its required references, write a failing xUnit test first, make the smallest change that passes, refactor only after green, and finish with the full `dotnet test` suite.
+
+### C#/.NET code style setup
+
+Normally dispatched by `/onboard-project`, which knows when to run it and at what severity. To run it directly: `/dotnet-editorconfig`, answering `baseline` for industry defaults or `walkthrough` to choose rules group by group. It writes the root `.editorconfig` and `Directory.Build.props`, then verifies with `dotnet build` and `dotnet format --verify-no-changes`. Projects added later inherit both files by directory position. It finishes by giving you the exact text to pass to `/agent-instructions` — run that follow-up, or agents will keep overriding the shared settings in new `.csproj` files.
 
 ### Resuming after a lost session
 
@@ -48,7 +53,7 @@ Cheapest first: run `git status`/`git diff` for any uncommitted work, then ask `
 ```mermaid
 flowchart LR
     A[Idea or existing repo] --> B{Existing artifacts?}
-    B -->|No context or plan| C[onboard-existing-project]
+    B -->|No context or plan| C[onboard-project]
     B -->|New product idea| D[brain-storm]
     C --> D
     D --> E[CONTEXT.md + UBIQUITOUS-LANGUAGE.md]

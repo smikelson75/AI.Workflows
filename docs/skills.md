@@ -8,9 +8,9 @@ Skills are user-invocable workflows. Each `SKILL.md` defines its contract, read 
 
 Invoke with `/brain-storm` when product intent is vague or changing. It interviews one focused question at a time, normalizes vocabulary, and writes `CONTEXT.md` plus `UBIQUITOUS-LANGUAGE.md`. It stops when product decisions are clear and waits for confirmation before acting.
 
-### `onboard-existing-project`
+### `onboard-project`
 
-Invoke with `/onboard-existing-project` for an existing codebase missing the standard artifacts. It performs evidence-based discovery, flags contradictions, and sequences the owning skills. It does not write those artifacts itself.
+Invoke with `/onboard-project` as the entry point to the workflow. It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills in the correct order for that state. It resolves competing instruction files first, dispatches the matching code style adapter, and performs evidence-based discovery for existing codebases. It writes no artifact itself.
 
 ## Target And Repository Guidance
 
@@ -40,6 +40,10 @@ Invoke with `/work-planner` after context and PRD are current. It owns the imple
 
 Invoke for C# behavior changes. It requires xUnit, Moq, and FluentValidation references, a failing test before production code, focused test loops, and a final full `dotnet test`.
 
+### `dotnet-editorconfig`
+
+The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, and the `agent-instructions` handoff live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
+
 ## Change Journaling
 
 ### `conventional-commit`
@@ -56,4 +60,8 @@ Use the references beside each skill for its format or protocol details:
 - [`adr-writer` references](../.github/skills/adr-writer/references/ADR-FORMAT.md)
 - [`tdd` protocol](../.github/skills/tdd/protocol.md)
 - [`tdd` test design](../.github/skills/tdd/test-design.md)
+- [`code-style` protocol](../.github/skills/code-style/protocol.md)
+- [`dotnet-editorconfig` baseline](../.github/skills/dotnet-editorconfig/references/BASELINE.md)
+- [`dotnet-editorconfig` enforcement](../.github/skills/dotnet-editorconfig/references/ENFORCEMENT.md)
+- [`onboard-project` discovery checklist](../.github/skills/onboard-project/references/DISCOVERY-CHECKLIST.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)

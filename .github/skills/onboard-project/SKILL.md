@@ -1,0 +1,109 @@
+---
+name: onboard-project
+description: "Detect the current state of a repository - empty, scaffolded, or an existing codebase, with any mix of missing or stale workflow artifacts - and sequence the owning skills in the correct order."
+argument-hint: "Ask to onboard this repo, or name the subtree to scope discovery to"
+user-invocable: true
+---
+
+# Onboard Project
+
+The entry point to the workflow. Detect what the repository actually contains, then sequence the owning skills so the user never has to work out the order themselves.
+
+This skill writes no durable artifact of its own. It detects, routes, and supplies the repo-grounded discovery step that no other skill owns.
+
+## When To Use
+
+Whenever starting or resuming work on a repository that is not already in the steady-state loop. It handles an empty directory, a bare scaffold, and a mature codebase alike, so the user does not need to classify the repository before invoking it.
+
+Do not use it when only one artifact is missing and the rest are current — call that owning skill directly.
+
+## Detect First
+
+Read-only. Establish two independent facts before routing.
+
+**Code maturity**
+
+| Signal | State |
+| --- | --- |
+| No manifest anywhere (`*.sln`/`*.csproj`, `package.json`, `pyproject.toml`, `go.mod`) | `empty` |
+| Manifest present, but source is only template output | `scaffold` |
+| Manifest plus real source and/or tests | `mature` |
+
+**Artifact maturity** — presence and currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
+
+Also record the detected **stack** from the manifest, and whether a code style config exists and is actually enforced.
+
+## Rule 1: Resolve Competing Instruction Files First
+
+Blocking and mechanical. Before any skill runs:
+
+- `AGENT.md` (singular) must be renamed to `AGENTS.md`. Never leave both.
+- If both `AGENTS.md` and `.github/copilot-instructions.md` exist, ask which is canonical and remove the other. `agent-instructions` will stop and ask anyway; resolving it here avoids a wasted run.
+
+Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as truth. It was written without a PRD or plan and may assert conventions the code no longer follows.
+
+## Rule 2: Route By Code Maturity
+
+**`empty`** — the stack is unknown, so no style adapter can run and nothing can be verified. Order:
+
+1. `brain-storm` (pure interview; no discovery to do)
+2. `prd-writer` — this is where the stack and target architecture get settled
+3. `work-planner` — Phase 0 must be a scaffolding phase
+4. Execute the scaffolding slice via `Orchestrator`
+5. Style adapter (see Rule 3), now that something is buildable
+6. `agent-instructions`
+
+Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
+
+**`scaffold`** — the stack is known and the style backlog is near zero. Order:
+
+1. Style adapter at blocking severity, committed on its own
+2. `brain-storm` -> `prd-writer` -> `work-planner`
+3. `agent-instructions`
+
+Running the style adapter first is the point: this is the cheapest moment the repository will ever offer, and it strips the settings the project template emitted before they spread.
+
+**`mature`** — run discovery, and treat the style backlog as plan work. Order:
+
+1. Style adapter at non-blocking severity, to measure the violation count without blocking anyone
+2. Discovery per [references/DISCOVERY-CHECKLIST.md](references/DISCOVERY-CHECKLIST.md)
+3. `brain-storm` -> `prd-writer` -> `work-planner`, handing the planner the violation count so remediation becomes real phases
+4. `agent-instructions`
+
+## Rule 3: Dispatch The Style Adapter By Stack
+
+Match the detected stack to its adapter, which applies [`code-style/protocol.md`](../code-style/protocol.md):
+
+| Stack evidence | Adapter |
+| --- | --- |
+| `*.sln`, `*.csproj` | `dotnet-editorconfig` |
+| `package.json` | none yet |
+| `pyproject.toml` | none yet |
+
+If no adapter exists for the detected stack, say so plainly and stop that step. Do not improvise a configuration; report the gap so an adapter can be added.
+
+## Rule 4: Ground The Product Skills In Evidence
+
+For a `mature` repository, discovery produces a disposable findings draft: candidate problem/users/workflow, current architecture and stack, apparent conventions, glossary candidates, contradictions and unknowns.
+
+Hand it to `brain-storm` as pre-filled context. The interview confirms or corrects the draft and resolves genuine ambiguity; it does not re-ask what discovery already answered. Wait for `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md` before continuing.
+
+For `prd-writer`, the target state of an existing project is normally "current architecture as confirmed" plus explicitly requested changes; ask what should change versus stay before it writes. For `work-planner`, expect most existing behavior to land as already-implemented foundation phases.
+
+If discovery contradicts the stated purpose, surface the contradiction and let the user resolve it before anything is written.
+
+## Rule 5: `agent-instructions` Runs Last, Once
+
+It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
+
+## Boundaries
+
+- Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style configuration directly. Always delegate to the owning skill.
+- Do not skip a downstream skill's interview because discovery produced a draft; the draft narrows questions, it does not replace confirmation.
+- Do not scaffold projects or choose a directory layout. That is a `prd-writer` target-architecture decision, and letting a scaffolding tool pick it silently overwrites a deliberate choice.
+- If the repo is too large for full discovery, scope to a confirmed subtree rather than sampling randomly.
+- Re-running this skill is a no-op for any step whose artifact is already current.
+
+## Exit
+
+Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, and which artifacts were created or updated. The written artifacts are durable; this brief is disposable.
