@@ -38,7 +38,7 @@ Invoke with `/work-planner` after context and PRD are current. It owns the imple
 
 ### `tdd-csharp`
 
-Invoke for C# behavior changes. It requires xUnit, Moq, and FluentValidation references, a failing test before production code, focused test loops, and a final full `dotnet test`.
+Invoke for C# behavior changes. It requires xUnit and Moq references, a failing test before production code, focused test loops, and a final full `dotnet test`.
 
 ### `dotnet-editorconfig`
 
