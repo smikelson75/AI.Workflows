@@ -1,20 +1,20 @@
 # Code Style Enforcement Protocol
 
-Stack-agnostic requirements for any code style adapter (`dotnet-editorconfig`, and future Node/Python equivalents). An adapter supplies the tools and file formats; this file supplies the rules that do not change between stacks.
+Stack-agnostic requirements for any code style adapter. An adapter supplies the tools, file formats, stack-specific enforcement point, and verification commands; this file supplies the rules that do not change between stacks.
 
 ## Outcome
 
 Style is enforced by the repository's standard verification command, not by reviewer discipline. A violation must fail something a developer or agent already runs.
 
-The enforcement point differs by stack:
+Each adapter must identify the stack's enforcement point and make style violations fail a command developers or agents already run.
 
-| Stack | Enforcement point |
-| --- | --- |
-| .NET | The compiler, via analyzer properties in the build |
-| Node/TypeScript | A lint script wired into the verification command, plus a CI gate or pre-commit hook |
-| Python | A linter/formatter check in the verification command, plus a CI gate or pre-commit hook |
+Acceptable enforcement points include, but are not limited to:
 
-Only .NET can enforce in the compiler. Everything else needs an explicit gate, and an adapter that omits the gate has not met this protocol.
+- compiler or build-integrated analysis;
+- a formatter or linter check wired into the repository's standard verification command;
+- an existing CI, task-runner, or hook gate that runs the verification command.
+
+If the stack cannot enforce style through compiler or build behavior, the adapter must add or identify an explicit verification gate. If no suitable gate exists and creating one is outside the adapter's boundary, the adapter must report the gap instead of claiming enforcement is complete.
 
 ## Non-Negotiables
 
