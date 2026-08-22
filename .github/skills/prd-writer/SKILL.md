@@ -37,6 +37,10 @@ The PRD is upstream of coding and should stay stable.
 - Do not update it for implementation discoveries, sequencing changes, status, or completed work. Those belong in plan artifacts.
 - If a change would alter problem, users, workflow, or vocabulary, stop and redirect to `brain-storm` instead of editing the PRD.
 
+## ADR Gate
+
+Before finalizing, check any newly settled target architecture direction or hard constraint against the three-part test: hard to reverse, surprising without context, and a real trade-off among genuine alternatives. If all three hold, hand off to `adr-writer` before returning. Otherwise skip silently; do not mention the test in the PRD itself.
+
 ## Read Order
 
 1. `CONTEXT.md`
@@ -52,6 +56,7 @@ Do not survey the repo for maturity or progress, and do not read `docs/plans/`. 
 3. Clarify until clear: required behaviors, scope refinements beyond the context guardrails, target architecture direction, hard constraints, acceptance signals, and planner-safe assumptions.
 4. Resolve contradictions among user direction, context, glossary, and existing PRD before writing.
 5. Write/update `docs/prd/<artifact-slug>-prd.md` using [references/PRD-FORMAT.md](references/PRD-FORMAT.md).
+6. Apply the ADR Gate to any newly settled architecture direction or hard constraint.
 
 Ask one focused question at a time; use 2-4 only when coupled. Push vague answers, request real examples, and ask what `work-planner` would get wrong about the target.
 

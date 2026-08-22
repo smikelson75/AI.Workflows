@@ -42,6 +42,10 @@ A slice must carry strong enough success criteria for a subagent to loop indepen
 - Inspect repo evidence only where it affects implementation status or sequencing.
 - Follow [references/PLAN-FORMAT.md](references/PLAN-FORMAT.md), [references/PLAN-ARTIFACT-STRUCTURE.md](references/PLAN-ARTIFACT-STRUCTURE.md), and the main/phase/slice format references.
 
+## ADR Gate
+
+Before finalizing, check any newly settled sequencing or implementation-architecture decision against the three-part test: hard to reverse, surprising without context, and a real trade-off among genuine alternatives. If all three hold, hand off to `adr-writer` before returning. Otherwise skip silently. This is separate from target architecture direction, which `prd-writer` gates.
+
 ## Plan Rules
 
 - Main plan: `docs/plans/<artifact-slug>-implementation-plan.md`; always the compact current-truth entry point.
@@ -63,6 +67,7 @@ A slice must carry strong enough success criteria for a subagent to loop indepen
 3. Derive the gap between current state and the PRD target, and record it in the main plan's current-state summary.
 4. Clarify only ordering/dependency changes, current status, active-slice needs, and unsettled planner assumptions.
 5. Write current-truth artifacts using the format references, omitting empty fields.
+6. Apply the ADR Gate to any newly settled sequencing or implementation-architecture decision.
 
 Write only when inputs, dependencies, statuses, active-slice needs, and artifact requirements are clear. Otherwise ask the next blocking question and do not write.
 

@@ -22,6 +22,7 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
 | `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
+| `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 
 Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
@@ -54,5 +55,6 @@ Use zero-padded numbering and relative links. The main plan links to phase detai
 - Target behavior or architecture changes update the PRD through `prd-writer`.
 - Implementation discoveries, sequencing, and status update plans through `work-planner` or `Orchestrator` according to the workflow.
 - Stable repository conventions update `AGENTS.md` through `agent-instructions`.
+- A hard-to-reverse, surprising, real-trade-off decision is recorded once through `adr-writer`, gated from within `prd-writer` (target architecture) or `work-planner` (sequencing/implementation architecture). An ADR is never edited in place; a new one supersedes it.
 
 Never use a plan status field to sneak a product decision into the implementation record.

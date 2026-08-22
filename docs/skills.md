@@ -26,6 +26,10 @@ Invoke with `/agent-instructions` to bootstrap or amend project-wide `AGENTS.md`
 
 Invoke with `/workflow-audit` when workflow definitions change or orchestration becomes repetitive or expensive. It audits token waste, duplicated authority, contradictions, oversized handoffs, and artifact churn. Audit mode is read-only; repair mode applies only approved minimal edits.
 
+### `adr-writer`
+
+Invoked directly, or from within `prd-writer`/`work-planner` when a decision is hard to reverse, surprising without context, and reflects a real trade-off among alternatives. Writes a point-in-time record at `docs/adr/NNNN-<slug>.md`. Never edited in place; a new ADR supersedes an old one.
+
 ## Planning And Implementation
 
 ### `work-planner`
@@ -49,6 +53,7 @@ Use the references beside each skill for its format or protocol details:
 - [`brain-storm` references](../.github/skills/brain-storm/references/CONTEXT-FORMAT.md)
 - [`prd-writer` references](../.github/skills/prd-writer/references/PRD-FORMAT.md)
 - [`work-planner` references](../.github/skills/work-planner/references/PLAN-FORMAT.md)
+- [`adr-writer` references](../.github/skills/adr-writer/references/ADR-FORMAT.md)
 - [`tdd` protocol](../.github/skills/tdd/protocol.md)
 - [`tdd` test design](../.github/skills/tdd/test-design.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)

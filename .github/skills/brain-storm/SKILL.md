@@ -17,7 +17,9 @@ Turn vague product intent into current context and a durable glossary before pla
 
 ## Interview
 
-Ask one focused question at a time; use 2-3 only when coupled. Ask before solutions. If vague, offer 2-3 options. Probe examples, branches, failures, fallbacks, and tradeoffs. Prefer and normalize domain terms.
+Ask one focused question at a time; use 2-3 only when coupled. Number each question (`Q1`, `Q2`, ...) as you ask it so any answer can be revisited by number later. Ask before solutions. If vague, offer 2-3 options. Probe examples, branches, failures, fallbacks, and tradeoffs. Prefer and normalize domain terms.
+
+If a new answer conflicts with a previously settled answer (by number) or with existing `CONTEXT.md`/`UBIQUITOUS-LANGUAGE.md` content, stop: restate old versus new explicitly, confirm which stands, and re-check anything already settled or written that depended on the old answer before continuing.
 
 Cover 1-4 always; 5-8 as relevant:
 

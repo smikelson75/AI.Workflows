@@ -12,6 +12,7 @@ The repository separates decisions by ownership:
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
+- **Decision record**: `adr-writer` records a hard-to-reverse, surprising, trade-off-driven technical decision, gated from within `prd-writer` and `work-planner`.
 
 ## Quick Start
 
@@ -19,8 +20,8 @@ The repository separates decisions by ownership:
 
 1. Run `/brain-storm` and answer its focused product questions.
 2. Confirm the resulting `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
-3. Run `/prd-writer` to create or update the target PRD.
-4. Run `/work-planner` to create the implementation plan and active slices.
+3. Run `/prd-writer` to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
+4. Run `/work-planner` to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
 5. Ask `Orchestrator` to run the next slice.
 6. Let `Coding Agent` implement and verify the dispatched slice.
 7. Repeat the orchestrator loop until the plan is complete.
@@ -65,6 +66,8 @@ flowchart LR
     J -->|changes target truth| F
     J -->|changes product truth| D
     J -->|no next slice in phase| H
+    F -->|hard-to-reverse architecture decision| O[adr-writer]
+    H -->|hard-to-reverse sequencing decision| O
 ```
 
 The detailed handoffs, gates, and escalation rules are in [docs/workflow.md](docs/workflow.md).

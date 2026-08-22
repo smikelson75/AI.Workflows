@@ -30,6 +30,8 @@ Use `/prd-writer` after context is current. The PRD describes the target state o
 
 The default PRD path is `docs/prd/<artifact-slug>-prd.md`, where `<artifact-slug>` comes from the settled project or product name in `UBIQUITOUS-LANGUAGE.md` and falls back to `CONTEXT.md` only when needed. The PRD must not contain progress, readiness, phases, slices, or implementation status.
 
+Before finalizing, `prd-writer` checks any newly settled target architecture direction or hard constraint against the ADR test (hard to reverse, surprising without context, real trade-off among genuine alternatives) and hands off to `adr-writer` when it holds.
+
 ### 4. Plan the gap
 
 Use `/work-planner` after the context and PRD are settled. It compares repository reality with the PRD target and owns:
@@ -40,6 +42,8 @@ Use `/work-planner` after the context and PRD are settled. It compares repositor
 - implementation status and plan drift.
 
 The planner creates execution-ready slices. Every slice needs a user-visible outcome, file/module scope, verification command, and observable acceptance checks.
+
+Before finalizing, `work-planner` applies the same ADR test to any newly settled sequencing or implementation-architecture decision and hands off to `adr-writer` when it holds.
 
 ### 5. Execute a slice
 
@@ -88,6 +92,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A sequencing, dependency, status, or active-slice issue goes to `work-planner`.
 - A slice that lacks a verification command stays blocked and returns to `work-planner`.
 - A failed verification keeps the slice `in progress` until repaired and rerun.
+- A hard-to-reverse, surprising, real-trade-off technical decision goes to `adr-writer`; a routine or reversible one does not.
 
 These rules prevent implementation discoveries from quietly changing product intent or target state.
 
