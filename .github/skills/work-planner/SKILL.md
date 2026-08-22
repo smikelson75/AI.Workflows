@@ -9,7 +9,16 @@ user-invocable: true
 
 After `brain-storm` and `prd-writer`, maintain the living implementation plan.
 
-Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, `docs/prd/scheduler-prd.md`, the existing main plan and phase/slice artifacts; write the main plan and required phase/slice artifacts.
+Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, `docs/prd/<artifact-slug>-prd.md`, the existing main plan and phase/slice artifacts; write the main plan and required phase/slice artifacts.
+
+## Artifact Naming
+
+- Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md` when present.
+- If the ubiquitous language does not settle a project name, derive `<artifact-slug>` from the product name in `CONTEXT.md`.
+- Use lowercase kebab-case, keep the slug short and domain-specific, and preserve the same slug across PRD and plan artifacts.
+- If neither source settles the name, ask for the project artifact slug before writing.
+- PRD path: `docs/prd/<artifact-slug>-prd.md`.
+- Main plan path: `docs/plans/<artifact-slug>-implementation-plan.md`.
 
 ## Consumer Contract
 
@@ -35,7 +44,7 @@ A slice must carry strong enough success criteria for a subagent to loop indepen
 
 ## Plan Rules
 
-- Main plan: `docs/plans/scheduler-implementation-plan.md`; always the compact current-truth entry point.
+- Main plan: `docs/plans/<artifact-slug>-implementation-plan.md`; always the compact current-truth entry point.
 - Every phase: retained `docs/plans/phases/phase-01/phase.md` style detail document.
 - Slices: only under the single current `in progress` phase unless explicitly directed; use `slice-01-<slug>.md`.
 - Use zero-padded numbering and relative links.

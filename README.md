@@ -1,3 +1,4 @@
+
 # AI Workflows
 
 Reusable VS Code skills and custom agents for taking software work from an unclear idea to a verified implementation.
@@ -51,7 +52,7 @@ flowchart LR
     C --> D
     D --> E[CONTEXT.md + UBIQUITOUS-LANGUAGE.md]
     E --> F[prd-writer]
-    F --> G[docs/prd/scheduler-prd.md]
+    F --> G[docs/prd/&lt;artifact-slug&gt;-prd.md]
     G --> H[work-planner]
     H --> I[Main plan + phase + slice artifacts]
     I --> J[Orchestrator]

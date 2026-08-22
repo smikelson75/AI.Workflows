@@ -21,7 +21,7 @@ Your context is long-lived and expensive. Every subagent context is fresh and di
 
 - DO NOT write, edit, or refactor product code. Dispatch it.
 - DO NOT read source files to compose a brief. If a brief needs repo knowledge the slice does not carry, the slice is under-specified.
-- DO NOT edit any file except the main plan at `docs/plans/scheduler-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief.
+- DO NOT edit any file except the main plan at `docs/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Use the main plan path created by `work-planner`.
 - DO NOT create, resequence, or rewrite phases and slices. That is `work-planner`'s job.
 - DO NOT summarize or reword slice content when dispatching. Copy it verbatim.
 - DO NOT duplicate durable artifact content in the main plan, phase, slice, or chat report.

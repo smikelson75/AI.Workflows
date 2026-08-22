@@ -16,7 +16,7 @@ Invoke with `/onboard-existing-project` for an existing codebase missing the sta
 
 ### `prd-writer`
 
-Invoke with `/prd-writer` after context is settled. It writes the target-state PRD at `docs/prd/scheduler-prd.md`. It does not describe maturity, progress, plans, tasks, or status.
+Invoke with `/prd-writer` after context is settled. It writes the target-state PRD at `docs/prd/<artifact-slug>-prd.md`, deriving `<artifact-slug>` from `UBIQUITOUS-LANGUAGE.md` or, if needed, `CONTEXT.md`. It does not describe maturity, progress, plans, tasks, or status.
 
 ### `agent-instructions`
 

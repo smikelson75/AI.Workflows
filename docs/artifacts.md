@@ -17,13 +17,13 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | --- | --- | --- |
 | `CONTEXT.md` | `brain-storm` | Problem, users, workflow, scope, constraints, and success |
 | `UBIQUITOUS-LANGUAGE.md` | `brain-storm` | Canonical domain terms and banned synonyms |
-| `docs/prd/scheduler-prd.md` | `prd-writer` | Stable v1 target state and acceptance signals |
-| `docs/plans/scheduler-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
+| `docs/prd/<artifact-slug>-prd.md` | `prd-writer` | Stable v1 target state and acceptance signals |
+| `docs/plans/<artifact-slug>-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
 | `docs/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
 | `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 
-The default PRD and plan filenames retain `scheduler` because they are the paths encoded in the skills. A project adopting these workflows should change those defaults deliberately and update the relevant contracts together.
+Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
 ## Status Rules
 
@@ -39,7 +39,7 @@ The default PRD and plan filenames retain `scheduler` because they are the paths
 
 ```text
 docs/plans/
-  scheduler-implementation-plan.md
+  <artifact-slug>-implementation-plan.md
   phases/
     phase-01/
       phase.md

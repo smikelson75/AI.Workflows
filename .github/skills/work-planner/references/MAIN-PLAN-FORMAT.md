@@ -1,6 +1,6 @@
 # Main Plan Format
 
-Purpose: define the compact entry document at `docs/plans/scheduler-implementation-plan.md`.
+Purpose: define the compact entry document at `docs/plans/<artifact-slug>-implementation-plan.md`, where `<artifact-slug>` is derived from the settled project or product name in `UBIQUITOUS-LANGUAGE.md` and falls back to `CONTEXT.md` only when the glossary has no project name.
 
 The main plan is the orchestrator's routing table and the single record of status. It answers three questions without loading anything else: what is being built, what is done, and what to dispatch next. Everything else lives behind a link.
 
@@ -30,7 +30,7 @@ The main plan is the orchestrator's routing table and the single record of statu
 ## Skeleton
 
 ```md
-# Scheduler implementation plan
+# <Project Name> implementation plan
 
 ## Problem and approach
 - what is being built

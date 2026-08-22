@@ -28,7 +28,7 @@ Use `/prd-writer` after context is current. The PRD describes the target state o
 - target architecture direction and hard constraints;
 - acceptance signals and planner-safe assumptions.
 
-The default PRD path is `docs/prd/scheduler-prd.md`. The PRD must not contain progress, readiness, phases, slices, or implementation status.
+The default PRD path is `docs/prd/<artifact-slug>-prd.md`, where `<artifact-slug>` comes from the settled project or product name in `UBIQUITOUS-LANGUAGE.md` and falls back to `CONTEXT.md` only when needed. The PRD must not contain progress, readiness, phases, slices, or implementation status.
 
 ### 4. Plan the gap
 

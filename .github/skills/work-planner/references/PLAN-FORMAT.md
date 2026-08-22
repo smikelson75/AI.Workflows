@@ -1,6 +1,6 @@
 # Plan Format
 
-Purpose: a living implementation plan set that carries current repo state and sequences work toward the target defined by `CONTEXT.md` and `docs/prd/scheduler-prd.md`. It keeps the main plan compact, stores full phase detail in separate phase documents, and carries slice detail only for the current in-progress phase.
+Purpose: a living implementation plan set that carries current repo state and sequences work toward the target defined by `CONTEXT.md` and `docs/prd/<artifact-slug>-prd.md`. It keeps the main plan compact, stores full phase detail in separate phase documents, and carries slice detail only for the current in-progress phase.
 
 The artifact set serves the `orchestrator` agent, which dispatches coding subagents governed by `.github/agents/coding-agent.agent.md`. The main plan routes, the phase document constrains, the slice document is dispatched.
 
@@ -40,7 +40,8 @@ Status is recorded only in the main plan.
 - slice: `planned`, `in progress`, `completed`
 
 ## Artifact Layout
-- main plan: `docs/plans/scheduler-implementation-plan.md`
+- artifact slug: derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when the glossary has no project name
+- main plan: `docs/plans/<artifact-slug>-implementation-plan.md`
 - phase detail document: `docs/plans/phases/phase-01/phase.md`
 - slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
 

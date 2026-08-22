@@ -27,7 +27,7 @@ Read only the sources that exist and are relevant:
 
 1. Existing `AGENTS.md`, if present.
 2. `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`, if present, for stable domain terminology and boundaries.
-3. The PRD, normally `docs/prd/scheduler-prd.md`, for target architecture and hard constraints.
+3. The PRD, normally `docs/prd/<artifact-slug>-prd.md`, for target architecture and hard constraints. Derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when needed.
 4. The main implementation plan and targeted phase or slice artifacts, normally under `docs/plans/`, only to identify durable repository conventions or required commands.
 5. Targeted repository evidence: manifests, project files, formatter/linter configuration, CI workflows, test projects, and representative source files.
 

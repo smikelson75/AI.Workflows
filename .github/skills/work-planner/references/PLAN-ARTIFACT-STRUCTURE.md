@@ -3,7 +3,8 @@
 Purpose: define the canonical file layout and naming rules for the `work-planner` skill so planning context stays small while completed detail remains durable.
 
 ## Canonical Files
-- main plan: `docs/plans/scheduler-implementation-plan.md`
+- artifact slug: derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when the glossary has no project name
+- main plan: `docs/plans/<artifact-slug>-implementation-plan.md`
 - phase detail root: `docs/plans/phases/`
 - phase detail document: `docs/plans/phases/phase-01/phase.md`
 - slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
@@ -36,7 +37,7 @@ Purpose: define the canonical file layout and naming rules for the `work-planner
 
 ```text
 docs/plans/
-  scheduler-implementation-plan.md
+  <artifact-slug>-implementation-plan.md
   phases/
     phase-01/
       phase.md
