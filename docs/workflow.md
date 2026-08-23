@@ -10,6 +10,8 @@ Use `/onboard-project` first, unless the user already knows the repository is on
 
 The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
 
+Onboarding completion is a hard gate, not a best-effort summary: the final `agent-instructions` run must be evidenced and its canonical instruction artifact must exist. `.github/agents/` definitions are execution roles and do not satisfy the repository's root `AGENTS.md` requirement. If that artifact is missing, or a required route was skipped, onboarding remains blocked and the next owning skill must be named.
+
 For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline. This gives the Git-based integration gate a meaningful starting point and keeps the Engineer report scoped to the assigned slice. The primary agent or user owns this commit boundary; `Engineer` never creates it.
 
 If discovery contradicts the stated product purpose or behavior, surface the contradiction for resolution. Do not silently convert an inference into product truth.
@@ -56,6 +58,8 @@ Use `Orchestrator` to execute an approved plan, run as the active agent mode wit
 `Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
 
 For local deterministic integration gating, invoke `/deterministic-verification`. After Pass A, `Orchestrator` validates the structured report and runs the gate. The gate derives the changed-file set from Git, so an uncommitted slice is supported; a mismatch blocks completion until the user commits or isolates other work, supplies a known baseline, or intentionally reconciles a combined scope. A required Pass B is dispatched to the existing `Engineer` role with integration-only scope; it is not a separate agent. Phase-end E2E remains a separate final validation step.
+
+Before dispatching a slice, `Orchestrator` must inspect the worktree for changes outside the assigned slice. Existing planner, product-truth, instruction, or unrelated implementation changes must be committed, isolated, or explicitly reconciled before dispatch; they must not be folded into Engineer's `changedFiles` merely because they are present in Git.
 
 For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 

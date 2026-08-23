@@ -18,6 +18,8 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - refuses to dispatch and names the redirect (`work-planner`, `prd-writer`, or `brain-storm`) when a request changes target truth, product truth, or is ambiguous between tiers;
 - stops and points to `work-planner` when the active phase has no next slice.
 
+Before dispatch, it checks the worktree for changes outside the selected slice. If unrelated or pre-existing changes would contaminate the Git change set, it stops and asks the primary agent or user to commit, isolate, or explicitly reconcile them. A dirty worktree is not permission for Engineer to claim planner, product-truth, instruction, or unrelated implementation files as part of the slice.
+
 It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
 
 Its active agent definition must provide `agent` and `execute` tools. `agent` is required to dispatch `Engineer`; `execute` is required to validate reports, run the integration gate, and run phase-end checks. If either is absent, stop and repair the invocation rather than routing terminal work through `Engineer`.
