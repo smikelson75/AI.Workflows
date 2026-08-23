@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "deterministic:ready", "type": "shell", "command": "./.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh", "problemMatcher": [] },
+    { "label": "slice:pass-a", "type": "shell", "command": "./.github/skills/deterministic-verification/scripts/run-unit-verification.sh", "args": ["--slice", "${input:slice}", "${input:unitCommand}"], "problemMatcher": [] },
+    { "label": "slice:gate", "type": "shell", "command": "./.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh", "args": ["--report", "${input:report}"], "problemMatcher": [] },
+    { "label": "slice:pass-b", "type": "shell", "command": "./.github/skills/deterministic-verification/scripts/run-integration-verification.sh", "args": ["--slice", "${input:slice}", "${input:integrationCommand}"], "problemMatcher": [] },
+    { "label": "phase:e2e", "type": "shell", "command": "./.github/skills/deterministic-verification/scripts/run-phase-e2e.sh", "args": ["--phase", "${input:phase}", "${input:e2eCommand}"], "problemMatcher": [] }
+  ],
+  "inputs": [
+    { "id": "slice", "type": "promptString", "description": "Slice path" },
+    { "id": "phase", "type": "promptString", "description": "Phase path" },
+    { "id": "report", "type": "promptString", "description": "Engineer A report path" },
+    { "id": "unitCommand", "type": "promptString", "description": "Unit verification command" },
+    { "id": "integrationCommand", "type": "promptString", "description": "Integration verification command" },
+    { "id": "e2eCommand", "type": "promptString", "description": "Phase E2E command" }
+  ]
+}

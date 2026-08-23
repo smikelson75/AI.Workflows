@@ -15,6 +15,7 @@ The repository separates decisions by ownership:
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
 - **Decision record**: `adr-writer` records a hard-to-reverse, surprising, trade-off-driven technical decision, gated from within `prd-writer` and `work-planner`.
+- **Deterministic verification**: `deterministic-verification` owns integration gating, structured reports, and phase-end E2E wrappers; `Orchestrator` routes Pass B to `Engineer` when required.
 
 ## Quick Start
 
@@ -35,7 +36,7 @@ Stay in `Orchestrator` and describe the change. It dispatches directly if the ch
 
 ### Any repository not already in the loop
 
-Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, or a mature codebase, plus which artifacts exist and which stack is in use, then sequences the owning skills in the right order for that state. It does not replace their interviews or write their artifacts directly.
+Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, or a mature codebase, plus which artifacts exist and which stack is in use, then sequences the owning skills in the right order for that state. It also runs deterministic verification bootstrap when those artifacts are present so local hooks and prerequisites are verified up front. It does not replace their interviews or write their artifacts directly.
 
 ### C# behavior change
 
@@ -52,6 +53,14 @@ Normally dispatched by `/onboard-project`, which knows the repository's test-sui
 ### Resuming after a lost session
 
 Cheapest first: run `git status`/`git diff` for any uncommitted work, then ask `Orchestrator` to continue — it reads only the main plan, active phase, and next slice. Only fall back to general chat exploration if no plan exists yet; it has no contract telling it where to look and is the most expensive option. See [docs/workflow.md](docs/workflow.md#resuming-after-context-loss).
+
+### Deterministic local verification
+
+The local integration and phase-end workflow is implemented under [.github/skills/deterministic-verification](.github/skills/deterministic-verification): policies in [policies](.github/skills/deterministic-verification/policies), report contracts in [schemas](.github/skills/deterministic-verification/schemas), templates in [templates](.github/skills/deterministic-verification/templates), wrappers in [scripts](.github/skills/deterministic-verification/scripts), and task targets in [Makefile](.github/skills/deterministic-verification/Makefile). Run `make -f .github/skills/deterministic-verification/Makefile deterministic-ready` once per clone to verify prerequisites and configure hooks. Run `make -f .github/skills/deterministic-verification/Makefile slice-gate REPORT=out/engineer-a-report.json`, and supply project-specific commands through `COMMAND`, `UNIT_TEST_COMMAND`, `INTEGRATION_TEST_COMMAND`, or `E2E_COMMAND`; this repository intentionally does not assume a product stack.
+
+For a full user walkthrough, see [Deterministic Verification User Guide](docs/deterministic-verification-user-guide.md).
+
+The model-facing entry point is `/deterministic-verification`. It works with `Orchestrator` and `Engineer`; Pass B does not require a separate agent.
 
 ## Workflow At A Glance
 

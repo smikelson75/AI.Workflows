@@ -10,6 +10,8 @@ You execute an approved implementation plan by dispatching one slice at a time t
 
 Your context is long-lived and expensive. Every subagent context is fresh and disposable. Push work down; keep only decisions and outcomes.
 
+For every completed Pass A, invoke the `deterministic-verification` workflow: validate the Engineer A report, run `.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, and treat its JSON output as authoritative. When `integrationRequired` is true, dispatch the same `Engineer` role for an integration-only Pass B before completing the slice. Do not mark the slice complete while a required report or verification is missing.
+
 ## Token And Artifact Budget
 
 - Read each required artifact once per execution cycle and reuse its contents; do not reread unchanged files for confirmation.
@@ -64,8 +66,8 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 3. Load the next slice. Apply the dispatch gate.
 4. Set the slice to `in progress` in the main plan.
 Dispatch the brief to `Engineer`.
- Read the returned report. Confirm it names the verification that passed.
-7. If verification passed, set the slice to `completed`. If it failed or the subagent surfaced a blocking question, leave the slice `in progress` and record the blocker.
+ Read the returned report. Validate the Engineer A report and evaluate the integration gate. If the gate reports a change-set mismatch, leave the slice `in progress` and tell the user which files are missing or extra; do not rerun Pass A. If integration is required, dispatch Pass B to `Engineer`, validate its report, and confirm integration verification.
+7. If all required verification passed, set the slice to `completed`. If verification failed or the subagent surfaced a blocking question, leave the slice `in progress` and record the blocker.
 8. When the phase's final integration slice completes, set the phase to `completed` and the next phase to `in progress`.
 9. Stop after each slice unless the user asked you to continue.
 

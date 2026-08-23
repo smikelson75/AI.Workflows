@@ -26,6 +26,10 @@ Invoke with `/agent-instructions` to bootstrap or amend project-wide `AGENTS.md`
 
 Invoke with `/workflow-audit` when workflow definitions change or orchestration becomes repetitive or expensive. It audits token waste, duplicated authority, contradictions, oversized handoffs, and artifact churn. Audit mode is read-only; repair mode applies only approved minimal edits.
 
+### `deterministic-verification`
+
+Invoke with `/deterministic-verification` to validate Engineer reports, evaluate boundary changes, route the integration-only Pass B, enforce explicit verification commands, and run phase-end E2E checks. It owns the local policies, schemas, scripts, hooks, and task entry points; `Orchestrator` owns routing and status, while `Engineer` owns implementation and reports.
+
 ### `adr-writer`
 
 Invoked directly, or from within `prd-writer`/`work-planner` when a decision is hard to reverse, surprising without context, and reflects a real trade-off among alternatives. Writes a point-in-time record at `docs/adr/NNNN-<slug>.md`. Never edited in place; a new ADR supersedes an old one.
