@@ -139,4 +139,6 @@ If those artifacts are absent, report that deterministic verification is not ins
 
 ## Exit
 
-Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, deterministic verification bootstrap status (ran, skipped, or blocked), and which artifacts were created or updated. The written artifacts are durable; this brief is disposable.
+Onboarding is complete only when the selected routing sequence has actually run and its required artifacts exist at their canonical paths. In particular, `agent-instructions` must be recorded as run and a root `AGENTS.md` must exist (unless the user explicitly requested a scoped instruction file); do not infer completion from the presence of `.github/agents/` definitions or from an `AGENTS.md` mentioned in a handoff.
+
+Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, deterministic verification bootstrap status (ran, skipped, or blocked), and which artifacts were created or updated. If a required step or artifact is missing, report onboarding as blocked and name the exact next owning skill; do not report the repository as onboarded. The written artifacts are durable; this brief is disposable.
