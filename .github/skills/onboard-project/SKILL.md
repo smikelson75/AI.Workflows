@@ -55,7 +55,11 @@ Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as t
 5. Style adapter (see Rule 3), now that something is buildable
 6. `agent-instructions`
 
+The empty-repository path is not onboarded when scaffolding alone passes. The style adapter and `agent-instructions` steps remain required after the scaffold exists; do not report onboarding complete while either is deferred.
+
 Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
+
+Before executing the first scaffolding slice in an empty repository, establish a clean Git baseline containing the onboarding artifacts created so far, while leaving the planned slice files uncommitted. Do this as the primary agent or user, never by dispatching it to `Engineer`; the deterministic gate compares the slice report with the post-baseline change set.
 
 **`scaffold`** — the stack is known and the style backlog is near zero. Order:
 

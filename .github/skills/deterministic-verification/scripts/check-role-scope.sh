@@ -17,10 +17,7 @@ for candidate in out/engineer-a-report.json out/engineer-b-report.json; do
 done
 [[ ${#reports[@]} -gt 0 ]] || exit 0
 
-changed_files="$(
-  { git diff --name-only; git diff --cached --name-only; git ls-files --others --exclude-standard; } \
-    | awk 'NF && !seen[$0]++'
-)"
+changed_files="$(git diff --cached --name-only | awk 'NF && !seen[$0]++')"
 [[ -n "$changed_files" ]] || exit 0
 
 denylist=(

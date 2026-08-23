@@ -20,6 +20,8 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 
 It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
 
+Its active agent definition must provide `agent` and `execute` tools. `agent` is required to dispatch `Engineer`; `execute` is required to validate reports, run the integration gate, and run phase-end checks. If either is absent, stop and repair the invocation rather than routing terminal work through `Engineer`.
+
 **Never dispatch `Orchestrator` through a subagent tool (e.g. a one-shot `runSubagent`-style call).** Run it as the active agent mode with full tool parity, including execute/terminal access and the ability to dispatch `Engineer`. It owns verification, so a dispatch path that strips its tool access will silently fail the gate it is responsible for — and, observed in practice, can cause it to write product code directly instead of stopping, which violates its own contract. If `Orchestrator` finds itself missing `agent` or `execute` tools, it must stop and report the invocation problem rather than substitute by doing the work itself.
 
 ## Engineer
@@ -35,6 +37,8 @@ Use `Engineer` for an assigned vertical slice. Its brief must include the outcom
 - returns changed files, verification, tradeoffs, and risks.
 
 It must not expand scope or guess at unresolved intent. Its default behavior follows Red-Green-Refactor for behavior changes.
+
+`Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Those repository-boundary operations belong to the primary agent or user.
 
 ## Relationship
 

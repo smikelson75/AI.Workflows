@@ -10,6 +10,8 @@ Use `/onboard-project` first, unless the user already knows the repository is on
 
 The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
 
+For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline. This gives the Git-based integration gate a meaningful starting point and keeps the Engineer report scoped to the assigned slice. The primary agent or user owns this commit boundary; `Engineer` never creates it.
+
 If discovery contradicts the stated product purpose or behavior, surface the contradiction for resolution. Do not silently convert an inference into product truth.
 
 ### 2. Discover or clarify
@@ -49,7 +51,7 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 ### 5. Execute a slice
 
-Use `Orchestrator` to execute an approved plan, run as the active agent mode — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
+Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
 `Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
 

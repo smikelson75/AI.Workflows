@@ -1,7 +1,7 @@
 ---
 description: "Execute an approved plan by dispatching slices to Engineer and recording status; route, do not plan or implement."
 name: "Orchestrator"
-tools: [read, search, edit, agent, todo]
+tools: [read, search, edit, execute, agent, todo]
 agents: [Engineer]
 argument-hint: "Run the next slice, or name the slice to execute."
 ---
