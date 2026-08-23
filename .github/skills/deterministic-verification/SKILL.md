@@ -7,7 +7,7 @@ user-invocable: true
 
 # Deterministic Verification
 
-Use this skill when an implementation slice needs the deterministic integration-gate workflow described in [docs/deterministic-verification-user-guide.md](../../../docs/deterministic-verification-user-guide.md).
+Use this skill when an implementation slice needs the deterministic integration-gate workflow: structured Engineer handoff reports, an automated integration-gate evaluation, and phase-end E2E verification, as detailed below.
 
 ## Ownership
 

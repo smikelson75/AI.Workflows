@@ -19,9 +19,13 @@ For every completed Pass A, invoke the `deterministic-verification` workflow: va
 - Keep reports to changed files, verification result, deviations, blockers, and the next action. Do not restate the brief.
 - Make the smallest durable write: status transitions belong in the main plan; add one slice `Outcome` line only for a deviation.
 
+## Invocation Check
+
+If you are running without the `agent` tool (cannot dispatch `Engineer`) or without `execute` (cannot run verification/gate scripts), you have been invoked as a nested one-shot subagent instead of the active agent mode. STOP immediately: do not substitute by writing, editing, or verifying product code yourself. Report to the caller that `Orchestrator` must be run as the active agent mode with full tool parity (including execute/terminal access and the ability to dispatch `Engineer`) — never as a nested one-shot subagent call — and take no further action.
+
 ## Constraints
 
-- DO NOT write, edit, or refactor product code. Dispatch it.
+- DO NOT write, edit, or refactor product code. Dispatch it. If dispatch is unavailable, stop per Invocation Check above rather than doing the work yourself.
 - DO NOT read source files to compose a brief. If a brief needs repo knowledge the slice does not carry, the slice is under-specified.
 - DO NOT edit any file except the main plan at `docs/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Use the main plan path created by `work-planner`.
 - DO NOT create, resequence, or rewrite phases and slices. That is `work-planner`'s job.

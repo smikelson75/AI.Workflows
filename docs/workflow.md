@@ -49,7 +49,7 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 ### 5. Execute a slice
 
-Use `Orchestrator` to execute an approved plan. It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
+Use `Orchestrator` to execute an approved plan, run as the active agent mode — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
 `Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
 

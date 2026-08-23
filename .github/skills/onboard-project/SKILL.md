@@ -51,7 +51,7 @@ Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as t
 1. `brain-storm` (pure interview; no discovery to do)
 2. `prd-writer` — this is where the stack and target architecture get settled
 3. `work-planner` — Phase 0 must be a scaffolding phase
-4. Execute the scaffolding slice via `Orchestrator`
+4. Execute the scaffolding slice via `Orchestrator`, run as the active agent mode (switch to it directly), never invoked through a subagent-dispatch tool — it needs `agent`/`execute` tool parity to dispatch `Engineer` and verify. `Orchestrator` dispatches the actual scaffolding to `Engineer` — it must not write product files itself.
 5. Style adapter (see Rule 3), now that something is buildable
 6. `agent-instructions`
 
