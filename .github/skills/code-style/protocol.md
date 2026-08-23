@@ -24,6 +24,7 @@ If the stack cannot enforce style through compiler or build behavior, the adapte
 4. **Measure before blocking.** On a repository with existing code, first configure at non-blocking severity and report the violation count. Only tighten to blocking once the backlog is cleared.
 5. **Never lower a severity to pass.** A failing check is resolved by fixing the code or by an explicit, recorded decision to change the standard. Silently downgrading a rule to unblock a build is prohibited.
 6. **Config changes are their own commit.** Never mix style configuration with behavior changes; the diff becomes unreviewable.
+7. **Check the worktree before writing.** Adapters write directly, in the primary conversation, never through `Engineer` — so no `Orchestrator`-style dispatch gate inspects the worktree first. Before writing any file, the adapter must check for unrelated pending changes (`git status`) and, if the tree is dirty, stop and ask the user to commit or isolate them before proceeding. Otherwise Non-Negotiable 6 cannot be honored: an unrelated change already sitting in the tree gets swept into "its own commit" alongside the config.
 
 ## Repository Maturity Paths
 

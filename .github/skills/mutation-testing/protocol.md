@@ -53,6 +53,7 @@ First-run behavior depends on two independent facts: code maturity (empty/scaffo
 3. First cycle on newly enabled work is measure-only; blocking is a deliberate later step.
 4. A low score is resolved by writing a better test or by an explicit, recorded scope decision — never by silently weakening a test or lowering a threshold to pass.
 5. Config changes are their own commit, never mixed with behavior changes.
+6. Check the worktree before writing. Adapters write directly, in the primary conversation, never through `Engineer`, so no `Orchestrator`-style dispatch gate inspects the worktree first. Before writing any file, check for unrelated pending changes (`git status`) and, if the tree is dirty, stop and ask the user to commit or isolate them before proceeding.
 
 ## Boundaries For Every Adapter
 
