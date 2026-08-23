@@ -20,6 +20,8 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 
 It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
 
+Run `Orchestrator` as the active agent mode with full tool parity (including execute/terminal access), not as a nested one-shot subagent call. It owns verification, so a dispatch path that strips its tool access will silently fail the gate it is responsible for.
+
 ## Engineer
 
 Definition: [`.github/agents/engineer.agent.md`](../.github/agents/engineer.agent.md)

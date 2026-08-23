@@ -116,9 +116,18 @@ If discovery contradicts the stated purpose, surface the contradiction and let t
 
 It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
 
+## Rule 7: Deterministic Verification Bootstrap
+
+After the normal routing sequence, if deterministic-verification artifacts are present (`.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, `.github/skills/deterministic-verification/hooks/pre-commit`, and `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`), run `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`.
+
+This step must fail closed with a clear message if prerequisites are missing, especially `jq`.
+
+If those artifacts are absent, report that deterministic verification is not installed in this repository and continue without inventing replacements.
+
 ## Boundaries
 
 - Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style configuration directly. Always delegate to the owning skill.
+- Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter to `Engineer` or any other subagent. Run each directly in the primary conversation, turn by turn with the user; a stateless subagent cannot hold the interview these skills require, and compressing it into one dispatched brief is not equivalent to running it.
 - Do not skip a downstream skill's interview because discovery produced a draft; the draft narrows questions, it does not replace confirmation.
 - Do not scaffold projects or choose a directory layout. That is a `prd-writer` target-architecture decision, and letting a scaffolding tool pick it silently overwrites a deliberate choice.
 - If the repo is too large for full discovery, scope to a confirmed subtree rather than sampling randomly.
@@ -126,4 +135,4 @@ It needs context, PRD, plan, and the enforced style config as inputs, so it runs
 
 ## Exit
 
-Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, and which artifacts were created or updated. The written artifacts are durable; this brief is disposable.
+Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, deterministic verification bootstrap status (ran, skipped, or blocked), and which artifacts were created or updated. The written artifacts are durable; this brief is disposable.

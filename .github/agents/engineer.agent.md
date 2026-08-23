@@ -11,6 +11,10 @@ Behavioral guidelines to reduce common LLM coding mistakes and provide instructi
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+## Scope Boundary
+
+`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it.
+
 ## Context And Diff Budget
 
 - Treat the brief as the primary specification. Read only the scoped files and the smallest neighboring context needed to verify the behavior.
@@ -80,7 +84,7 @@ For multi-step tasks, state a brief plan:
   3. Refactor if necessary while maintaining test passes.
 - **No Speculation**: Subagents should not guess intent for unclear requirements; they must surface these questions before providing code.
 - **Isolated Changes**: Only modify files necessary for the specific task assigned by the primary agent.
-- **Reporting**: Provide a concise summary of what was changed, how it was verified (e.g., "Tests in `Scheduler.Api.Tests` passed"), and any identified trade-offs or risks.
+- **Reporting**: Write the report for the assigned pass using the matching template in `.github/skills/deterministic-verification/templates/`. Pass A must include `sliceId`, `changedFiles`, `boundaryChanges`, `unitVerificationCommand`, `unitVerificationResult`, `integrationTargetsSuggested`, and `risks`. Pass B must include `sliceId`, `integrationTestsChanged`, `harnessChanges`, `integrationVerificationCommands`, `integrationVerificationResult`, and `remainingRisks`. Validate it with `.github/skills/deterministic-verification/scripts/validate-report.sh` before handing back to `Orchestrator`.
 
 ---
 
