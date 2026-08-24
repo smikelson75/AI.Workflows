@@ -61,13 +61,13 @@ For local deterministic integration gating, invoke `/deterministic-verification`
 
 Before dispatching a slice, `Orchestrator` must inspect the worktree for changes outside the assigned slice. Existing planner, product-truth, instruction, or unrelated implementation changes must be committed, isolated, or explicitly reconciled before dispatch; they must not be folded into Engineer's `changedFiles` merely because they are present in Git.
 
-For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
+For C# or TypeScript behavior changes, apply the matching stack skill (`/tdd-csharp` or `/tdd-typescript`) inside this implementation stage:
 
 1. Red: add one failing test for one behavior.
 2. Green: make the smallest production change that passes.
 3. Refactor: improve the design while keeping tests green.
 4. Repeat for the remaining behavior.
-5. Finish with the full `dotnet test` suite.
+5. Finish with the stack's full project test suite.
 
 A phase's **final integration slice** additionally applies `/stryker-dotnet` (or the matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 

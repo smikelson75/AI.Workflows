@@ -44,6 +44,10 @@ Invoke with `/work-planner` after context and PRD are current. It owns the imple
 
 Invoke for C# behavior changes. It requires xUnit and Moq references, a failing test before production code, focused test loops, and a final full `dotnet test`.
 
+### `tdd-typescript`
+
+Invoke for TypeScript behavior changes. It requires Jest for tests and Jest's built-in mocking APIs, a failing test before production code, focused Jest test loops, and a final full project test suite.
+
 ### `dotnet-editorconfig`
 
 The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, and the `agent-instructions` handoff live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
@@ -68,6 +72,7 @@ Use the references beside each skill for its format or protocol details:
 - [`adr-writer` references](../.github/skills/adr-writer/references/ADR-FORMAT.md)
 - [`tdd` protocol](../.github/skills/tdd/protocol.md)
 - [`tdd` test design](../.github/skills/tdd/test-design.md)
+- [`tdd-typescript` stack specifics](../.github/skills/tdd-typescript/docs/stack.md)
 - [`code-style` protocol](../.github/skills/code-style/protocol.md)
 - [`dotnet-editorconfig` baseline](../.github/skills/dotnet-editorconfig/references/BASELINE.md)
 - [`dotnet-editorconfig` enforcement](../.github/skills/dotnet-editorconfig/references/ENFORCEMENT.md)

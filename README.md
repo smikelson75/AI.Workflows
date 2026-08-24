@@ -9,7 +9,7 @@ The repository separates decisions by ownership:
 - **Target truth**: `prd-writer` defines what the finished v1 must do and the constraints it must satisfy.
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
-- **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
+- **Behavior verification**: `tdd-csharp` and `tdd-typescript` supply the Red-Green-Refactor rules for stack-specific work.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
 - **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` is the C#/.NET adapter.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
@@ -41,6 +41,10 @@ Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, o
 ### C# behavior change
 
 Use `/tdd-csharp` before implementation. Load its required references, write a failing xUnit test first, make the smallest change that passes, refactor only after green, and finish with the full `dotnet test` suite.
+
+### TypeScript behavior change
+
+Use `/tdd-typescript` before implementation. Load its required references, write a failing Jest test first, use Jest's built-in mocking APIs when a test double is needed, make the smallest change that passes, refactor only after green, and finish with the full project test suite.
 
 ### C#/.NET code style setup
 
