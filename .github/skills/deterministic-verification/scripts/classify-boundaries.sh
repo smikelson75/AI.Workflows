@@ -21,6 +21,7 @@ fi
 
 printf '%s\n' "${files[@]}" | awk 'NF && !seen[$0]++' | while IFS= read -r file; do
   case "$file" in
+    *.md|*.mdx|*.txt|*.rst) printf '%s\tdocumentation\n' "$file" ;;
     *route*|*controller*|*handler*|*http*|*api*|*client*) printf '%s\thttp\n' "$file" ;;
     *migration*|*repository*|*repo*|*query*|*database*|*storage*) printf '%s\tdatabase\n' "$file" ;;
     *file*|*filesystem*|*fs*|*path*) printf '%s\tfilesystem\n' "$file" ;;

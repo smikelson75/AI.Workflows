@@ -38,7 +38,7 @@ if [[ -n "$missing_from_report" || -n "$not_in_worktree" ]]; then
   exit 1
 fi
 slice_id="$(jq -r '.sliceId' "$report")"
-reasons="$(printf '%s\n' "$classified" | awk -F '\t' '$2 != "" { print $2 }' | sort -u | jq -Rsc 'split("\n") | map(select(length > 0))')"
+reasons="$(printf '%s\n' "$classified" | awk -F '\t' '$2 != "" && $2 != "documentation" { print $2 }' | sort -u | jq -Rsc 'split("\n") | map(select(length > 0))')"
 uncertain="$(printf '%s\n' "$classified" | awk -F '\t' '$2 == "unknown" { found=1 } END { print found ? "true" : "false" }')"
 boundary_changes="$(jq -c '.boundaryChanges' "$report")"
 integration_required="$(jq -n --argjson reasons "$reasons" --argjson changes "$boundary_changes" --arg uncertain "$uncertain" '$uncertain == "true" or ($reasons | length) > 0 or any($changes[]; . == "unknown")')"

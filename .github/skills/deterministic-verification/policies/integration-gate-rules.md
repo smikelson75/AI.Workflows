@@ -12,6 +12,9 @@ The gate evaluates changed files and the Engineer A report. Integration is requi
 | `queue` | producers, consumers, pub-sub handlers |
 | `external_api` | SDK wrappers and third-party API adapters |
 | `serialization` | serializers, protocol models, wire-format mapping |
+| `documentation` | Markdown, MDX, reStructuredText, and plain-text documentation |
+
+Documentation-only changes do not require integration verification. They are classified explicitly so they are not confused with an uncertain boundary. Mixed documentation and integration changes still require integration verification for the integration-boundary files.
 
 If classification is uncertain, the gate requires integration. The gate output is authoritative and machine-readable. Suggested targets come from the report and are advisory scope for Pass B.
 
