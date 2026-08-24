@@ -75,6 +75,8 @@ A phase's **final integration slice** additionally applies `/stryker-dotnet` (or
 
 After a successful slice, `Orchestrator` records status in the main plan. It stops after each slice unless asked to continue. Use `/conventional-commit` to inspect the diff, keep unrelated changes separate, and create a Conventional Commit for the coherent change.
 
+Before reporting any durable side effect as complete — a commit, a Git baseline, a written or exported file, a plan status change — verify it against the filesystem or `git status`/`git log`/`git show`. A described action is not evidence that it occurred; a claimed commit or export that cannot be found in that verification did not happen and must be reported as failed, not retried silently or restated as success.
+
 ## Resuming After Context Loss
 
 If a session ends mid-work (cleared context, new chat, restart), reconstruct state in this order, cheapest first:
