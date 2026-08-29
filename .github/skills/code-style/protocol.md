@@ -59,5 +59,5 @@ Adjust the framing to the situation:
 
 - Does not write `AGENTS.md`; that file is owned by `agent-instructions`.
 - Does not create projects, solutions, or CI pipelines.
-- Does not duplicate test conventions owned by the stack's TDD skill.
+- Does not duplicate test conventions owned by the `tdd` skill.
 - Escalates to `adr-writer` only when the enforcement choice is hard to reverse and genuinely contested, such as blocking enforcement across a large legacy codebase.

@@ -4,7 +4,7 @@ Purpose: define the retained slice detail document at `docs/plans/phases/phase-0
 
 A slice is the payload the `orchestrator` agent turns into a brief for an engineer governed by `.github/agents/engineer.agent.md`. The orchestrator copies slice content verbatim and adds only the phase's cross-slice invariants, so the slice must stand alone: a subagent given only this content plus the repo must be able to work to completion without asking for missing intent.
 
-The orchestrator gates dispatch on the user-visible outcome, files in scope, verification command, and acceptance checks. A slice missing any of these is returned to `work-planner` instead of being executed.
+The orchestrator gates dispatch on the user-visible outcome, files in scope, verification commands, and acceptance checks. A slice missing any of these is returned to `work-planner` instead of being executed.
 
 ## Sizing
 
@@ -17,8 +17,15 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 
 - execution-ready slice detail
 - success criteria strong enough for a subagent to loop independently
-- an explicit verification command
+- every verification command needed to prove the slice
 - the files or modules in scope
+
+## Verification Commands
+
+- state the focused test command the repository actually uses; never name a test framework or mocking library, since the test stack is discovered rather than prescribed
+- add an integration verification command when the slice adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary)
+- add a mutation-testing command only when the user has enabled mutation testing and its agreed cadence names this slice
+- every listed command is run as written and must pass before the slice completes
 
 ## Rules
 
@@ -38,7 +45,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 - backend/data slice
 - UI/workflow slice
 - files/modules in scope
-- verification command
+- verification commands
 - acceptance checks, stated as observable or testable results
 - useful-if-stopped statement
 - outcome, only if the completed slice deviated from the brief (scope change, discovery, follow-up needed)
@@ -52,7 +59,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 - **Backend/data slice:** ...
 - **UI/workflow slice:** ...
 - **Files/modules in scope:** ...
-- **Verification command:** `...`
+- **Verification commands:** `...`
 - **Acceptance checks:** ...
 - **Useful-if-stopped statement:** ...
 - **Outcome:** ... (only if the completed slice deviated from this brief)

@@ -12,17 +12,18 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - selects the next slice and applies the dispatch gate;
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Engineer`;
-- confirms verification and records `completed`, or records a blocker;
+- confirms that every verification command the slice states was run as written and passed, then records `completed`, or records a blocker;
 - advances phase status only after its final integration slice;
+- expands the next phase's slices from its approved phase document at a phase boundary, then asks the user to confirm before the first dispatch;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
 - refuses to dispatch and names the redirect (`work-planner`, `prd-writer`, or `brain-storm`) when a request changes target truth, product truth, or is ambiguous between tiers;
-- stops and points to `work-planner` when the active phase has no next slice.
+- stops and points to `work-planner` when the next phase has no phase document, needs resequencing, or rests on a premise the completed phase invalidated.
 
-Before dispatch, it checks the worktree for changes outside the selected slice. If unrelated or pre-existing changes would contaminate the Git change set, it stops and asks the primary agent or user to commit, isolate, or explicitly reconcile them. A dirty worktree is not permission for Engineer to claim planner, product-truth, instruction, or unrelated implementation files as part of the slice.
+Before dispatch, it checks the worktree for changes outside the selected slice. If unrelated or pre-existing changes would contaminate the slice diff, it stops and asks the primary agent or user to commit, isolate, or explicitly reconcile them. A dirty worktree is not permission for Engineer to claim planner, product-truth, instruction, or unrelated implementation files as part of the slice.
 
-It is a router, not a product-code implementer. It may edit only the main plan, plus an outcome line in a slice document when the completed work deviated from its brief.
+It is a router, not a product-code implementer. It may edit only the main plan, an outcome line in a slice document when the completed work deviated from its brief, and the next phase's slice documents during a phase transition.
 
-Its active agent definition must provide `agent` and `execute` tools. `agent` is required to dispatch `Engineer`; `execute` is required to validate reports, run the integration gate, and run phase-end checks. If either is absent, stop and repair the invocation rather than routing terminal work through `Engineer`.
+Its active agent definition must provide `agent` and `execute` tools. `agent` is required to dispatch `Engineer`; `execute` is required to re-run verification when syncing status for work done outside the loop. If either is absent, stop and repair the invocation rather than routing terminal work through `Engineer`.
 
 **Never dispatch `Orchestrator` through a subagent tool (e.g. a one-shot `runSubagent`-style call).** Run it as the active agent mode with full tool parity, including execute/terminal access and the ability to dispatch `Engineer`. It owns verification, so a dispatch path that strips its tool access will silently fail the gate it is responsible for — and, observed in practice, can cause it to write product code directly instead of stopping, which violates its own contract. If `Orchestrator` finds itself missing `agent` or `execute` tools, it must stop and report the invocation problem rather than substitute by doing the work itself.
 
@@ -30,13 +31,13 @@ Its active agent definition must provide `agent` and `execute` tools. `agent` is
 
 Definition: [`.github/agents/engineer.agent.md`](../.github/agents/engineer.agent.md)
 
-Use `Engineer` for an assigned vertical slice. Its brief must include the outcome, scope, verification command, and acceptance checks. It:
+Use `Engineer` for an assigned vertical slice. Its brief must include the outcome, scope, verification commands, and acceptance checks. It:
 
 - states assumptions and surfaces ambiguity;
 - makes the smallest necessary, surgical change;
-- creates or updates tests for the behavior;
-- verifies the result before reporting;
-- returns changed files, verification, tradeoffs, and risks.
+- creates or updates tests for the behavior, using the repository's existing test stack rather than a prescribed one;
+- runs every stated verification command as written before reporting;
+- returns changed files, each command and its result, tradeoffs, and risks in the response — no report files or schemas.
 
 It must not expand scope or guess at unresolved intent. Its default behavior follows Red-Green-Refactor for behavior changes.
 

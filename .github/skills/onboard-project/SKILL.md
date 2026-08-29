@@ -29,7 +29,7 @@ Read-only. Establish two independent facts before routing.
 | Manifest present, but source is only template output | `scaffold` |
 | Manifest plus real source and/or tests | `mature` |
 
-**Test-suite maturity** (only relevant once code maturity is `mature`) — whether a real unit test suite exists, versus no tests at all. This drives the `mutation-testing` dispatch in Rule 4 and is independent of code maturity: a mature codebase can still have zero tests.
+**Test-suite maturity** (only relevant once code maturity is `mature`) — whether a real unit test suite exists, versus no tests at all, and which test framework and commands it uses. This drives the `mutation-testing` offer in Rule 4 and is independent of code maturity: a mature codebase can still have zero tests.
 
 **Artifact maturity** — presence and currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
 
@@ -59,7 +59,7 @@ The empty-repository path is not onboarded when scaffolding alone passes. The st
 
 Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
 
-Before executing the first scaffolding slice in an empty repository, establish a clean Git baseline containing the onboarding artifacts created so far, while leaving the planned slice files uncommitted. Do this as the primary agent or user, never by dispatching it to `Engineer`; the deterministic gate compares the slice report with the post-baseline change set.
+Before executing the first scaffolding slice in an empty repository, establish a clean Git baseline containing the onboarding artifacts created so far, while leaving the planned slice files uncommitted. Do this as the primary agent or user, never by dispatching it to `Engineer`.
 
 **`scaffold`** — the stack is known and the style backlog is near zero. Order:
 
@@ -73,7 +73,7 @@ Running the style adapter first is the point: this is the cheapest moment the re
 
 1. Style adapter at non-blocking severity, to measure the violation count without blocking anyone
 2. Discovery per [references/DISCOVERY-CHECKLIST.md](references/DISCOVERY-CHECKLIST.md)
-3. Mutation-testing check per Rule 4, handing its result to `work-planner` alongside the violation count
+3. Mutation-testing offer per Rule 4, handing its result to `work-planner` alongside the violation count
 4. `brain-storm` -> `prd-writer` -> `work-planner`, handing the planner the violation count so remediation becomes real phases
 5. `agent-instructions`
 
@@ -89,22 +89,14 @@ Match the detected stack to its adapter, which applies [`code-style/protocol.md`
 
 If no adapter exists for the detected stack, say so plainly and stop that step. Do not improvise a configuration; report the gap so an adapter can be added.
 
-## Rule 4: Dispatch The Mutation-Testing Adapter By Stack And Test-Suite State
+## Rule 4: Offer Mutation Testing; Never Enable It Unasked
 
-Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only relevant once code maturity is `mature`; `empty` and `scaffold` defer per the protocol's repository maturity paths, with no action needed here.
-
-| Stack evidence | Adapter |
-| --- | --- |
-| `*.sln`, `*.csproj` | `stryker-dotnet` |
-| `package.json` | none yet |
-| `pyproject.toml` | none yet |
+Mutation testing is opt-in per [`mutation-testing/references/PROTOCOL.md`](../mutation-testing/references/PROTOCOL.md), and there are no per-stack adapters — `/mutation-testing` works with whichever tool the user selects. Only relevant once code maturity is `mature`; `empty` and `scaffold` defer per the protocol's repository maturity paths, with no action needed here.
 
 For a `mature` repository, branch on test-suite maturity:
 
-- **No test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
-- **Existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
-
-If no adapter exists for the detected stack, say so plainly and stop that step, same as Rule 3.
+- **No test suite at all** — do not offer a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
+- **Existing test suite** — tell the user mutation testing is available, state the cost trade-off plainly, and let them decide whether to run `/mutation-testing` now. Do not configure a tool, pick a tool, or start a run on their behalf, and do not treat silence as consent. Report the outcome (enabled, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
 
 ## Rule 5: Ground The Product Skills In Evidence
 
@@ -120,18 +112,14 @@ If discovery contradicts the stated purpose, surface the contradiction and let t
 
 It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
 
-## Rule 7: Deterministic Verification Bootstrap
+## Rule 7: Report The Test Stack, Do Not Choose It
 
-After the normal routing sequence, if deterministic-verification artifacts are present (`.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, `.github/skills/deterministic-verification/hooks/pre-commit`, and `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`), run `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`.
-
-This step must fail closed with a clear message if prerequisites are missing, especially `jq`.
-
-If those artifacts are absent, report that deterministic verification is not installed in this repository and continue without inventing replacements.
+Record the detected test framework, test-double approach, focused-run command, and full-suite command, and hand them to `agent-instructions` so `AGENTS.md` carries them. Where a repository has no tests yet, leave the choice open: the framework is settled with the user by [`tdd`](../tdd/SKILL.md) at the first behavior change, not guessed here.
 
 ## Boundaries
 
 - Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style configuration directly. Always delegate to the owning skill.
-- Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter to `Engineer` or any other subagent. Run each directly in the primary conversation, turn by turn with the user; a stateless subagent cannot hold the interview these skills require, and compressing it into one dispatched brief is not equivalent to running it.
+- Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or code style / mutation-testing setup to `Engineer` or any other subagent. Run each directly in the primary conversation, turn by turn with the user; a stateless subagent cannot hold the interview these skills require, and compressing it into one dispatched brief is not equivalent to running it.
 - Do not skip a downstream skill's interview because discovery produced a draft; the draft narrows questions, it does not replace confirmation.
 - Do not scaffold projects or choose a directory layout. That is a `prd-writer` target-architecture decision, and letting a scaffolding tool pick it silently overwrites a deliberate choice.
 - If the repo is too large for full discovery, scope to a confirmed subtree rather than sampling randomly.
@@ -141,4 +129,4 @@ If those artifacts are absent, report that deterministic verification is not ins
 
 Onboarding is complete only when the selected routing sequence has actually run and its required artifacts exist at their canonical paths. In particular, `agent-instructions` must be recorded as run and a root `AGENTS.md` must exist (unless the user explicitly requested a scoped instruction file); do not infer completion from the presence of `.github/agents/` definitions or from an `AGENTS.md` mentioned in a handoff.
 
-Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, deterministic verification bootstrap status (ran, skipped, or blocked), and which artifacts were created or updated. If a required step or artifact is missing, report onboarding as blocked and name the exact next owning skill; do not report the repository as onboarded. The written artifacts are durable; this brief is disposable.
+Return a brief listing: detected code and artifact maturity, detected stack and test stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, whether mutation testing was enabled, declined, or deferred, and which artifacts were created or updated. If a required step or artifact is missing, report onboarding as blocked and name the exact next owning skill; do not report the repository as onboarded. The written artifacts are durable; this brief is disposable.

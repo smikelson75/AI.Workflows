@@ -33,8 +33,8 @@ Derive `<artifact-slug>` from the canonical project, product, or system name in 
 - Status is recorded only in the main plan.
 - Phase and slice detail documents retain durable content; they do not become status logs.
 - Completed phase and slice artifacts remain in place.
-- Only the current in-progress phase receives new slice files unless explicitly directed.
-- The final slice of each phase is integration or end-to-end validation. When a mutation-testing adapter is configured, this slice's verification command also includes the phase-scoped mutation-testing run per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md).
+- Only the current in-progress phase receives new slice files unless explicitly directed. `work-planner` writes them, and `Orchestrator` may expand the next phase's slices from an approved phase document at a phase boundary.
+- The final slice of each phase is integration or end-to-end validation. When the user has enabled mutation testing, that slice's verification commands also include the agreed mutation run per [`mutation-testing/references/PROTOCOL.md`](../.github/skills/mutation-testing/references/PROTOCOL.md).
 
 ## Plan Shape
 

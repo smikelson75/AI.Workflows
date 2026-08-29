@@ -13,7 +13,7 @@ Behavioral guidelines to reduce common LLM coding mistakes and provide instructi
 
 ## Scope Boundary
 
-`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it.
+`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a code style or mutation-testing setup, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it.
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Repository setup and commit boundaries belong to the primary agent or user.
 
@@ -80,13 +80,15 @@ For multi-step tasks, state a brief plan:
 **When subagents are invoked to perform coding or testing tasks, they must adhere to these specific instructions:**
 
 - **Verification First**: Before suggesting a solution, ensure the logic can be verified by running existing tests or creating new ones that cover the edge cases of the change.
-- **TDD Workflow**: When implementing features or bug fixes:
-  1. Identify/create a failing test.
-  2. Implement the minimum code to pass.
-  3. Refactor if necessary while maintaining test passes.
+- **TDD Workflow**: When implementing features or bug fixes, follow `.github/skills/tdd/`:
+  1. Settle the repository's existing test stack and commands (`references/STACK-DISCOVERY.md`) — never assume a framework, assertion style, or mocking library, and never introduce a new one.
+  2. Identify/create a failing test.
+  3. Implement the minimum code to pass.
+  4. Refactor if necessary while maintaining test passes.
 - **No Speculation**: Subagents should not guess intent for unclear requirements; they must surface these questions before providing code.
 - **Isolated Changes**: Only modify files necessary for the specific task assigned by the primary agent.
-- **Reporting**: Write the report for the assigned pass using the matching template in `.github/skills/deterministic-verification/templates/`. Pass A must include `sliceId`, `changedFiles`, `boundaryChanges`, `unitVerificationCommand`, `unitVerificationResult`, `integrationTargetsSuggested`, and `risks`. Pass B must include `sliceId`, `integrationTestsChanged`, `harnessChanges`, `integrationVerificationCommands`, `integrationVerificationResult`, and `remainingRisks`. Validate it with `.github/skills/deterministic-verification/scripts/validate-report.sh` before handing back to `Orchestrator`.
+- **Verification Commands**: Run every verification command the brief states, exactly as written, and capture the actual output. Never substitute a narrower command, never report a command you did not run, and never report a slice as verified while any of them fails. If a stated command is wrong or unrunnable, stop and report that instead of improvising a replacement.
+- **Reporting**: Return a compact report in the response — no report files, schemas, or generated artifacts. It contains: the slice name, changed files, each verification command with its pass/fail result and the decisive output line, deviations from the brief, and remaining risks. Do not restate the brief.
 
 ---
 

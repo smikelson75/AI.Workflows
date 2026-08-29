@@ -26,10 +26,6 @@ Invoke with `/agent-instructions` to bootstrap or amend project-wide `AGENTS.md`
 
 Invoke with `/workflow-audit` when workflow definitions change or orchestration becomes repetitive or expensive. It audits token waste, duplicated authority, contradictions, oversized handoffs, and artifact churn. Audit mode is read-only; repair mode applies only approved minimal edits.
 
-### `deterministic-verification`
-
-Invoke with `/deterministic-verification` to validate Engineer reports, evaluate boundary changes, route the integration-only Pass B, enforce explicit verification commands, and run phase-end E2E checks. It owns the local policies, schemas, scripts, hooks, and task entry points; `Orchestrator` owns routing and status, while `Engineer` owns implementation and reports.
-
 ### `adr-writer`
 
 Invoked directly, or from within `prd-writer`/`work-planner` when a decision is hard to reverse, surprising without context, and reflects a real trade-off among alternatives. Writes a point-in-time record at `docs/adr/NNNN-<slug>.md`. Never edited in place; a new ADR supersedes an old one.
@@ -40,21 +36,17 @@ Invoked directly, or from within `prd-writer`/`work-planner` when a decision is 
 
 Invoke with `/work-planner` after context and PRD are current. It owns the implementation gap, phase and slice artifacts, sequencing, and status assumptions. The main plan is the single status record.
 
-### `tdd-csharp`
+### `tdd`
 
-Invoke for C# behavior changes. It requires xUnit and Moq references, a failing test before production code, focused test loops, and a final full `dotnet test`.
-
-### `tdd-typescript`
-
-Invoke for TypeScript behavior changes. It requires Jest for tests and Jest's built-in mocking APIs, a failing test before production code, focused Jest test loops, and a final full project test suite.
+Invoke with `/tdd` for any behavior change. It is stack-agnostic: it discovers the repository's existing test framework, assertion style, test-double approach, and focused/full-suite commands before the first Red step, and asks the user when nothing settles the choice. It never introduces or swaps a testing package on its own. It requires a failing test before production code, focused loops, and a green full suite before done.
 
 ### `dotnet-editorconfig`
 
 The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, and the `agent-instructions` handoff live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
 
-### `stryker-dotnet`
+### `mutation-testing`
 
-The C#/.NET adapter for the generic mutation-testing protocol. Invoke with `/stryker-dotnet` to write `stryker-config.json`, scoped to unit tests only (integration/e2e tests are permanently excluded), and to run a guided threshold walkthrough instead of silently picking a mutation-score bar. Cadence (phase's final integration slice, incremental scope), blocking policy, repository maturity paths, and survivor remediation live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
+Opt-in and tool-agnostic. Invoke with `/mutation-testing` to select a mutation tool with the user, agree a cadence and thresholds through a guided walkthrough, and write that tool's root configuration scoped to unit tests only — or to run the configured command for the current phase and route survivors. It never enables itself, never picks the tool, and never adds a mutation run to a verification command the user has not agreed to.
 
 ## Change Journaling
 
@@ -70,12 +62,13 @@ Use the references beside each skill for its format or protocol details:
 - [`prd-writer` references](../.github/skills/prd-writer/references/PRD-FORMAT.md)
 - [`work-planner` references](../.github/skills/work-planner/references/PLAN-FORMAT.md)
 - [`adr-writer` references](../.github/skills/adr-writer/references/ADR-FORMAT.md)
-- [`tdd` protocol](../.github/skills/tdd/protocol.md)
-- [`tdd` test design](../.github/skills/tdd/test-design.md)
-- [`tdd-typescript` stack specifics](../.github/skills/tdd-typescript/docs/stack.md)
+- [`tdd` protocol](../.github/skills/tdd/references/PROTOCOL.md)
+- [`tdd` test design](../.github/skills/tdd/references/TEST-DESIGN.md)
+- [`tdd` stack discovery](../.github/skills/tdd/references/STACK-DISCOVERY.md)
 - [`code-style` protocol](../.github/skills/code-style/protocol.md)
 - [`dotnet-editorconfig` baseline](../.github/skills/dotnet-editorconfig/references/BASELINE.md)
 - [`dotnet-editorconfig` enforcement](../.github/skills/dotnet-editorconfig/references/ENFORCEMENT.md)
-- [`mutation-testing` protocol](../.github/skills/mutation-testing/protocol.md)
+- [`mutation-testing` protocol](../.github/skills/mutation-testing/references/PROTOCOL.md)
+- [`mutation-testing` tool selection](../.github/skills/mutation-testing/references/TOOL-SELECTION.md)
 - [`onboard-project` discovery checklist](../.github/skills/onboard-project/references/DISCOVERY-CHECKLIST.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)

@@ -1,22 +1,28 @@
 # Mutation Testing Protocol
 
-Stack-agnostic requirements for any mutation-testing adapter. An adapter supplies the tool, config format, and stack-specific scoping mechanics; this file supplies the rules that do not change between stacks.
+Stack-agnostic rules that hold whichever mutation-testing tool the user selects. Tool choice, config format, and scoping mechanics come from the user and the tool's own documentation; this file supplies what does not change between them.
 
 ## Outcome
 
 Mutation testing measures whether the test suite actually detects introduced faults (a mutation score). This is a different signal than coverage: coverage proves a line executed, mutation testing proves a test would fail if the line's behavior changed.
 
+## Opt-In
+
+Mutation testing is off until the user turns it on. It is not implied by having tests, by onboarding a repository, or by a phase reaching its final slice. Nothing in the workflow may add a mutation run to a verification command the user has not agreed to.
+
 ## Cadence
 
-Runs at each phase's **final end-to-end validation slice**, scoped incrementally to that phase's diff since phase start — not every slice, not only at release.
+The recommended default is each phase's **final integration or end-to-end slice**, scoped incrementally to that phase's diff since phase start — not every slice, not only at release. Propose it; the user may choose a different cadence. The reasoning behind the recommendation:
 
 - Not every slice: a mutation run reruns the suite per surviving mutant. It does not fit the fast Red-Green-Refactor inner loop, and running it there would make that loop unusable.
 - Not release-only: by then, multiple phases of weak tests would already be entrenched, defeating shift-left testing and turning remediation into a big-bang cleanup.
 - Incremental scoping (diff since phase start, not the whole repository) keeps cost proportional to the phase.
 
+Whatever cadence is agreed, it is recorded once, in the tool's configuration or `AGENTS.md`, and the planner attaches the resulting command only to the slices that cadence names.
+
 ## Test Scope
 
-Mutate and score using **unit tests only**, by default. Integration and end-to-end tests are permanently excluded, both as mutation targets and as mutant killers:
+Mutate and score using **unit tests only**, by default. Integration and end-to-end tests are excluded, both as mutation targets and as mutant killers:
 
 - **Cost**: a mutant re-triggers whatever its covering tests touch. Integration/e2e tests are slow and often carry real side effects (network calls, containers, external quota) that multiply badly across hundreds of mutants.
 - **Signal**: integration/e2e tests assert at a coarse boundary and often survive a mutant that changes fine-grained internal logic, producing a weak kill signal even at high cost.
@@ -28,18 +34,18 @@ This mutation-only scope rule does not relax normal verification expectations: i
 
 - First cycle on any newly enabled phase or repository: **measure-only**. Report the mutation score and the list of survived mutants; do not fail the verification command.
 - Hand the survivor list to `work-planner` as backlog once measured.
-- Tighten to a blocking threshold only after that backlog is cleared.
+- Tighten to a blocking threshold only after that backlog is cleared, and only with the user's agreement.
 - Never resolve a low score by weakening or deleting a hard-to-kill test, or by quietly excluding code from mutation scope, without an explicit, recorded decision. This mirrors the `code-style` protocol's "never lower a severity to pass" rule.
-- Threshold values (score bands) are not defined here; the stack adapter proposes them to the user through a guided walkthrough, since the right bar depends on the codebase and risk tolerance.
+- Threshold values (score bands) are never chosen unilaterally; propose them to the user through a guided walkthrough, since the right bar depends on the codebase and risk tolerance.
 
 ## Repository Maturity Paths
 
 First-run behavior depends on two independent facts: code maturity (empty/scaffold/mature) and whether a meaningful test suite already exists.
 
 - **No code yet** — not applicable; mutation testing waits for a scaffolding slice.
-- **Scaffold, no real tests yet** — not applicable yet, but this is the clean case: no legacy debt to measure. The adapter activates cold at phase 1's final end-to-end validation slice; no baseline run is needed.
+- **Scaffold, no real tests yet** — not applicable yet, but this is the clean case: no legacy debt to measure. Setup can activate cold at the first phase's final validation slice; no baseline run is needed.
 - **Mature codebase, no test suite at all** — blocked. Mutation testing cannot run without tests to kill mutants. Hand this to `work-planner` as a required prerequisite phase (write a baseline test suite) before any mutation-testing phase can start.
-- **Mature codebase, existing test suite** — no prior phase boundary exists yet to scope an incremental diff against. Offer a one-time, **opt-in, cost-flagged** full-repository baseline run: non-blocking, reporting score and survivor hotspots to `work-planner` as backlog. Do not run this automatically the way a cheap linter runs automatically — the cost can be large, and the user should choose to pay it. After the baseline (or if declined), the incremental per-phase cadence takes over from the next phase forward.
+- **Mature codebase, existing test suite** — no prior phase boundary exists yet to scope an incremental diff against. Offer a one-time, **opt-in, cost-flagged** full-repository baseline run: non-blocking, reporting score and survivor hotspots to `work-planner` as backlog. Do not run this automatically the way a cheap linter runs automatically — the cost can be large, and the user should choose to pay it. After the baseline (or if declined), the agreed cadence takes over from the next phase forward.
 
 ## Survivor Remediation After A Run
 
@@ -48,16 +54,10 @@ First-run behavior depends on two independent facts: code maturity (empty/scaffo
 
 ## Non-Negotiables
 
-1. Root-level configuration is the source of truth for scope, thresholds, and exclusions.
-2. Default scope is unit-level only, as above.
-3. First cycle on newly enabled work is measure-only; blocking is a deliberate later step.
-4. A low score is resolved by writing a better test or by an explicit, recorded scope decision — never by silently weakening a test or lowering a threshold to pass.
-5. Config changes are their own commit, never mixed with behavior changes.
-6. Check the worktree before writing. Adapters write directly, in the primary conversation, never through `Engineer`, so no `Orchestrator`-style dispatch gate inspects the worktree first. Before writing any file, check for unrelated pending changes (`git status`) and, if the tree is dirty, stop and ask the user to commit or isolate them before proceeding.
-
-## Boundaries For Every Adapter
-
-- Does not replace the stack's TDD skill; mutation testing measures existing tests, it does not define how tests are written.
-- Does not run every slice by default.
-- Does not choose numeric thresholds unilaterally; proposes them to the user via a guided walkthrough and confirms before writing config.
-- Escalates to `adr-writer` only when the enforcement choice is hard to reverse and genuinely contested (for example, blocking enforcement across a large legacy codebase, or a decision to permanently exclude a layer from mutation scope).
+1. Mutation testing is opt-in, and both the tool and the thresholds are the user's decision.
+2. Root-level configuration is the source of truth for scope, thresholds, and exclusions.
+3. Default scope is unit-level only, as above.
+4. First cycle on newly enabled work is measure-only; blocking is a deliberate later step.
+5. A low score is resolved by writing a better test or by an explicit, recorded scope decision — never by silently weakening a test or lowering a threshold to pass.
+6. Config changes are their own commit, never mixed with behavior changes.
+7. Check the worktree before writing. Setup runs directly, in the primary conversation, never through `Engineer`, so no `Orchestrator`-style dispatch gate inspects the worktree first. Before writing any file, check for unrelated pending changes (`git status`) and, if the tree is dirty, stop and ask the user to commit or isolate them before proceeding.

@@ -6,13 +6,13 @@ This system is a staged workflow. Each stage owns a different kind of truth and 
 
 ### 1. Onboard a repository
 
-Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, the matching mutation-testing adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts.
+Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, test-suite maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts. It offers `/mutation-testing` rather than enabling it.
 
 The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
 
 Onboarding completion is a hard gate, not a best-effort summary: the final `agent-instructions` run must be evidenced and its canonical instruction artifact must exist. `.github/agents/` definitions are execution roles and do not satisfy the repository's root `AGENTS.md` requirement. If that artifact is missing, or a required route was skipped, onboarding remains blocked and the next owning skill must be named.
 
-For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline. This gives the Git-based integration gate a meaningful starting point and keeps the Engineer report scoped to the assigned slice. The primary agent or user owns this commit boundary; `Engineer` never creates it.
+For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline, so the first slice's diff is reviewable on its own. The primary agent or user owns this commit boundary; `Engineer` never creates it.
 
 If discovery contradicts the stated product purpose or behavior, surface the contradiction for resolution. Do not silently convert an inference into product truth.
 
@@ -47,7 +47,7 @@ Use `/work-planner` after the context and PRD are settled. It compares repositor
 - active slice detail;
 - implementation status and plan drift.
 
-The planner creates execution-ready slices. Every slice needs a user-visible outcome, file/module scope, verification command, and observable acceptance checks.
+The planner creates execution-ready slices. Every slice needs a user-visible outcome, file/module scope, every verification command needed to prove it, and observable acceptance checks. A slice that adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary) also carries an integration verification command, decided at planning time rather than inferred during execution.
 
 Before finalizing, `work-planner` applies the same ADR test to any newly settled sequencing or implementation-architecture decision and hands off to `adr-writer` when it holds.
 
@@ -55,21 +55,22 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
-`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
+`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, the verification commands it ran with their results, and risks. Verification is the slice's own commands, run as written; there is no separate gating tool, report file, or schema. `Orchestrator` completes a slice only when every stated command has been run and passed.
 
-For local deterministic integration gating, invoke `/deterministic-verification`. After Pass A, `Orchestrator` validates the structured report and runs the gate. The gate derives the changed-file set from Git, so an uncommitted slice is supported; a mismatch blocks completion until the user commits or isolates other work, supplies a known baseline, or intentionally reconciles a combined scope. A required Pass B is dispatched to the existing `Engineer` role with integration-only scope; it is not a separate agent. Phase-end E2E remains a separate final validation step.
+Before dispatching a slice, `Orchestrator` must inspect the worktree for changes outside the assigned slice. Existing planner, product-truth, instruction, or unrelated implementation changes must be committed, isolated, or explicitly reconciled before dispatch, so the slice's diff stays reviewable.
 
-Before dispatching a slice, `Orchestrator` must inspect the worktree for changes outside the assigned slice. Existing planner, product-truth, instruction, or unrelated implementation changes must be committed, isolated, or explicitly reconciled before dispatch; they must not be folded into Engineer's `changedFiles` merely because they are present in Git.
+For any behavior change, apply `/tdd` inside this implementation stage:
 
-For C# or TypeScript behavior changes, apply the matching stack skill (`/tdd-csharp` or `/tdd-typescript`) inside this implementation stage:
+1. Settle the repository's test stack: framework, assertion style, test-double approach, focused-run command, full-suite command. Discovered evidence beats convention; where nothing settles it, ask the user. Never introduce or swap a testing package unasked.
+2. Red: add one failing test for one behavior.
+3. Green: make the smallest production change that passes.
+4. Refactor: improve the design while keeping tests green.
+5. Repeat for the remaining behavior.
+6. Finish with the repository's full test suite.
 
-1. Red: add one failing test for one behavior.
-2. Green: make the smallest production change that passes.
-3. Refactor: improve the design while keeping tests green.
-4. Repeat for the remaining behavior.
-5. Finish with the stack's full project test suite.
+When the active phase runs out of slices, `Orchestrator` does not exit the loop. If the next phase already has an approved phase document and nothing discovered in the completed phase invalidates it, `Orchestrator` expands that phase's slices from the phase document, records the transition in the main plan, and asks the user to confirm before dispatching the first one. That is elaboration of approved planning, not new planning: anything requiring a new or resequenced phase, a changed objective, or an undecided behavior stops and routes to `/work-planner`.
 
-A phase's **final integration slice** additionally applies `/stryker-dotnet` (or the matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
+Mutation testing is opt-in and never assumed. When the user has enabled it through `/mutation-testing`, the agreed cadence (by default, each phase's final validation slice, scoped to the phase diff, unit tests only, measure-only until a backlog is cleared) determines which slices carry the mutation command per [`mutation-testing/references/PROTOCOL.md`](../.github/skills/mutation-testing/references/PROTOCOL.md). Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 
 ### 6. Record and commit
 
@@ -94,9 +95,10 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 | Discovery to context | Problem, users, workflow, scope, constraints, success, and vocabulary are answerable |
 | Context to PRD | Context and glossary are current and confirmed |
 | PRD to plan | Target behavior, constraints, and acceptance signals are settled |
-| Plan to orchestrator | The next slice has outcome, scope, verification command, and acceptance checks |
+| Plan to orchestrator | The next slice has outcome, scope, verification commands, and acceptance checks |
 | Orchestrator to engineer | Slice and active phase invariants are copied verbatim |
-| Slice completion | Verification passes and the result is reported |
+| Slice completion | Every stated verification command was run as written, passed, and its result was reported |
+| Phase transition | The next phase has an approved phase document that still holds; its slices are expanded and confirmed before the first dispatch |
 | Commit | Staging scope is coherent and the message follows Conventional Commits 1.0.0 |
 
 ## Escalation Rules
@@ -104,6 +106,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A changed problem, user, workflow, or vocabulary goes to `brain-storm`.
 - A changed required behavior, scope boundary, hard constraint, or target architecture goes to `prd-writer`.
 - A sequencing, dependency, status, or active-slice issue goes to `work-planner`.
+- A phase boundary that needs a new, resequenced, or redefined phase goes to `work-planner`; expanding an already-approved phase's slices does not.
 - A slice that lacks a verification command stays blocked and returns to `work-planner`.
 - A failed verification keeps the slice `in progress` until repaired and rerun.
 - A hard-to-reverse, surprising, real-trade-off technical decision goes to `adr-writer`; a routine or reversible one does not.

@@ -8,3 +8,5 @@ Refactor: improve readability post-green; keep tests passing.
 Repeat: small slices until behavior complete.
 
 Execution: test before code change; focused tests per loop; full test suite before done; never done with failing tests.
+
+Commands: take the focused-run and full-suite commands from the repository, per `STACK-DISCOVERY.md`. This protocol never names a framework.
