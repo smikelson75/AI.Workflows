@@ -11,3 +11,10 @@
 - **Risks and mitigations:** extending Orchestrator's existing completion rule can contradict its dispatch and status contract, so update the Review Subagent definition, Orchestrator definition, workflow documentation, agent catalog, artifact catalog, and related examples together; `preToolUse` command hooks fail closed on a crash or non-zero exit but fail open on a timeout, so a hung Catalog call could silently bypass enforcement — keep hook scripts minimal, synchronous, and covered by their own fast unit tests; no repository harness exists for firing real Copilot CLI hook events end-to-end, so hook scripts must be verified directly against their documented stdin/stdout contract using crafted fixtures, not through a live CLI session.
 - **Test checkpoints:** preserve Phase 01 `node --test` catalog coverage; verify each hook script (`subagentStart`, `preToolUse`, `subagentStop`) directly by piping documented JSON input fixtures to it and asserting its stdout decision, using `node --test`; use focused documentation whitespace validation for contract artifacts. No repository Markdown link-check command exists, so link correctness requires explicit review until one is established. The phase's integration slice proves the hook scripts' composed behavior via fixture-driven invocation in sequence, not a live agent session.
 - **Definition of done:** the documented Orchestrator loop, hook-enforced Rule Catalog invocation, Review Subagent (as a custom agent), Decision Journal, and adoption path form one coherent blocking handoff that meets every PRD acceptance signal.
+
+## Slice order
+
+1. [Slice 01 - Enforce Rule Loading Through Hooks](slice-01-enforce-rule-loading-through-hooks.md)
+2. [Slice 02 - Record Review Decisions and Rule Adoption](slice-02-record-review-decisions-and-rule-adoption.md)
+3. [Slice 03 - Block Slice Completion on Review State](slice-03-block-slice-completion-on-review-state.md)
+4. [Slice 04 - Validate the Blocking Review Workflow (integration/E2E)](slice-04-validate-blocking-review-workflow.md)

@@ -16,20 +16,29 @@
 
 ## Active work
 
-- **Current phase:** [Phase 01 - Rule Catalog Foundation](phases/phase-01/phase.md)
-- **Next slice:** [Slice 01 - Load Rule Metadata](phases/phase-01/slice-01-load-rule-metadata.md)
+- **Current phase:** [Phase 02 - Blocking Review Workflow](phases/phase-02/phase.md)
+- **Next slice:** [Slice 01 - Enforce Rule Loading Through Hooks](phases/phase-02/slice-01-enforce-rule-loading-through-hooks.md)
 - **Blockers:** none.
 
 ## Phase plan
 
 | # | Phase | Status | Outcome | Detail |
 |---|-------|--------|---------|--------|
-| 01 | Rule Catalog Foundation | in progress | Active Rules are validated, lazily loadable policy documents with seeded construction guidance. | [detail](phases/phase-01/phase.md) |
-| 02 | Blocking Review Workflow | planned | Engineer Slices receive evidence-backed review decisions and cannot complete with unresolved Findings. | [detail](phases/phase-02/phase.md) |
+| 01 | Rule Catalog Foundation | completed | Active Rules are validated, lazily loadable policy documents with seeded construction guidance. | [detail](phases/phase-01/phase.md) |
+| 02 | Blocking Review Workflow | in progress | Engineer Slices receive evidence-backed review decisions and cannot complete with unresolved Findings. | [detail](phases/phase-02/phase.md) |
 
 ## Slice status - Phase 01
 
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
-| 01 | Load Rule Metadata | planned | [detail](phases/phase-01/slice-01-load-rule-metadata.md) |
-| 02 | Validate Catalog Behavior (integration/E2E) | planned | [detail](phases/phase-01/slice-02-validate-catalog-behavior.md) |
+| 01 | Load Rule Metadata | completed | [detail](phases/phase-01/slice-01-load-rule-metadata.md) |
+| 02 | Validate Catalog Behavior (integration/E2E) | completed | [detail](phases/phase-01/slice-02-validate-catalog-behavior.md) |
+
+## Slice status - Phase 02
+
+| # | Slice | Status | Detail |
+|---|-------|--------|--------|
+| 01 | Enforce Rule Loading Through Hooks | planned | [detail](phases/phase-02/slice-01-enforce-rule-loading-through-hooks.md) |
+| 02 | Record Review Decisions and Rule Adoption | planned | [detail](phases/phase-02/slice-02-record-review-decisions-and-rule-adoption.md) |
+| 03 | Block Slice Completion on Review State | planned | [detail](phases/phase-02/slice-03-block-slice-completion-on-review-state.md) |
+| 04 | Validate the Blocking Review Workflow (integration/E2E) | planned | [detail](phases/phase-02/slice-04-validate-blocking-review-workflow.md) |
