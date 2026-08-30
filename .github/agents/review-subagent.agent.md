@@ -2,6 +2,11 @@
 description: "Review an Engineer Slice diff against loaded Rules and present all Findings for Developer disposition."
 name: "Review Subagent"
 tools: [read, search]
+model: 
+  - Gemini 3.7 Flash (copilot)
+  - GPT-5.6 Terra (copilot)
+  - Claude Sonnet 5 (copilot)
+  - Auto (copilot)
 argument-hint: "The Engineer Slice diff and directly affected Construction Paths."
 ---
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import path from 'node:path';
+import { realpathSync } from 'node:fs';
 
 import { loadActiveRule } from '../rule-catalog.mjs';
-import { recordLoadedRule } from '../session-store.mjs';
+import { recordConfigurationFailure, recordLoadedRule } from '../session-store.mjs';
 import { readStdin, rulesDirectoryFor, writeOutput } from './hook-io.mjs';
 
 /**
@@ -32,8 +33,25 @@ async function main() {
     return;
   }
 
-  const rulesDirectory = rulesDirectoryFor(input.cwd);
-  const resolvedTarget = path.resolve(input.cwd ?? process.cwd(), input.toolArgs.path);
+  let rulesDirectory;
+  const requestedTarget = path.resolve(input.cwd ?? process.cwd(), input.toolArgs.path);
+  let resolvedTarget;
+  try {
+    rulesDirectory = realpathSync(rulesDirectoryFor(input.cwd));
+  } catch {
+    writeOutput({});
+    return;
+  }
+  try {
+    resolvedTarget = realpathSync(requestedTarget);
+  } catch {
+    try {
+      resolvedTarget = path.join(realpathSync(path.dirname(requestedTarget)), path.basename(requestedTarget));
+    } catch {
+      writeOutput({});
+      return;
+    }
+  }
   const relativeToRules = path.relative(rulesDirectory, resolvedTarget);
 
   if (relativeToRules.startsWith('..') || path.isAbsolute(relativeToRules)) {
@@ -58,15 +76,35 @@ async function main() {
   try {
     rule = loadActiveRule(rulesDirectory, ruleId);
   } catch (error) {
-    deny(`Rule ${ruleId} could not be loaded: ${error.message}`);
+    deny(recordFailure(
+      input.sessionId,
+      `Rule ${ruleId} could not be loaded: ${error.message}`,
+    ));
     return;
   }
 
-  recordLoadedRule(input.sessionId, ruleId);
+  try {
+    recordLoadedRule(input.sessionId, ruleId);
+  } catch (error) {
+    deny(recordFailure(
+      input.sessionId,
+      `could not record loaded Rule ${ruleId}: ${error.message}`,
+    ));
+    return;
+  }
   deny(
     `Rule ${ruleId} loaded through the hook-enforced path. Review Subagent must not read Rule files `
-      + `directly; cite only the following loaded policy:\n${JSON.stringify(rule)}`,
+    + `directly; cite only the following loaded policy:\n${JSON.stringify(rule)}`,
   );
+}
+
+function recordFailure(sessionId, detail) {
+  try {
+    recordConfigurationFailure(sessionId, detail);
+    return detail;
+  } catch (error) {
+    return `${detail}. Could not record the review session configuration failure: ${error.message}`;
+  }
 }
 
 function deny(reason) {

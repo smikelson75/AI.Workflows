@@ -2,6 +2,9 @@
 description: "Interactively plan the gap from the settled PRD to repository reality and maintain execution-ready plan artifacts."
 name: "Work Planner"
 tools: [read, search, edit, execute, todo]
+model: 
+  - GPT-5.6 Sol (copilot)
+  - Claude Opus 5 (copilot)
 argument-hint: "Create or amend the implementation plan, phases, or active slices."
 disable-model-invocation: true
 handoffs:

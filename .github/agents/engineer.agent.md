@@ -3,6 +3,10 @@ description: "Implement and test an assigned work slice within its file scope, t
 name: "Engineer"
 tools: [read, edit, search, execute, todo]
 argument-hint: "The slice brief: outcome, files in scope, verification command, acceptance checks."
+model: 
+  - Gemini 3.7 Flash (copilot)
+  - GPT-5.6 Terra (copilot)
+  - Claude Sonnet 5 (copilot)
 ---
 
 # Coding Guidelines & Subagent Instructions

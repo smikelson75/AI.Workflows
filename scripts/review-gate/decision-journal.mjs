@@ -1,7 +1,16 @@
-import { appendFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import {
+  appendFileSync,
+  closeSync,
+  existsSync,
+  mkdirSync,
+  openSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 
 const DISPOSITIONS = new Set(['fix-once', 'adopt-rule-and-fix', 'dismiss']);
+const DECISION_STRING_FIELDS = ['ruleId', 'slice', 'location', 'rationale'];
 const RULE_STRING_FIELDS = [
   'id',
   'title',
@@ -18,8 +27,8 @@ const RULE_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
 /**
  * Appends a durable disposition for one numbered Finding. Rule adoption
- * creates the active Rule before its decision is recorded, so failed Rule
- * generation cannot leave an adoption in the journal.
+ * creates an active Rule and records its decision together. If recording
+ * fails, the newly created Rule is removed.
  *
  * @param {string} journalPath
  * @param {string} rulesDirectory
@@ -27,19 +36,38 @@ const RULE_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
  */
 export function recordDecision(journalPath, rulesDirectory, decision) {
   validateDecision(decision);
+  prepareJournalDestination(journalPath);
 
   const record = {
     findingNumber: decision.findingNumber,
+    ruleId: decision.ruleId,
+    slice: decision.slice,
+    location: decision.location,
     disposition: decision.disposition,
+    rationale: decision.rationale,
     recordedAt: new Date().toISOString(),
   };
 
+  let createdRule;
   if (decision.disposition === 'adopt-rule-and-fix') {
-    record.rulePath = createActiveRule(rulesDirectory, decision.rule);
+    createdRule = createActiveRule(rulesDirectory, decision.rule);
+    record.rulePath = createdRule.journalPath;
   }
 
+  try {
+    appendFileSync(journalPath, `${JSON.stringify(record)}\n`);
+  } catch (error) {
+    if (createdRule) {
+      rmSync(createdRule.filePath);
+    }
+    throw error;
+  }
+}
+
+function prepareJournalDestination(journalPath) {
   mkdirSync(path.dirname(journalPath), { recursive: true });
-  appendFileSync(journalPath, `${JSON.stringify(record)}\n`);
+  const journalFile = openSync(journalPath, 'a');
+  closeSync(journalFile);
 }
 
 function validateDecision(decision) {
@@ -51,6 +79,11 @@ function validateDecision(decision) {
   }
   if (!DISPOSITIONS.has(decision.disposition)) {
     throw new Error('Decision has an unsupported disposition');
+  }
+  for (const field of DECISION_STRING_FIELDS) {
+    if (typeof decision[field] !== 'string' || decision[field].trim() === '') {
+      throw new Error(`Decision ${field} must be a non-empty string`);
+    }
   }
   if (decision.disposition === 'adopt-rule-and-fix') {
     validateRule(decision.rule);
@@ -92,7 +125,10 @@ function createActiveRule(rulesDirectory, rule) {
 
   mkdirSync(rulesDirectory, { recursive: true });
   writeFileSync(rulePath, renderRule(rule), { flag: 'wx' });
-  return path.posix.join('.github', 'review-gate', 'rules', filename);
+  return {
+    filePath: rulePath,
+    journalPath: path.posix.join('.github', 'review-gate', 'rules', filename),
+  };
 }
 
 function renderRule(rule) {

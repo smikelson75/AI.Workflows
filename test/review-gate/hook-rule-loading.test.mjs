@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import {
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -18,7 +23,10 @@ const preToolUseScript = fileURLToPath(
   new URL('../../scripts/review-gate/hooks/pre-tool-use.mjs', import.meta.url),
 );
 
-function runHook(scriptPath, input, { rulesDirectory = seededRulesDirectory, sessionDirectory } = {}) {
+function runHook(scriptPath, input, {
+  rulesDirectory = seededRulesDirectory,
+  sessionDirectory,
+} = {}) {
   const result = spawnSync(process.execPath, [scriptPath], {
     input: typeof input === 'string' ? input : JSON.stringify(input),
     encoding: 'utf8',
@@ -78,6 +86,25 @@ test('subagentStart fails closed when the Rule Catalog cannot load metadata', ()
   });
 });
 
+test('subagentStart fails closed when it cannot initialize session state', () => {
+  const repository = mkdtempSync(path.join(tmpdir(), 'review-gate-session-store-failure-'));
+  const sessionDirectory = path.join(repository, 'sessions');
+  writeFileSync(sessionDirectory, 'not a directory');
+
+  try {
+    const output = runHook(
+      subagentStartScript,
+      { sessionId: 'session-1', timestamp: 1, cwd: '/repo', agentName: 'review-subagent' },
+      { sessionDirectory },
+    );
+
+    assert.match(output.additionalContext, /REVIEW GATE CONFIGURATION ERROR/);
+    assert.match(output.additionalContext, /session state/);
+  } finally {
+    rmSync(repository, { recursive: true, force: true });
+  }
+});
+
 test('preToolUse denies a direct Rule view, returns its full policy, and records the load', () => {
   withSessionDirectory((sessionDirectory) => {
     const output = runHook(
@@ -98,6 +125,33 @@ test('preToolUse denies a direct Rule view, returns its full policy, and records
 
     assert.deepEqual(getLoadedRulesFrom(sessionDirectory, 'session-2'), ['simple-constructor']);
   });
+});
+
+test('preToolUse denies a Rule view through a symbolic-link alias and records the load', () => {
+  const repository = mkdtempSync(path.join(tmpdir(), 'review-gate-rule-alias-'));
+  const sessionDirectory = path.join(repository, 'sessions');
+  const aliasDirectory = path.join(repository, 'rule-alias');
+  symlinkSync(seededRulesDirectory, aliasDirectory, 'dir');
+
+  try {
+    const output = runHook(
+      preToolUseScript,
+      {
+        sessionId: 'session-alias',
+        timestamp: 1,
+        cwd: repository,
+        toolName: 'view',
+        toolArgs: { path: path.join(aliasDirectory, 'simple-constructor.md') },
+      },
+      { sessionDirectory },
+    );
+
+    assert.equal(output.permissionDecision, 'deny');
+    assert.match(output.permissionDecisionReason, /Rule simple-constructor loaded through the hook-enforced path/);
+    assert.deepEqual(getLoadedRulesFrom(sessionDirectory, 'session-alias'), ['simple-constructor']);
+  } finally {
+    rmSync(repository, { recursive: true, force: true });
+  }
 });
 
 test('preToolUse fails closed for an unknown Rule ID', () => {
@@ -138,6 +192,31 @@ test('preToolUse fails closed when the Rule Catalog cannot load a malformed Rule
     assert.match(output.permissionDecisionReason, /missing title/);
     assert.deepEqual(getLoadedRulesFrom(sessionDirectory, 'session-4'), []);
   });
+});
+
+test('preToolUse fails closed when it cannot record a loaded Rule', () => {
+  const repository = mkdtempSync(path.join(tmpdir(), 'review-gate-session-store-failure-'));
+  const sessionDirectory = path.join(repository, 'sessions');
+  writeFileSync(sessionDirectory, 'not a directory');
+
+  try {
+    const output = runHook(
+      preToolUseScript,
+      {
+        sessionId: 'session-4',
+        timestamp: 1,
+        cwd: '/repo',
+        toolName: 'view',
+        toolArgs: { path: path.join(seededRulesDirectory, 'simple-constructor.md') },
+      },
+      { sessionDirectory },
+    );
+
+    assert.equal(output.permissionDecision, 'deny');
+    assert.match(output.permissionDecisionReason, /could not record loaded Rule/);
+  } finally {
+    rmSync(repository, { recursive: true, force: true });
+  }
 });
 
 test('preToolUse fails closed on malformed JSON input', () => {

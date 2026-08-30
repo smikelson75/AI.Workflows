@@ -2,6 +2,9 @@
 description: "Interactively define the planner-ready target state from settled context and maintain the canonical PRD."
 name: "PRD Writer"
 tools: [read, search, edit, todo]
+model: 
+  - GPT-5.6 Sol (copilot)
+  - Claude Opus 5 (copilot)
 argument-hint: "Define or amend the target behavior, scope, constraints, or architecture."
 disable-model-invocation: true
 handoffs:

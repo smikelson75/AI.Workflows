@@ -16,8 +16,8 @@
 
 ## Active work
 
-- **Current phase:** [Phase 02 - Blocking Review Workflow](phases/phase-02/phase.md)
-- **Next slice:** [Slice 02 - Record Review Decisions and Rule Adoption](phases/phase-02/slice-02-record-review-decisions-and-rule-adoption.md)
+- **Current phase:** none; implementation plan completed.
+- **Next slice:** none.
 - **Blockers:** none.
 
 ## Phase plan
@@ -25,7 +25,7 @@
 | # | Phase | Status | Outcome | Detail |
 |---|-------|--------|---------|--------|
 | 01 | Rule Catalog Foundation | completed | Active Rules are validated, lazily loadable policy documents with seeded construction guidance. | [detail](phases/phase-01/phase.md) |
-| 02 | Blocking Review Workflow | in progress | Engineer Slices receive evidence-backed review decisions and cannot complete with unresolved Findings. | [detail](phases/phase-02/phase.md) |
+| 02 | Blocking Review Workflow | completed | Engineer Slices receive evidence-backed review decisions and cannot complete with unresolved Findings. | [detail](phases/phase-02/phase.md) |
 
 ## Slice status - Phase 01
 
@@ -41,4 +41,4 @@
 | 01 | Enforce Rule Loading Through Hooks | completed | [detail](phases/phase-02/slice-01-enforce-rule-loading-through-hooks.md) |
 | 02 | Record Review Decisions and Rule Adoption | completed | [detail](phases/phase-02/slice-02-record-review-decisions-and-rule-adoption.md) |
 | 03 | Block Slice Completion on Review State | completed | [detail](phases/phase-02/slice-03-block-slice-completion-on-review-state.md) |
-| 04 | Validate the Blocking Review Workflow (integration/E2E) | planned | [detail](phases/phase-02/slice-04-validate-blocking-review-workflow.md) |
+| 04 | Validate the Blocking Review Workflow (integration/E2E) | completed | [detail](phases/phase-02/slice-04-validate-blocking-review-workflow.md) |

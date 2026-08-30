@@ -2,6 +2,9 @@
 description: "Interactively clarify product intent, maintain the canonical context and glossary, and route settled target decisions to PRD Writer."
 name: "Brain Storm"
 tools: [read, search, edit, todo]
+model: 
+  - GPT-5.6 Sol (copilot)
+  - Claude Opus 5 (copilot)
 argument-hint: "Describe a new idea or the product truth that changed."
 disable-model-invocation: true
 handoffs:

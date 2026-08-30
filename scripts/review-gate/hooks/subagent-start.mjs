@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { loadActiveRuleMetadata } from '../rule-catalog.mjs';
-import { resetLoadedRules } from '../session-store.mjs';
+import { recordConfigurationFailure, resetLoadedRules } from '../session-store.mjs';
 import { readStdin, rulesDirectoryFor, writeOutput } from './hook-io.mjs';
 
 /**
@@ -26,13 +26,27 @@ async function main() {
     return;
   }
 
-  resetLoadedRules(input.sessionId);
+  try {
+    resetLoadedRules(input.sessionId);
+  } catch (error) {
+    writeOutput({
+      additionalContext: configurationError(
+        recordFailure(input.sessionId, `could not initialize review session state: ${error.message}`),
+      ),
+    });
+    return;
+  }
 
   let rules;
   try {
     rules = loadActiveRuleMetadata(rulesDirectoryFor(input.cwd));
   } catch (error) {
-    writeOutput({ additionalContext: configurationError(`Rule Catalog failed to load active Rule Metadata: ${error.message}`) });
+    writeOutput({
+      additionalContext: configurationError(recordFailure(
+        input.sessionId,
+        `Rule Catalog failed to load active Rule Metadata: ${error.message}`,
+      )),
+    });
     return;
   }
 
@@ -48,6 +62,15 @@ async function main() {
 function configurationError(detail) {
   return `REVIEW GATE CONFIGURATION ERROR: subagentStart hook ${detail}. `
     + 'Report this as a blocking configuration Finding; review cannot rely on Rule Metadata until it is fixed.';
+}
+
+function recordFailure(sessionId, detail) {
+  try {
+    recordConfigurationFailure(sessionId, detail);
+    return detail;
+  } catch (error) {
+    return `${detail}. Could not record the review session configuration failure: ${error.message}`;
+  }
 }
 
 await main();

@@ -6,7 +6,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { recordLoadedRule } from '../../scripts/review-gate/session-store.mjs';
+import { recordLoadedRule, resetLoadedRules } from '../../scripts/review-gate/session-store.mjs';
 
 const subagentStopScript = fileURLToPath(
   new URL('../../scripts/review-gate/hooks/subagent-stop.mjs', import.meta.url),
@@ -33,6 +33,9 @@ function withSessionDirectory(run) {
 
 test('subagentStop blocks a Finding that cites a Rule not loaded for its session', () => {
   withSessionDirectory((sessionDirectory) => {
+    process.env.REVIEW_GATE_SESSION_DIR = sessionDirectory;
+    resetLoadedRules('review-1');
+    delete process.env.REVIEW_GATE_SESSION_DIR;
     const output = runHook(
       {
         sessionId: 'review-1',
@@ -49,6 +52,9 @@ test('subagentStop blocks a Finding that cites a Rule not loaded for its session
 
 test('subagentStop permits a clean review and a Finding citing a loaded Rule', () => {
   withSessionDirectory((sessionDirectory) => {
+    process.env.REVIEW_GATE_SESSION_DIR = sessionDirectory;
+    resetLoadedRules('review-2');
+    delete process.env.REVIEW_GATE_SESSION_DIR;
     assert.deepEqual(
       runHook({ sessionId: 'review-2', response: 'No Findings' }, sessionDirectory),
       {},
@@ -67,6 +73,15 @@ test('subagentStop permits a clean review and a Finding citing a loaded Rule', (
       ),
       {},
     );
+  });
+});
+
+test('subagentStop blocks completion for a session not initialized by subagentStart', () => {
+  withSessionDirectory((sessionDirectory) => {
+    const output = runHook({ sessionId: 'review-uninitialized', response: 'No Findings' }, sessionDirectory);
+
+    assert.equal(output.decision, 'block');
+    assert.match(output.reason, /not initialized/);
   });
 });
 

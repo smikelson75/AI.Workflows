@@ -1,5 +1,9 @@
 #!/usr/bin/env node
-import { getLoadedRules } from '../session-store.mjs';
+import {
+  getConfigurationFailure,
+  getLoadedRules,
+  isSessionInitialized,
+} from '../session-store.mjs';
 import { readStdin, writeOutput } from './hook-io.mjs';
 
 const RULE_CITATION_PATTERN = /\bRule ID:\s*`?([a-z0-9][a-z0-9-]*)`?/gi;
@@ -25,6 +29,30 @@ async function main() {
   }
   if (typeof input.response !== 'string') {
     block('subagentStop hook received input without a final response');
+    return;
+  }
+
+  let initialized;
+  try {
+    initialized = isSessionInitialized(input.sessionId);
+  } catch (error) {
+    block(`subagentStop hook could not read review session state: ${error.message}`);
+    return;
+  }
+  if (!initialized) {
+    block('subagentStop hook received completion for a session not initialized by subagentStart');
+    return;
+  }
+
+  let configurationFailure;
+  try {
+    configurationFailure = getConfigurationFailure(input.sessionId);
+  } catch (error) {
+    block(`subagentStop hook could not read review session state: ${error.message}`);
+    return;
+  }
+  if (typeof configurationFailure === 'string') {
+    block(`subagentStop hook is blocked by a review session configuration failure: ${configurationFailure}`);
     return;
   }
 
