@@ -39,6 +39,6 @@
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
 | 01 | Enforce Rule Loading Through Hooks | completed | [detail](phases/phase-02/slice-01-enforce-rule-loading-through-hooks.md) |
-| 02 | Record Review Decisions and Rule Adoption | planned | [detail](phases/phase-02/slice-02-record-review-decisions-and-rule-adoption.md) |
+| 02 | Record Review Decisions and Rule Adoption | completed | [detail](phases/phase-02/slice-02-record-review-decisions-and-rule-adoption.md) |
 | 03 | Block Slice Completion on Review State | planned | [detail](phases/phase-02/slice-03-block-slice-completion-on-review-state.md) |
 | 04 | Validate the Blocking Review Workflow (integration/E2E) | planned | [detail](phases/phase-02/slice-04-validate-blocking-review-workflow.md) |

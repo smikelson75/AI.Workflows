@@ -23,6 +23,8 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
+| `.github/review-gate/decision-journal.jsonl` | Developer | Append-only, per-Finding Review Gate dispositions; Adopt Rule and Fix records the created Rule path |
+| `.github/review-gate/rules/<rule-id>.md` | Developer | Repository-wide active Rule adopted through a Review Gate decision |
 
 Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
@@ -58,3 +60,14 @@ Use zero-padded numbering and relative links. The main plan links to phase detai
 - A hard-to-reverse, surprising, real-trade-off decision is recorded once through `adr-writer`, gated from within `prd-writer` (target architecture) or `work-planner` (sequencing/implementation architecture). An ADR is never edited in place; a new one supersedes it.
 
 Never use a plan status field to sneak a product decision into the implementation record.
+
+## Review Gate Decisions
+
+The Decision Journal is JSON Lines: each line is one immutable decision for one
+numbered Finding. `Fix Once`, `Adopt Rule and Fix`, and `Dismiss` are recorded
+as `fix-once`, `adopt-rule-and-fix`, and `dismiss`. A dismissal remains limited
+to its Finding and is not a Rule or future-match suppression mechanism.
+
+An Adopt Rule and Fix decision creates a complete active Markdown Rule under
+`.github/review-gate/rules/` before its decision is appended. Its journal record
+stores that Rule's repository-relative path.
