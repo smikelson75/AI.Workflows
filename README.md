@@ -99,10 +99,18 @@ The detailed handoffs, gates, and escalation rules are in [docs/workflow.md](doc
 ```text
 .github/
   agents/                         Custom agent definitions
+  hooks/                          Operational hook routing for repository automation
+  review-gate/                    Operational Review Gate package
+    runtime/                      JavaScript runtime, rules, and hook entry points
+    rules/                        Active repository rules adopted through review decisions
   skills/                         User-invocable skills and references
     <skill>/SKILL.md              Skill contract and workflow
     <skill>/references/           Format and domain references
+
 docs/                             Documentation for this workflow system
+
+test/
+  review-gate/                    External validation suite for Review Gate behavior
 ```
 
 ## Design Principles

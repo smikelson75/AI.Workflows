@@ -5,8 +5,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
-import { recordDecision } from '../../scripts/review-gate/decision-journal.mjs';
-import { loadActiveRule } from '../../scripts/review-gate/rule-catalog.mjs';
+import { recordDecision } from '../../.github/review-gate/runtime/decision-journal.mjs';
+import { loadActiveRule } from '../../.github/review-gate/runtime/rule-catalog.mjs';
 
 function withRepository(run) {
   const repository = mkdtempSync(path.join(tmpdir(), 'review-gate-decision-test-'));

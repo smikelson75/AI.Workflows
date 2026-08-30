@@ -11,16 +11,16 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { getLoadedRules } from '../../scripts/review-gate/session-store.mjs';
+import { getLoadedRules } from '../../.github/review-gate/runtime/session-store.mjs';
 
 const seededRulesDirectory = fileURLToPath(new URL('../../.github/review-gate/rules/', import.meta.url));
 const invalidRulesDirectory = fileURLToPath(new URL('./fixtures/invalid-active-rules/', import.meta.url));
 
 const subagentStartScript = fileURLToPath(
-  new URL('../../scripts/review-gate/hooks/subagent-start.mjs', import.meta.url),
+  new URL('../../.github/review-gate/runtime/hooks/subagent-start.mjs', import.meta.url),
 );
 const preToolUseScript = fileURLToPath(
-  new URL('../../scripts/review-gate/hooks/pre-tool-use.mjs', import.meta.url),
+  new URL('../../.github/review-gate/runtime/hooks/pre-tool-use.mjs', import.meta.url),
 );
 
 function runHook(scriptPath, input, {

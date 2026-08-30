@@ -5,8 +5,8 @@
       {
         "type": "command",
         "matcher": "^review-subagent$",
-        "bash": "node scripts/review-gate/hooks/subagent-start.mjs",
-        "powershell": "node scripts/review-gate/hooks/subagent-start.mjs",
+        "bash": "node .github/review-gate/runtime/hooks/subagent-start.mjs",
+        "powershell": "node .github/review-gate/runtime/hooks/subagent-start.mjs",
         "timeoutSec": 10
       }
     ],
@@ -14,8 +14,8 @@
       {
         "type": "command",
         "matcher": "^view$",
-        "bash": "node scripts/review-gate/hooks/pre-tool-use.mjs",
-        "powershell": "node scripts/review-gate/hooks/pre-tool-use.mjs",
+        "bash": "node .github/review-gate/runtime/hooks/pre-tool-use.mjs",
+        "powershell": "node .github/review-gate/runtime/hooks/pre-tool-use.mjs",
         "timeoutSec": 10
       }
     ],
@@ -23,8 +23,8 @@
       {
         "type": "command",
         "matcher": "^review-subagent$",
-        "bash": "node scripts/review-gate/hooks/subagent-stop.mjs",
-        "powershell": "node scripts/review-gate/hooks/subagent-stop.mjs",
+        "bash": "node .github/review-gate/runtime/hooks/subagent-stop.mjs",
+        "powershell": "node .github/review-gate/runtime/hooks/subagent-stop.mjs",
         "timeoutSec": 10
       }
     ]

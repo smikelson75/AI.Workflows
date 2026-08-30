@@ -10,6 +10,7 @@
 - The Review Gate blocks completion of every Engineer Slice until its scoped review has no unresolved Findings.
 - Developers decide every Finding with enough evidence to distinguish a one-time correction, a durable Rule, and an acceptable exception.
 - Active Rules are independently readable and their full contents are loaded only when the Engineer Slice plausibly matches their metadata.
+- Copying the repository's `.github/` directory into another repository installs every repository-owned artifact required to operate the Review Gate.
 
 ## Requirements And Behaviors
 
@@ -53,6 +54,13 @@
 - The initial Rule Catalog must include an active Complex Constructor Rule for constructors with five or more required parameters, or ambiguous combinations including multiple same-typed values, booleans, or numerous optional values.
 - The Complex Constructor Rule must recommend a builder or value object as appropriate, while leaving the Finding disposition to the Developer.
 
+### Portable Distribution
+
+- Every repository-owned runtime, hook, agent, and Rule required to operate the Review Gate must reside under `.github/`.
+- Review Gate hook commands and runtime module references must resolve exclusively to operational artifacts under `.github/` and must not depend on repository-owned runtime code outside that directory.
+- Copying `.github/` into a target repository must preserve Review Gate operation without requiring a second copy step or path rewriting.
+- Development tests and fixtures must remain outside `.github/`; they validate the packaged hooks and runtime but are not part of the copied operational distribution.
+
 ## Scope Refinements And Non-Goals
 
 - Rule adoption produces repository-wide Rules by default.
@@ -65,6 +73,7 @@
 
 - Rules are policy documents; the JavaScript Rule Catalog is the only metadata loading and validation boundary.
 - Copilot CLI hooks (`subagentStart`, `preToolUse`, `subagentStop`), not Review Subagent tool calls, invoke the Rule Catalog; Rule loading occurs under deterministic hook-script control rather than agent-reported compliance.
+- The Review Gate is a self-contained `.github/` operational distribution boundary; its JavaScript runtime is colocated with its hooks, agents, and durable artifacts beneath that directory, while development tests remain outside the distribution.
 - Review Subagent is a user-defined custom agent; the built-in `general-purpose` agent does not emit the `subagentStart`/`subagentStop` events this design depends on.
 - `subagentStop` is the enforcement boundary: it inspects the Review Subagent's final response before Orchestrator receives it and can force another turn independent of Orchestrator's own handling of that response.
 - The Review Gate is a required post-Engineer, pre-completion boundary managed through the Engineer Slice workflow.
@@ -79,6 +88,7 @@
 - An adopted Rule has a complete Markdown file, valid metadata, and a compact Decision Journal record.
 - A dismissal leaves a compact Decision Journal record and does not alter future Rule evaluation.
 - A Finding that cites a Rule ID not recorded as loaded through the hook-enforced path is blocked at `subagentStop`, independent of Orchestrator's own handling of the Review Subagent's report.
+- An external development test must copy `.github/` into a clean target repository and prove that each configured hook resolves and executes its packaged JavaScript entry point without relying on source-repository runtime files.
 
 ## Planner Assumptions
 
@@ -88,3 +98,5 @@
 - The existing Engineer Slice lifecycle is the source of slice identity and revision handoff context.
 - Review Subagent is implemented as a user-defined custom agent, not the built-in `general-purpose` agent, because `subagentStart`/`subagentStop` hook events do not fire for `general-purpose`.
 - Repository-level Copilot CLI hook configuration (`.github/hooks/*.json`) is available and loaded in every environment the Review Gate runs.
+- Node.js is available in each target environment as the external runtime; no repository-owned operational Review Gate dependency is required outside `.github/`.
+- The source repository retains its Review Gate tests and fixtures outside `.github/`; consuming repositories are not required to receive those development artifacts.

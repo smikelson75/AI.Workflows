@@ -6,10 +6,10 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { recordLoadedRule, resetLoadedRules } from '../../scripts/review-gate/session-store.mjs';
+import { recordLoadedRule, resetLoadedRules } from '../../.github/review-gate/runtime/session-store.mjs';
 
 const subagentStopScript = fileURLToPath(
-  new URL('../../scripts/review-gate/hooks/subagent-stop.mjs', import.meta.url),
+  new URL('../../.github/review-gate/runtime/hooks/subagent-stop.mjs', import.meta.url),
 );
 
 function runHook(input, sessionDirectory) {

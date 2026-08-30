@@ -1,0 +1,9 @@
+# Slice 01 - Package Review Gate Under .github
+
+- **User-visible outcome:** copying `.github/` includes every Review Gate operational asset without bundling its development tests or fixtures.
+- **Backend/data slice:** retain the relocation from `scripts/review-gate/` to `.github/review-gate/runtime/`; move `.github/review-gate/test/` back to `test/review-gate/`; update external test imports, fixture paths, Rule paths, and hook commands while preserving all existing behavior; remove the superseded top-level runtime directory and packaged test directory.
+- **UI/workflow slice:** update the artifact catalog and repository layout documentation to distinguish the packaged runtime from the external verification suite; do not add runtime paths to agent contracts that do not execute those assets directly.
+- **Files/modules in scope:** `.github/review-gate/runtime/`; `.github/review-gate/test/`; `.github/hooks/review-gate.json`; `scripts/review-gate/`; `test/review-gate/`; `docs/artifacts.md`; `README.md`.
+- **Verification commands:** `node --test test/review-gate/*.test.mjs`
+- **Acceptance checks:** all previously passing Review Gate tests pass from `test/review-gate/` while importing the packaged runtime; every hook command resolves to `.github/review-gate/runtime/hooks/`; no Review Gate test or fixture remains under `.github/`; no operational dependency remains under top-level `scripts/review-gate/`; current artifact and layout documentation identifies `.github/` as the operational package boundary and `test/review-gate/` as source-repository validation; Review Subagent and Orchestrator contracts remain behaviorally unchanged.
+- **Useful-if-stopped statement:** Review Gate runtime, configuration, and durable assets are packaged beneath `.github/`, while the restored external suite proves relocation preserved behavior.

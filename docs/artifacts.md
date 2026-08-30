@@ -25,7 +25,8 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 | `.github/review-gate/decision-journal.jsonl` | Developer | Append-only, per-Finding Review Gate dispositions; Adopt Rule and Fix records the created Rule path |
 | `.github/review-gate/rules/<rule-id>.md` | Developer | Repository-wide active Rule adopted through a Review Gate decision |
-| `.github/hooks/review-gate.json` and `scripts/review-gate/hooks/` | Review Gate | Deterministic Rule loading and citation enforcement for custom Review Subagent sessions |
+| `.github/hooks/review-gate.json` and `.github/review-gate/runtime/hooks/` | Review Gate | Deterministic Rule loading and citation enforcement for custom Review Subagent sessions |
+| `test/review-gate/` | Developer | External validation suite for Review Gate behavior; it imports the packaged runtime under `.github/review-gate/runtime/` and exercises repository-level behavior without shipping test fixtures inside `.github/` |
 
 Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 

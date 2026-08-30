@@ -11,7 +11,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { recordDecision } from '../../scripts/review-gate/decision-journal.mjs';
+import { recordDecision } from '../../.github/review-gate/runtime/decision-journal.mjs';
 
 import {
   adoptedRule,
@@ -22,7 +22,7 @@ import {
 
 const seededRulesDirectory = fileURLToPath(new URL('../../.github/review-gate/rules/', import.meta.url));
 const invalidRulesDirectory = fileURLToPath(new URL('./fixtures/invalid-active-rules/', import.meta.url));
-const hookDirectory = fileURLToPath(new URL('../../scripts/review-gate/hooks/', import.meta.url));
+const hookDirectory = fileURLToPath(new URL('../../.github/review-gate/runtime/hooks/', import.meta.url));
 const failAfterFirstSessionWrite = fileURLToPath(
   new URL('./fixtures/fail-after-first-session-write.mjs', import.meta.url),
 );

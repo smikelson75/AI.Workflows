@@ -8,7 +8,7 @@ import {
   getLoadedRules,
   recordLoadedRule,
   resetLoadedRules,
-} from '../../scripts/review-gate/session-store.mjs';
+} from '../../.github/review-gate/runtime/session-store.mjs';
 
 function withSessionDirectory(run) {
   const sessionDirectory = mkdtempSync(path.join(tmpdir(), 'review-gate-session-store-test-'));

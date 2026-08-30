@@ -4,7 +4,7 @@ import test from 'node:test';
 import {
   loadActiveRule,
   loadActiveRuleMetadata,
-} from '../../scripts/review-gate/rule-catalog.mjs';
+} from '../../.github/review-gate/runtime/rule-catalog.mjs';
 
 const seededRulesDirectory = new URL('../../.github/review-gate/rules/', import.meta.url);
 const invalidRulesDirectory = new URL('./fixtures/invalid-active-rules/', import.meta.url);
