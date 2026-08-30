@@ -18,7 +18,7 @@ If discovery contradicts the stated product purpose or behavior, surface the con
 
 ### 2. Discover or clarify
 
-If the repository is already known to be onboarded, start here directly with `/brain-storm` for a new idea or an unsettled product direction. It asks focused questions about the problem, users, desired outcome, workflow branches, scope, constraints, success, and vocabulary. When complete, it writes:
+If the repository is already known to be onboarded, start here directly with `/brain-storm` or the active `Brain Storm` agent for a new idea or an unsettled product direction. The agent follows the skill contract, asks focused questions about the problem, users, desired outcome, workflow branches, scope, constraints, success, and vocabulary, and must run as an active interactive agent rather than a one-shot subagent. When complete, it writes:
 
 - `CONTEXT.md`: current product and domain truth.
 - `UBIQUITOUS-LANGUAGE.md`: canonical terms and banned synonyms.
@@ -27,7 +27,7 @@ Do not proceed to the PRD while product decisions remain unresolved.
 
 ### 3. Define the target
 
-Use `/prd-writer` after context is current. The PRD describes the target state only:
+Use `/prd-writer` or the active `PRD Writer` agent after context is current. It must run as an active interactive agent rather than a one-shot subagent. The PRD describes the target state only:
 
 - required behaviors grouped by capability or workflow;
 - scope refinements and non-goals not already settled in context;
@@ -40,7 +40,7 @@ Before finalizing, `prd-writer` checks any newly settled target architecture dir
 
 ### 4. Plan the gap
 
-Use `/work-planner` after the context and PRD are settled. It compares repository reality with the PRD target and owns:
+Use `/work-planner` or the active `Work Planner` agent after the context and PRD are settled. It must run as an active interactive agent rather than a one-shot subagent. It compares repository reality with the PRD target and owns:
 
 - current-state summaries;
 - phase sequencing and dependencies;
@@ -112,6 +112,20 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A hard-to-reverse, surprising, real-trade-off technical decision goes to `adr-writer`; a routine or reversible one does not.
 
 These rules prevent implementation discoveries from quietly changing product intent or target state.
+
+## Active-Agent Transitions
+
+`Brain Storm`, `PRD Writer`, and `Work Planner` are interactive active agents, not subagents. Their definitions disable model invocation so an agent cannot silently launch a stateless copy that loses the required user interview.
+
+In VS Code, each completed forward transition offers a handoff button with a pre-filled prompt:
+
+```text
+Brain Storm -> PRD Writer -> Work Planner -> Orchestrator
+```
+
+During execution, `Orchestrator` also offers non-auto-submitting handoffs to `Brain Storm` for product-truth changes and `Work Planner` for replanning. An already-approved next phase follows `Orchestrator`'s Phase Transition instead; route to `Work Planner` only when the phase needs new or revised planning.
+
+The buttons never auto-submit: the user reviews the artifacts and chooses the next stage. The CLI does not consume this metadata, so the user switches to the named active agent and uses the same prompt. The canonical artifacts and handoff gates remain authoritative in both harnesses.
 
 ## Small Change Path
 

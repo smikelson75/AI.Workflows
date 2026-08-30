@@ -20,10 +20,10 @@ The repository separates decisions by ownership:
 
 ### New idea
 
-1. Run `/brain-storm` and answer its focused product questions.
+1. Run `/brain-storm` or select the active `Brain Storm` agent, then answer its focused product questions.
 2. Confirm the resulting `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
-3. Run `/prd-writer` to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
-4. Run `/work-planner` to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
+3. Run `/prd-writer` or select the active `PRD Writer` agent to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
+4. Run `/work-planner` or select the active `Work Planner` agent to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
 5. Ask `Orchestrator` to run the next slice.
 6. Let `Engineer` implement and verify the dispatched slice.
 7. Repeat the orchestrator loop until the plan is complete. At a phase boundary it expands the next phase's slices from its approved phase document and asks you to confirm before continuing.
