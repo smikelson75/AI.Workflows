@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "hooks": {
+    "subagentStart": [
+      {
+        "type": "command",
+        "matcher": "^review-subagent$",
+        "bash": "node scripts/review-gate/hooks/subagent-start.mjs",
+        "powershell": "node scripts/review-gate/hooks/subagent-start.mjs",
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "matcher": "^view$",
+        "bash": "node scripts/review-gate/hooks/pre-tool-use.mjs",
+        "powershell": "node scripts/review-gate/hooks/pre-tool-use.mjs",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
