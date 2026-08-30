@@ -25,6 +25,7 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 | `.github/review-gate/decision-journal.jsonl` | Developer | Append-only, per-Finding Review Gate dispositions; Adopt Rule and Fix records the created Rule path |
 | `.github/review-gate/rules/<rule-id>.md` | Developer | Repository-wide active Rule adopted through a Review Gate decision |
+| `.github/hooks/review-gate.json` and `scripts/review-gate/hooks/` | Review Gate | Deterministic Rule loading and citation enforcement for custom Review Subagent sessions |
 
 Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
@@ -71,3 +72,8 @@ to its Finding and is not a Rule or future-match suppression mechanism.
 An Adopt Rule and Fix decision creates a complete active Markdown Rule under
 `.github/review-gate/rules/` before its decision is appended. Its journal record
 stores that Rule's repository-relative path.
+
+Findings remain review state, not durable plan status: each is resolved only by
+its own recorded Developer disposition. Fix Once and Adopt Rule and Fix create
+focused Engineer revision work and require a new Review Subagent report. Only
+a final `No Findings` report permits Orchestrator to mark the slice completed.

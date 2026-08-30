@@ -36,7 +36,7 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - selects the next slice and applies the dispatch gate;
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Engineer`;
-- confirms that every verification command the slice states was run as written and passed, then records `completed`, or records a blocker;
+- confirms that every verification command the slice states was run as written and passed, sends the resulting diff to the custom `Review Subagent`, and records `completed` only after its final `No Findings` report;
 - advances phase status only after its final integration slice;
 - expands the next phase's slices from its approved phase document at a phase boundary, then asks the user to confirm before the first dispatch;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
@@ -69,6 +69,14 @@ It must not expand scope or guess at unresolved intent. Its default behavior fol
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Those repository-boundary operations belong to the primary agent or user.
 
+## Review Subagent
+
+Definition: [`.github/agents/review-subagent.agent.md`](../.github/agents/review-subagent.agent.md)
+
+`Review Subagent` is a user-defined custom agent, never the built-in `general-purpose` agent, because Review Gate's `subagentStart` and `subagentStop` hooks do not fire for `general-purpose`. It reviews only the Engineer Slice diff and directly affected Construction Paths. The hooks inject compact Rule Metadata, load and record full Rules, and block a final response that cites a Rule not loaded for that review session.
+
+It returns all Findings together. Every Finding remains unresolved until the Developer records exactly one disposition. Fix Once and Adopt Rule and Fix return focused Engineer revision work and require a new complete review. A Dismiss resolves only its numbered Finding. Orchestrator cannot complete the slice until a final review reports `No Findings`.
+
 ## Relationship
 
 ```mermaid
@@ -76,11 +84,15 @@ sequenceDiagram
     participant P as Work Planner
     participant O as Orchestrator
     participant C as Engineer
+    participant R as Review Subagent
     P->>O: main plan, phase invariants, next slice
     O->>O: apply dispatch gate
     O->>C: copy slice and invariants verbatim
     C->>C: implement, test, verify
     C-->>O: report and verification result
+    O->>R: Engineer diff and affected Construction Paths
+    R-->>O: No Findings, or numbered Findings
+    O->>C: focused revision after Fix Once or Adopt Rule and Fix
     O->>P: record status in main plan
 ```
 

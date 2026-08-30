@@ -69,7 +69,9 @@ flowchart LR
     I --> J[Orchestrator]
     J --> K[Engineer]
     K --> L[Focused verification]
-    L --> J
+    L --> R[Review Subagent]
+    R -->|No Findings| J
+    R -->|Findings| K
     J --> M[conventional-commit]
     N[Small/mid-session change request] --> J
     J -->|no target-truth change| K

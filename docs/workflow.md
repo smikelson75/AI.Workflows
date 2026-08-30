@@ -55,7 +55,9 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
-`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, the verification commands it ran with their results, and risks. Verification is the slice's own commands, run as written; there is no separate gating tool, report file, or schema. `Orchestrator` completes a slice only when every stated command has been run and passed.
+`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, the verification commands it ran with their results, and risks. Verification is the slice's own commands, run as written. After that verification passes, `Orchestrator` dispatches the custom user-defined `Review Subagent` with the Engineer Slice diff and directly affected Construction Paths; never use built-in `general-purpose`, whose `subagentStart` and `subagentStop` events do not fire.
+
+Review Gate hooks inject compact Rule Metadata, load full Rule bodies only through the hook path, and fail closed on configuration failures. `subagentStop` blocks a response that cites a Rule ID not recorded as loaded for that review session. The Review Subagent returns all Findings together. Each Finding requires its own Developer disposition: Fix Once, Adopt Rule and Fix, or Dismiss. Fix Once and Adopt Rule and Fix return focused revision work to Engineer; after the revision and its required verification, Orchestrator dispatches a new complete review. Dismiss applies only to that Finding. A slice remains `in progress` until the final review says `No Findings`; Engineer verification alone never completes it.
 
 Before dispatching a slice, `Orchestrator` must inspect the worktree for changes outside the assigned slice. Existing planner, product-truth, instruction, or unrelated implementation changes must be committed, isolated, or explicitly reconciled before dispatch, so the slice's diff stays reviewable.
 
@@ -97,7 +99,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 | PRD to plan | Target behavior, constraints, and acceptance signals are settled |
 | Plan to orchestrator | The next slice has outcome, scope, verification commands, and acceptance checks |
 | Orchestrator to engineer | Slice and active phase invariants are copied verbatim |
-| Slice completion | Every stated verification command was run as written, passed, and its result was reported |
+| Slice completion | Every stated verification command was run as written and passed, all Findings have specific dispositions, every required revision was re-reviewed, and the final Review Subagent report says `No Findings` |
 | Phase transition | The next phase has an approved phase document that still holds; its slices are expanded and confirmed before the first dispatch |
 | Commit | Staging scope is coherent and the message follows Conventional Commits 1.0.0 |
 
@@ -109,6 +111,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A phase boundary that needs a new, resequenced, or redefined phase goes to `work-planner`; expanding an already-approved phase's slices does not.
 - A slice that lacks a verification command stays blocked and returns to `work-planner`.
 - A failed verification keeps the slice `in progress` until repaired and rerun.
+- A blocked Review Gate hook, configuration failure, or unresolved Finding keeps the slice `in progress`; Fix Once and Adopt Rule and Fix return focused revision scope to Engineer and must be re-reviewed.
 - A hard-to-reverse, surprising, real-trade-off technical decision goes to `adr-writer`; a routine or reversible one does not.
 
 These rules prevent implementation discoveries from quietly changing product intent or target state.

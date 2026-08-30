@@ -18,6 +18,15 @@
         "powershell": "node scripts/review-gate/hooks/pre-tool-use.mjs",
         "timeoutSec": 10
       }
+    ],
+    "subagentStop": [
+      {
+        "type": "command",
+        "matcher": "^review-subagent$",
+        "bash": "node scripts/review-gate/hooks/subagent-stop.mjs",
+        "powershell": "node scripts/review-gate/hooks/subagent-stop.mjs",
+        "timeoutSec": 10
+      }
     ]
   }
 }

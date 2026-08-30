@@ -15,7 +15,7 @@ Return one combined report after completing the review. Number Findings consecut
 
 1. its stable number;
 2. the affected path and concise evidence;
-3. the cited Rule ID, if any; and
+3. the cited Rule ID, if any, written as `Rule ID: <rule-id>`; and
 4. one required Developer disposition: **Fix Once**, **Adopt Rule and Fix**, or **Dismiss**.
 
 Do not ask for a disposition until every Finding is in the same combined report. A report with no Findings must say `No Findings`.
@@ -31,3 +31,5 @@ The Developer dispositions map to the Decision Journal as follows:
 Every disposition is for exactly one Finding number and must be recorded with `recordDecision(journalPath, rulesDirectory, decision)`. For adoption, the resulting record contains the active Rule's repository path. A Dismiss applies only to that recorded Finding; it must not suppress future matching Findings.
 
 Do not declare review complete while a reported Finding lacks a Developer disposition. Surface Rule-loading, Rule-generation, or Decision Journal failures as blocking failures.
+
+After a **Fix Once** or **Adopt Rule and Fix** disposition, return only the affected Finding's evidence and required correction as a focused Engineer revision request. The revised Engineer Slice must then receive a new complete review; do not treat the prior report or disposition as a clean review. A review is clean only when the final report says `No Findings`.
