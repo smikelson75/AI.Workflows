@@ -33,10 +33,10 @@ Definition: [`.github/agents/orchestrator.agent.md`](../.github/agents/orchestra
 Use `Orchestrator` when an approved implementation plan should move forward. It:
 
 - reads the main plan and active phase detail;
-- selects the next slice and applies the dispatch gate;
+- selects the next slice and applies the dispatch gate, including its planner-owned `behavior`, `verification-only`, or `refactor` kind;
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Engineer`;
-- confirms that every verification command the slice states was run as written and passed, sends the resulting diff to the custom `Review Subagent`, and records `completed` only after its final `No Findings` report;
+- confirms that every verification command the slice states was run as written and passed, every `behavior` slice carries complete Red-Green-Refactor evidence at its required test level, and verification-only/refactor boundaries were respected; then sends the resulting diff to the custom `Review Subagent` and records `completed` only after its final `No Findings` report;
 - advances phase status only after its final integration slice;
 - expands the next phase's slices from its approved phase document at a phase boundary, then asks the user to confirm before the first dispatch;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
@@ -63,8 +63,9 @@ Use `Engineer` for an assigned vertical slice. Its brief must include the outcom
 - states assumptions and surfaces ambiguity;
 - makes the smallest necessary, surgical change;
 - creates or updates tests for the behavior, using the repository's existing test stack rather than a prescribed one;
+- runs one Red-Green-Refactor loop per implemented behavior, using a unit, integration, contract, process, or end-to-end Red as required by the nearest observable boundary;
 - runs every stated verification command as written before reporting;
-- returns changed files, each command and its result, tradeoffs, and risks in the response — no report files or schemas.
+- returns changed files, chronological evidence for every behavior loop, each final verification command and its result, tradeoffs, and risks in the response — no report files or schemas.
 
 It must not expand scope or guess at unresolved intent. Its default behavior follows Red-Green-Refactor for behavior changes.
 

@@ -38,7 +38,7 @@ Invoke with `/work-planner` after context and PRD are current. It owns the imple
 
 ### `tdd`
 
-Invoke with `/tdd` for any behavior change. It is stack-agnostic: it discovers the repository's existing test framework, assertion style, test-double approach, placement, and focused/full-suite commands before the first Red step, and asks the user when nothing settles the choice. For a new scaffold, stack-settlement mode records those choices through an `agent-instructions` handoff without creating placeholder tests or installing packages; the first behavior slice creates the minimum setup its first failing test needs. It never introduces or swaps a testing package on its own. It requires a failing test before production code, focused loops, and a green full suite before done.
+Invoke with `/tdd` for any behavior change. It is stack-agnostic and test-level agnostic: the smallest practical unit, integration, contract, process, or end-to-end test at the nearest observable boundary may drive Red-Green-Refactor. It discovers the repository's existing test framework, assertion style, test-double approach, placement, and focused/full-suite commands before the first Red step, and asks the user when nothing settles the choice. Verification-only tests for behavior implemented earlier may pass initially but cannot include production changes; a discovered production gap becomes a behavior slice. It never introduces or swaps a testing package on its own.
 
 ### `dotnet-editorconfig`
 

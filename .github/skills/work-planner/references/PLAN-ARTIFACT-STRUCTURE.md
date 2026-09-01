@@ -23,7 +23,7 @@ Purpose: define the canonical file layout and naming rules for the `work-planner
 - always write or update the main plan as the single entry document and the single status record
 - always create or retain a separate phase detail document for each phase
 - create slice detail documents only for the single `in progress` phase
-- make the final slice of every phase an integration and/or end-to-end slice
+- make the final slice of every phase a `verification-only` integration and/or end-to-end slice that does not introduce production behavior
 - when a phase becomes `completed`, keep its phase document and slice documents; update statuses in the main plan rather than collapsing or deleting them
 - link from the main plan to each phase document without restating its detail
 - list slice links in each phase document without restating slice content

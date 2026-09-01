@@ -8,13 +8,15 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 
 ## Sizing
 
-- one slice is one vertical behavior, thin through every layer it touches
-- the final slice of every phase is an integration and/or end-to-end slice that proves the phase's vertical behavior works as intended
+- every slice declares exactly one kind: `behavior`, `verification-only`, or `refactor`
+- one `behavior` slice is one vertical behavior, thin through every layer it touches
+- the final slice of every phase is a `verification-only` integration and/or end-to-end slice that proves behavior implemented by earlier slices; it excludes production behavior changes and production files from scope
 - if a slice needs more than one vertical behavior to be useful, the phase is shaped wrong; resplit the phase rather than growing the slice
 - if a slice cannot state a verification command, it is not ready to dispatch
 
 ## Include Always
 
+- slice kind
 - execution-ready slice detail
 - success criteria strong enough for a subagent to loop independently
 - every verification command needed to prove the slice
@@ -30,6 +32,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 ## Rules
 
 - keep slices concise and execution-ready
+- require slice kind on every new, revised, planned, or in-progress slice; retained completed slices written before this field was introduced may omit it as historical planning baselines
 - state success as something runnable, not as a description of intent
 - name the scope boundary so the subagent makes isolated changes
 - carry no status field; the main plan is the single status record
@@ -41,6 +44,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 
 ## Slice Detail Schema
 
+- slice kind: `behavior`, `verification-only`, or `refactor`
 - user-visible outcome
 - backend/data slice
 - UI/workflow slice
@@ -55,6 +59,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 ```md
 # Slice 01 - <name>
 
+- **Slice kind:** behavior | verification-only | refactor
 - **User-visible outcome:** ...
 - **Backend/data slice:** ...
 - **UI/workflow slice:** ...

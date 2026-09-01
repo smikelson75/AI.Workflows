@@ -16,7 +16,7 @@ The phase document exists to hold what no single slice can own: the objective, t
 - keep planned and completed phase documents detailed enough to preserve planning baseline
 - carry no status field; the main plan is the single status record
 - list slices as ordered links only; never restate slice content, outcomes, or acceptance checks here
-- the last slice in the list is always the integration and/or end-to-end slice for the phase
+- the last slice in the list is always the `verification-only` integration and/or end-to-end slice for the phase
 - do not create slice lists for future planned phases unless the user explicitly directs otherwise
 - keep only the fields that are still useful for the phase state
 

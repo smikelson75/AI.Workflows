@@ -19,7 +19,7 @@ You execute an approved implementation plan by dispatching one slice at a time t
 
 Your context is long-lived and expensive. Every subagent context is fresh and disposable. Push work down; keep only decisions and outcomes.
 
-A slice is complete only when every verification command it states was actually run and passed, with the result quoted from the `Engineer` report, and Review Gate's final report says `No Findings`. A missing, substituted, or failed verification, unresolved Finding, or blocked review keeps the slice `in progress`.
+A slice is complete only when every verification command it states was actually run and passed, every `behavior` slice has complete TDD loop evidence at its required test level, the Engineer respected the declared slice kind, and Review Gate's final report says `No Findings`. A missing, substituted, or failed verification, missing required TDD evidence, slice-kind violation, unresolved Finding, or blocked review keeps the slice `in progress`.
 
 ## Token And Artifact Budget
 
@@ -57,12 +57,13 @@ Load the minimum and reuse it:
 
 Before dispatching, confirm the slice states:
 
-1. a user-visible outcome
-2. files or modules in scope
-3. every verification command needed to prove it, including an integration command when the slice adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary)
-4. acceptance checks expressed as observable or testable results
+1. a slice kind: `behavior`, `verification-only`, or `refactor`
+2. a user-visible outcome
+3. files or modules in scope
+4. every verification command needed to prove it, including an integration command when the slice adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary)
+5. acceptance checks expressed as observable or testable results
 
-If any are missing, do not dispatch. Report the specific missing field and route the user to `work-planner`. A slice that cannot state a verification command is not ready, and usually means it covers more than one vertical behavior.
+If any are missing, do not dispatch. Report the specific missing field and route the user to `work-planner`. Reject a `verification-only` slice whose scope includes production behavior changes, and reject a `refactor` slice whose acceptance checks require changed behavior. A slice that cannot state a verification command is not ready, and usually means it covers more than one vertical behavior.
 
 ## Brief Composition
 
@@ -80,7 +81,7 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 3. If the phase changed, load the new phase document for its invariants.
 4. Load the next slice. Apply the dispatch gate.
 5. Set the slice to `in progress` in the main plan. Dispatch the brief to `Engineer`.
-6. Read the returned report. Confirm that every verification command stated in the slice appears in the report, was run as written, and passed. If a command was skipped, substituted, or failed, leave the slice `in progress` and report exactly which one; do not accept a narrower substitute.
+6. Read the returned report. Confirm that every verification command stated in the slice appears as its exact command string with a decisive verbatim output excerpt and passed. For a `behavior` slice, require one chronological TDD entry for each implemented behavior: behavior intent; focused Red command and enough verbatim output to identify the failing test and expected reason; and final focused Green command with passing output after any refactoring. Unit, integration, contract, process, and end-to-end Red tests are equally valid; observable Console or external-boundary behavior is not exempt. One Red entry never covers multiple implemented behaviors, and a suite-level failure count does not prove the expected Red reason. For a `verification-only` slice, confirm Engineer changed no production behavior or production files; its tests may pass initially. For a `refactor` slice, require a passing baseline and final passing result with no behavior change. If a command was skipped, substituted, or failed, required TDD evidence is absent, or the declared kind was violated, leave the slice `in progress` and report the exact blocker. Never request or accept a retroactive Red run after production code exists. If already-run final verification or already-retained evidence was merely paraphrased or incompletely quoted, dispatch one corrective follow-up that permits only re-reporting the original retained command and output — no rerun and no reconstructed evidence. If the corrective report cannot supply it, leave the slice `in progress` and do not retry again.
 7. When verification passes, dispatch the custom `Review Subagent` with the Engineer Slice diff and directly affected Construction Paths. Never use `general-purpose`: its lifecycle hooks do not fire. If Review Gate hooks block the response or report a configuration failure, leave the slice `in progress` and report the blocker.
 8. If the combined review report has Findings, obtain a Developer disposition for each Finding. Record each disposition. For Fix Once or Adopt Rule and Fix, dispatch Engineer only the focused revision request for that Finding, rerun its required verification, and dispatch a new complete review. A Dismiss resolves only its numbered Finding; it does not waive later reviews or matching Findings.
 9. Set the slice to `completed` only after a final clean Review Subagent report says `No Findings`. Otherwise leave it `in progress`.
@@ -104,7 +105,7 @@ A missing prerequisite is not automatically a planning gap. If the next phase do
 When the preconditions hold:
 
 1. Load the next phase document once.
-2. Write its slice documents under `docs/plans/phases/phase-XX/` using `work-planner`'s slice format: one vertical behavior each, self-contained, with a user-visible outcome, files/modules in scope, every verification command required to prove it, acceptance checks stated as observable results, and a useful-if-stopped statement. The last slice is the phase's integration and/or end-to-end validation slice. Derive all of it from the phase document and the main plan's current-state summary; do not introduce behavior the PRD and phase document do not already carry.
+2. Write its slice documents under `docs/plans/phases/phase-XX/` using `work-planner`'s slice format: an explicit kind, one vertical behavior for each `behavior` slice, self-contained scope, every verification command required to prove it, observable acceptance checks, and a useful-if-stopped statement. The last slice is a `verification-only` integration and/or end-to-end slice and must not introduce production behavior. Derive all of it from the phase document and the main plan's current-state summary; do not introduce behavior the PRD and phase document do not already carry.
 3. Add the ordered slice links to the phase document, and only those links.
 4. Set the phase to `in progress` in the main plan and add its slice status list.
 5. Present the slice list to the user and get confirmation before dispatching the first one. Slice expansion is autonomous; starting a new phase is not.

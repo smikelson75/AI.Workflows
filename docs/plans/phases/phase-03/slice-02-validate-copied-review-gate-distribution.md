@@ -1,5 +1,6 @@
 # Slice 02 - Validate Copied Review Gate Distribution
 
+- **Slice kind:** verification-only
 - **User-visible outcome:** an external integration test proves that a copied `.github/` directory installs an operational Review Gate in a clean target repository.
 - **Backend/data slice:** add an external portability integration test that copies only `.github/` into a temporary target repository and proves each configured hook resolves and executes its packaged JavaScript entry point under the documented stdin/stdout contract without copying or invoking the source test suite in that repository.
 - **UI/workflow slice:** none; this slice validates the packaged workflow without changing its agent or Developer interaction contracts.

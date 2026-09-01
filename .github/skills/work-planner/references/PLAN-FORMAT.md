@@ -54,8 +54,9 @@ Use zero-padded numbering. Do not include a slug in the phase folder name. Do no
 
 ## Slice Rules
 - slices are allowed only under the single current `in progress` phase unless the user explicitly directs otherwise
-- one slice is one vertical behavior
-- the final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended
+- every slice declares exactly one kind: `behavior`, `verification-only`, or `refactor`
+- one `behavior` slice is one vertical behavior
+- the final slice of every phase is a `verification-only` integration and/or end-to-end slice proving behavior implemented by earlier slices
 - a slice must be self-contained enough to become a subagent brief, including a verification command and files in scope
 - completed slice documents are retained as planning baseline after the phase completes
 

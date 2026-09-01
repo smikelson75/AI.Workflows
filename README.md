@@ -9,7 +9,7 @@ The repository separates decisions by ownership:
 - **Target truth**: `prd-writer` defines what the finished v1 must do and the constraints it must satisfy.
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
-- **Behavior verification**: `tdd` supplies stack-agnostic Red-Green-Refactor rules and adapts to the repository's own testing packages.
+- **Behavior verification**: `tdd` supplies stack-agnostic, test-level-agnostic Red-Green-Refactor rules and adapts to the repository's own testing packages.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
 - **Mutation testing**: `mutation-testing` is opt-in and tool-agnostic; the user chooses the tool, cadence, and thresholds.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.

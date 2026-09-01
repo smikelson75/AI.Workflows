@@ -47,7 +47,7 @@ Use `/work-planner` or the active `Work Planner` agent after the context and PRD
 - active slice detail;
 - implementation status and plan drift.
 
-The planner creates execution-ready slices. Every slice needs a user-visible outcome, file/module scope, every verification command needed to prove it, and observable acceptance checks. A slice that adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary) also carries an integration verification command, decided at planning time rather than inferred during execution.
+The planner creates execution-ready slices. Every slice declares one kind: `behavior`, `verification-only`, or `refactor`, and needs a user-visible outcome, file/module scope, every verification command needed to prove it, and observable acceptance checks. A slice that adds or changes a dependency boundary (network, database, filesystem, queue, external service, or process boundary) also carries an integration verification command, decided at planning time rather than inferred during execution. The phase-final integration/end-to-end slice is `verification-only`; it proves behavior implemented earlier and excludes production changes.
 
 Before finalizing, `work-planner` applies the same ADR test to any newly settled sequencing or implementation-architecture decision and hands off to `adr-writer` when it holds.
 
@@ -55,7 +55,7 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
-`Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, the verification commands it ran with their results, and risks. Verification is the slice's own commands, run as written. After that verification passes, `Orchestrator` dispatches the custom user-defined `Review Subagent` with the Engineer Slice diff and directly affected Construction Paths; never use built-in `general-purpose`, whose `subagentStart` and `subagentStop` events do not fire.
+`Engineer` implements the assigned slice within scope. For a `behavior` slice, it uses the smallest practical unit, integration, contract, process, or end-to-end test at the nearest observable boundary as Red before production code, then reports compact Red and final focused Green evidence. A `verification-only` slice may add tests that pass initially but cannot change production behavior; a `refactor` slice reports passing baseline and final verification. Each Red excerpt must identify the failing test and prove the expected failure reason. Verification is the slice's own commands, run as written. After that verification passes, `Orchestrator` dispatches the custom user-defined `Review Subagent` with the Engineer Slice diff and directly affected Construction Paths; never use built-in `general-purpose`, whose `subagentStart` and `subagentStop` events do not fire.
 
 Review Gate hooks inject compact Rule Metadata, load full Rule bodies only through the hook path, and fail closed on configuration failures. `subagentStop` blocks a response that cites a Rule ID not recorded as loaded for that review session. The Review Subagent returns all Findings together. Each Finding requires its own Developer disposition: Fix Once, Adopt Rule and Fix, or Dismiss. Fix Once and Adopt Rule and Fix return focused revision work to Engineer; after the revision and its required verification, Orchestrator dispatches a new complete review. Dismiss applies only to that Finding. A slice remains `in progress` until the final review says `No Findings`; Engineer verification alone never completes it.
 
@@ -64,9 +64,9 @@ Before dispatching a slice, `Orchestrator` must inspect the worktree for changes
 For any behavior change, apply `/tdd` inside this implementation stage:
 
 1. Settle the repository's test stack: framework, assertion style, test-double approach, placement, focused-run command, full-suite command. Discovered evidence beats convention; where a new scaffold has no evidence, run `/tdd` in stack-settlement mode before elaborating the first behavior slice and persist the choices through `/agent-instructions`. Never introduce or swap a testing package unasked.
-2. Red: add one failing test for one behavior.
-3. Green: make the smallest production change that passes.
-4. Refactor: improve the design while keeping tests green.
+2. Red: add one failing test for one behavior, run it, and retain the command plus enough output to identify the test and expected failure reason.
+3. Green: make the smallest production change that passes, rerun the focused test, and retain its passing output.
+4. Refactor: improve the design while keeping tests green; rerun and retain the focused passing result after each refactor step.
 5. Repeat for the remaining behavior.
 6. Finish with the repository's full test suite.
 

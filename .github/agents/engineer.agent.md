@@ -84,15 +84,18 @@ For multi-step tasks, state a brief plan:
 **When subagents are invoked to perform coding or testing tasks, they must adhere to these specific instructions:**
 
 - **Verification First**: Before suggesting a solution, ensure the logic can be verified by running existing tests or creating new ones that cover the edge cases of the change.
-- **TDD Workflow**: When implementing features or bug fixes, follow `.github/skills/tdd/`:
+- **TDD Workflow**: For every change that adds or fixes observable behavior, follow `.github/skills/tdd/`:
   1. Settle the repository's existing test stack and commands (`references/STACK-DISCOVERY.md`) — never assume a framework, assertion style, or mocking library, and never introduce a new one.
-  2. Identify/create a failing test.
-  3. Implement the minimum code to pass.
-  4. Refactor if necessary while maintaining test passes.
+  2. Use the smallest practical test at the nearest observable boundary. Unit, integration, contract, process, and end-to-end tests all drive the same loop; Console or other external behavior still requires an observed Red before production code.
+  3. Retain the focused command and enough verbatim failure output to identify the test and prove the expected Red reason; a suite-level failure count is insufficient.
+  4. Implement the minimum production code to make that focused test pass, rerun it, and retain the passing output (Green).
+  5. Refactor if necessary, rerunning the focused test after each refactor step and retaining the final passing output.
+  6. Repeat the complete loop for every remaining behavior; one Red run does not cover a multi-behavior change.
+- **Slice Kind**: Honor the planner-owned `behavior`, `verification-only`, or `refactor` kind. A `verification-only` slice may add or run tests that pass initially, but must not change production files or behavior. If it exposes a production defect or missing behavior, stop and report that the work needs a behavior slice. A `refactor` slice establishes a passing baseline before changing code and preserves behavior; if behavior must change, stop and report the mismatch.
 - **No Speculation**: Subagents should not guess intent for unclear requirements; they must surface these questions before providing code.
 - **Isolated Changes**: Only modify files necessary for the specific task assigned by the primary agent.
 - **Verification Commands**: Run every verification command the brief states, exactly as written, and capture the actual output. Never substitute a narrower command, never report a command you did not run, and never report a slice as verified while any of them fails. If a stated command is wrong or unrunnable, stop and report that instead of improvising a replacement.
-- **Reporting**: Return a compact report in the response — no report files, schemas, or generated artifacts. It contains: the slice name, changed files, each verification command with its pass/fail result and the decisive output line, deviations from the brief, and remaining risks. Do not restate the brief.
+- **Reporting**: Return a compact report in the response — no report files, schemas, or generated artifacts. For a `behavior` slice, include one chronological TDD entry per implemented behavior: behavior intent; exact focused Red command and the smallest verbatim excerpt identifying the test and expected failure reason; and exact final focused Green command with decisive passing output after any refactoring. Never recreate missing Red evidence after production code exists; report that behavior as unproven TDD compliance. For a `refactor` slice, report the passing baseline and final passing result. For every verification command stated by the brief, reproduce its exact command string followed by its decisive verbatim output excerpt and pass/fail result. A paraphrase such as "tests passed" or "build succeeded" is not evidence. Also include the slice name, kind, changed files, deviations from the brief, and remaining risks. Do not restate the brief.
 
 ---
 

@@ -20,7 +20,7 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/prd/<artifact-slug>-prd.md` | `prd-writer` | Stable v1 target state and acceptance signals |
 | `docs/plans/<artifact-slug>-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
 | `docs/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
-| `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
+| `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained behavior, verification-only, or refactor execution brief |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 | `.github/review-gate/decision-journal.jsonl` | Developer | Append-only, per-Finding Review Gate dispositions; Adopt Rule and Fix records the created Rule path |
@@ -37,8 +37,9 @@ Derive `<artifact-slug>` from the canonical project, product, or system name in 
 - Status is recorded only in the main plan.
 - Phase and slice detail documents retain durable content; they do not become status logs.
 - Completed phase and slice artifacts remain in place.
+- Retained completed slices created before slice kinds were introduced may omit that field; every new, revised, planned, or in-progress slice declares `behavior`, `verification-only`, or `refactor`.
 - Only the current in-progress phase receives new slice files unless explicitly directed. `work-planner` writes them, and `Orchestrator` may expand the next phase's slices from an approved phase document at a phase boundary.
-- The final slice of each phase is integration or end-to-end validation. When the user has enabled mutation testing, that slice's verification commands also include the agreed mutation run per [`mutation-testing/references/PROTOCOL.md`](../.github/skills/mutation-testing/references/PROTOCOL.md).
+- The final slice of each phase is `verification-only` integration or end-to-end validation and introduces no production behavior. When the user has enabled mutation testing, that slice's verification commands also include the agreed mutation run per [`mutation-testing/references/PROTOCOL.md`](../.github/skills/mutation-testing/references/PROTOCOL.md).
 
 ## Plan Shape
 
