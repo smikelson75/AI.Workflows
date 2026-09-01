@@ -8,9 +8,9 @@ This system is a staged workflow. Each stage owns a different kind of truth and 
 
 Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, test-suite maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts. It offers `/mutation-testing` rather than enabling it.
 
-The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
+The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the application stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity, then uses `tdd` stack-settlement mode when no test stack exists; a mature codebase takes style enforcement non-blocking and turns the violation count into plan phases. `agent-instructions` runs once after setup choices so it can capture both style and test commands.
 
-Onboarding completion is a hard gate, not a best-effort summary: the final `agent-instructions` run must be evidenced and its canonical instruction artifact must exist. `.github/agents/` definitions are execution roles and do not satisfy the repository's root `AGENTS.md` requirement. If that artifact is missing, or a required route was skipped, onboarding remains blocked and the next owning skill must be named.
+Onboarding completion is a hard gate, not a best-effort summary: style setup, any required test-stack settlement, and the `agent-instructions` run must be evidenced, and the canonical instruction artifact must exist. `.github/agents/` definitions are execution roles and do not satisfy the repository's root `AGENTS.md` requirement. If an artifact or setup decision is missing, onboarding remains blocked and the next owning skill must be named directly; missing skill-owned setup is not by itself a request to rescope a phase.
 
 For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline, so the first slice's diff is reviewable on its own. The primary agent or user owns this commit boundary; `Engineer` never creates it.
 
@@ -63,7 +63,7 @@ Before dispatching a slice, `Orchestrator` must inspect the worktree for changes
 
 For any behavior change, apply `/tdd` inside this implementation stage:
 
-1. Settle the repository's test stack: framework, assertion style, test-double approach, focused-run command, full-suite command. Discovered evidence beats convention; where nothing settles it, ask the user. Never introduce or swap a testing package unasked.
+1. Settle the repository's test stack: framework, assertion style, test-double approach, placement, focused-run command, full-suite command. Discovered evidence beats convention; where a new scaffold has no evidence, run `/tdd` in stack-settlement mode before elaborating the first behavior slice and persist the choices through `/agent-instructions`. Never introduce or swap a testing package unasked.
 2. Red: add one failing test for one behavior.
 3. Green: make the smallest production change that passes.
 4. Refactor: improve the design while keeping tests green.
@@ -109,6 +109,7 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A changed required behavior, scope boundary, hard constraint, or target architecture goes to `prd-writer`.
 - A sequencing, dependency, status, or active-slice issue goes to `work-planner`.
 - A phase boundary that needs a new, resequenced, or redefined phase goes to `work-planner`; expanding an already-approved phase's slices does not.
+- A missing prerequisite already owned by a setup skill routes to that skill (`dotnet-editorconfig`, TDD stack settlement, or `agent-instructions`); it goes to `work-planner` only if sequencing or phase content must change.
 - A slice that lacks a verification command stays blocked and returns to `work-planner`.
 - A failed verification keeps the slice `in progress` until repaired and rerun.
 - A blocked Review Gate hook, configuration failure, or unresolved Finding keeps the slice `in progress`; Fix Once and Adopt Rule and Fix return focused revision scope to Engineer and must be re-reviewed.

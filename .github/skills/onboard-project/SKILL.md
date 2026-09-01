@@ -29,7 +29,7 @@ Read-only. Establish two independent facts before routing.
 | Manifest present, but source is only template output | `scaffold` |
 | Manifest plus real source and/or tests | `mature` |
 
-**Test-suite maturity** (only relevant once code maturity is `mature`) — whether a real unit test suite exists, versus no tests at all, and which test framework and commands it uses. This drives the `mutation-testing` offer in Rule 4 and is independent of code maturity: a mature codebase can still have zero tests.
+**Test-suite maturity** (relevant once code maturity is `scaffold` or `mature`) — whether a real unit test suite exists, versus no tests at all, and which test framework and commands it uses. This drives first-behavior readiness for a scaffold and the `mutation-testing` offer in Rule 4 for mature code. A mature codebase can still have zero tests.
 
 **Artifact maturity** — presence and currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
 
@@ -53,9 +53,11 @@ Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as t
 3. `work-planner` — Phase 0 must be a scaffolding phase
 4. Execute the scaffolding slice via `Orchestrator`, run as the active agent mode (switch to it directly), never invoked through a subagent-dispatch tool — it needs `agent`/`execute` tool parity to dispatch `Engineer` and verify. `Orchestrator` dispatches the actual scaffolding to `Engineer` — it must not write product files itself.
 5. Style adapter (see Rule 3), now that something is buildable
-6. `agent-instructions`
+6. `tdd` in stack-settlement mode when no test stack exists
+7. `agent-instructions`, folding in both the style and test-stack handoffs
+8. `work-planner` only when the initial plan could not elaborate its first behavior slices until executable test commands were settled
 
-The empty-repository path is not onboarded when scaffolding alone passes. The style adapter and `agent-instructions` steps remain required after the scaffold exists; do not report onboarding complete while either is deferred.
+The empty-repository path is not onboarded when scaffolding alone passes. Style setup, test-stack settlement, and `agent-instructions` remain required after the scaffold exists; do not report onboarding complete while any is deferred. The post-settlement `work-planner` run elaborates blocked behavior slices from choices now recorded in `AGENTS.md`; it does not rescope a phase merely because setup files were previously absent.
 
 Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
 
@@ -65,7 +67,9 @@ Before executing the first scaffolding slice in an empty repository, establish a
 
 1. Style adapter at blocking severity, committed on its own
 2. `brain-storm` -> `prd-writer` -> `work-planner`
-3. `agent-instructions`
+3. `tdd` in stack-settlement mode when no test stack exists
+4. `agent-instructions`, folding in both setup handoffs
+5. `work-planner` only when executable behavior slices were blocked on those choices
 
 Running the style adapter first is the point: this is the cheapest moment the repository will ever offer, and it strips the settings the project template emitted before they spread.
 
@@ -108,13 +112,13 @@ For `prd-writer`, the target state of an existing project is normally "current a
 
 If discovery contradicts the stated purpose, surface the contradiction and let the user resolve it before anything is written.
 
-## Rule 6: `agent-instructions` Runs Last, Once
+## Rule 6: `agent-instructions` Runs Once After Setup Choices
 
-It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
+It needs context, PRD, the initial plan, enforced style config, and any newly settled test stack as inputs. Choose bootstrap or amendment mode from detection, and fold the style adapter and TDD handoff text into the same run rather than amending twice. A later planner pass that only elaborates slices from those durable choices does not require another instruction amendment.
 
 ## Rule 7: Report The Test Stack, Do Not Choose It
 
-Record the detected test framework, test-double approach, focused-run command, and full-suite command, and hand them to `agent-instructions` so `AGENTS.md` carries them. Where a repository has no tests yet, leave the choice open: the framework is settled with the user by [`tdd`](../tdd/SKILL.md) at the first behavior change, not guessed here.
+Record the detected test framework, assertion style, test-double approach, test placement, focused-run command, and full-suite command, and hand them to `agent-instructions` so `AGENTS.md` carries them. Where a scaffold has no tests yet, run [`tdd`](../tdd/SKILL.md) in stack-settlement mode before the first behavior slice is elaborated; never guess the choices here.
 
 ## Boundaries
 

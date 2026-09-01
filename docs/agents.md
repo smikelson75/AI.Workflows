@@ -41,6 +41,7 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - expands the next phase's slices from its approved phase document at a phase boundary, then asks the user to confirm before the first dispatch;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
 - refuses to dispatch and names the redirect (`work-planner`, `prd-writer`, or `brain-storm`) when a request changes target truth, product truth, or is ambiguous between tiers;
+- routes approved setup prerequisites directly to their owning skills — including `.NET` style setup, TDD stack settlement, and repository instructions — instead of treating their missing files as phase-planning defects;
 - stops and points to `work-planner` when the next phase has no phase document, needs resequencing, or rests on a premise the completed phase invalidated.
 
 Before dispatch, it checks the worktree for changes outside the selected slice. If unrelated or pre-existing changes would contaminate the slice diff, it stops and asks the primary agent or user to commit, isolate, or explicitly reconcile them. A dirty worktree is not permission for Engineer to claim planner, product-truth, instruction, or unrelated implementation files as part of the slice.

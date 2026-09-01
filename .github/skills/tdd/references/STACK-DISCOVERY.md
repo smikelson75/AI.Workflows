@@ -34,5 +34,6 @@ The protocol does not change with the stack; only the mechanics do.
 
 ## When No Tests Exist Yet
 
-- A repository with no test suite cannot start a Red step until the framework is chosen. Ask, then add the smallest possible test setup consistent with the manifest and the user's choice — one framework, no extra tooling.
+- A repository with no test suite cannot start a Red step until the framework is chosen. When planning needs executable commands before the first behavior slice, run `/tdd` in stack-settlement mode: ask for every item above, write no code or package configuration, and emit exact `/agent-instructions` handoff text that records the choices. Otherwise ask at the start of the first behavior change.
+- After the choices are durable, add the smallest possible test setup alongside the first failing test, consistent with the manifest and the user's choice — one framework, no extra tooling.
 - Do not create a broad test scaffold, shared base classes, or helper layers in advance. Add only what the first failing test needs.

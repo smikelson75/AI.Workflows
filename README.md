@@ -41,6 +41,8 @@ Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, o
 
 Use `/tdd`. It first settles the repository's test framework, assertion style, test-double approach, and focused/full-suite commands from the existing tests and manifests — asking you when nothing settles it — then runs Red-Green-Refactor against that stack. It never introduces or swaps a testing package on its own, so the packages stay your choice.
 
+For a new scaffold with no tests, run `/tdd` in **stack-settlement mode** before planning the first behavior slice. It records no placeholder code: it returns the chosen framework, assertions, test-double approach, placement, and commands for `/agent-instructions`. The first behavior slice then creates only the test setup needed by its first failing test.
+
 ### C#/.NET code style setup
 
 Normally dispatched by `/onboard-project`, which knows when to run it and at what severity. To run it directly: `/dotnet-editorconfig`, answering `baseline` for industry defaults or `walkthrough` to choose rules group by group. It writes the root `.editorconfig` and `Directory.Build.props`, then verifies with `dotnet build` and `dotnet format --verify-no-changes`. Projects added later inherit both files by directory position. It finishes by giving you the exact text to pass to `/agent-instructions` — run that follow-up, or agents will keep overriding the shared settings in new `.csproj` files.

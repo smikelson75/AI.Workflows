@@ -97,7 +97,9 @@ Preconditions — all must hold:
 - the next phase already exists in the main plan's phase table and has a phase document written by `work-planner`;
 - that phase document still holds: its objective, scope, and invariants are consistent with what the completed phases actually shipped, including any `Outcome` deviations you recorded.
 
-If any precondition fails, stop and route the user to `/work-planner`. In particular, stop if the next phase has no phase document, if sequencing or dependencies need to change, or if a discovery from the completed phase invalidates the next phase's premise. Never invent a phase.
+If a phase-transition precondition fails because the next phase has no phase document, sequencing or dependencies need to change, or a discovery from the completed phase invalidates the next phase's premise, stop and route the user to `/work-planner`. Never invent a phase.
+
+A missing prerequisite is not automatically a planning gap. If the next phase document already names a prerequisite owned by an interactive setup skill, stop and name the owning skill and the order in which it must run. For a scaffolded .NET repository, route missing root style enforcement to `/dotnet-editorconfig` (including the selected `baseline` or `walkthrough` mode), route an unsettled test stack to `/tdd` in stack-settlement mode, then route missing repository instructions to `/agent-instructions` using both emitted handoffs. Route to `/work-planner` afterward only if behavior slices still need elaboration using the newly recorded commands, or when the prerequisite itself is absent from the approved phase, must be added or resequenced, or changes the phase premise. Never dispatch setup-skill work to `Engineer`.
 
 When the preconditions hold:
 
