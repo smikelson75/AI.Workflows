@@ -10,7 +10,7 @@ The repository separates decisions by ownership:
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
-- **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` is the C#/.NET adapter.
+- **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` and `ts-eslint` are the C#/.NET and TypeScript/Node adapters.
 - **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` is the C#/.NET adapter.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
@@ -45,6 +45,12 @@ Use `/tdd-csharp` before implementation. Load its required references, write a f
 ### C#/.NET code style setup
 
 Normally dispatched by `/onboard-project`, which knows when to run it and at what severity. To run it directly: `/dotnet-editorconfig`, answering `baseline` for industry defaults or `walkthrough` to choose rules group by group. It writes the root `.editorconfig` and `Directory.Build.props`, then verifies with `dotnet build` and `dotnet format --verify-no-changes`. Projects added later inherit both files by directory position. It finishes by giving you the exact text to pass to `/agent-instructions` — run that follow-up, or agents will keep overriding the shared settings in new `.csproj` files.
+
+### TypeScript/Node code style setup
+
+Normally dispatched by `/onboard-project`. To run it directly: `/ts-eslint`, answering `baseline` or `walkthrough`. It writes the root `eslint.config.js`, `.prettierrc`, the `tsconfig.json` strictness block, and the `verify` npm script that runs `tsc --noEmit`, `eslint --max-warnings=0`, and `prettier --check` as one gate. Nothing inherits by directory position in this stack, so a package that adds its own ESLint or Prettier config silently leaves coverage — the handoff to `/agent-instructions` is what prevents that.
+
+If the repository holds both C# and TypeScript, both adapters run: the primary build's adapter first, the other in amendment mode, with the shared `.editorconfig` split by glob and violation counts reported per stack.
 
 ### C#/.NET mutation testing setup
 

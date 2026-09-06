@@ -57,6 +57,33 @@ Place beside the test projects, not at the root:
 
 The `Import` is required: a nested `Directory.Build.props` stops the upward search unless it imports the parent explicitly.
 
+## Mixed-Stack Repositories
+
+MSBuild imports `Directory.Build.props` for every project type, not only `.csproj`. In a repository that also holds a JavaScript or TypeScript project wrapped in an MSBuild project file — `.esproj` from the ASP.NET Core SPA templates, or `.njsproj` — that project inherits the .NET analyzer properties, where they are inert at best and build noise at worst.
+
+Guard the .NET-only properties by project extension rather than relying on the other stack to override them:
+
+```xml
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>
+```
+
+The root `.editorconfig` is shared with the other stack's adapter. Follow the protocol's mixed-stack arbitration: keep C# settings under their own glob, add nothing stack-specific to `[*]`, and do not touch glob sections another adapter owns.
+
+Do not make `dotnet build` run the frontend's lint or build step to obtain a single gate. Enforcement points stay separate; verification is selected by the files a change touched.
+
 ## New-Project Checklist
 
 Apply whenever a project is added:
@@ -81,4 +108,4 @@ To prove enforcement reaches new projects, temporarily add a violating line to a
 
 ## CI Note
 
-Enforcement lives in the build, so a CI job needs no extra linting step beyond `dotnet build` plus `dotnet format --verify-no-changes`. Do not duplicate rule configuration in CI YAML.
+Enforcement lives in the build, so a CI job needs no extra linting step beyond `dotnet build` plus `dotnet format --verify-no-changes`. Do not duplicate rule configuration in CI YAML. In a mixed-stack repository this covers the .NET side only; the other stack's adapter contributes its own command.

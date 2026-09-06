@@ -46,7 +46,13 @@ Invoke for C# behavior changes. It requires xUnit and Moq references, a failing 
 
 ### `dotnet-editorconfig`
 
-The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, and the `agent-instructions` handoff live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
+The C#/.NET adapter for the generic code style protocol. Invoke with `/dotnet-editorconfig` to write the root `.editorconfig` from an industry baseline or a guided per-rule walkthrough, plus the root `Directory.Build.props` that makes style and analyzer rules run at compile time. Both files are inherited by projects created later, so no per-project opt-in is needed. Enforcement rules, maturity paths, mixed-stack arbitration, and the `agent-instructions` handoff live in the shared protocol, not here.
+
+### `ts-eslint`
+
+The TypeScript/Node adapter for the same protocol. Invoke with `/ts-eslint` to write the root `eslint.config.js`, `.prettierrc`, the `tsconfig.json` strictness block, and the `verify` script that is this stack's enforcement point. Three tools each own one concern — `tsc` type strictness, ESLint correctness, Prettier formatting — with `eslint-config-prettier` removing the overlap. Unlike .NET, nothing inherits by directory position: one root flat config reaches every package by glob, so the forbidden-in-subpackage list is the load-bearing part. `.editorconfig` is written only when the repository holds files Prettier cannot parse.
+
+Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
 
 ### `stryker-dotnet`
 
@@ -71,6 +77,8 @@ Use the references beside each skill for its format or protocol details:
 - [`code-style` protocol](../.github/skills/code-style/protocol.md)
 - [`dotnet-editorconfig` baseline](../.github/skills/dotnet-editorconfig/references/BASELINE.md)
 - [`dotnet-editorconfig` enforcement](../.github/skills/dotnet-editorconfig/references/ENFORCEMENT.md)
+- [`ts-eslint` baseline](../.github/skills/ts-eslint/references/BASELINE.md)
+- [`ts-eslint` enforcement](../.github/skills/ts-eslint/references/ENFORCEMENT.md)
 - [`mutation-testing` protocol](../.github/skills/mutation-testing/protocol.md)
 - [`onboard-project` discovery checklist](../.github/skills/onboard-project/references/DISCOVERY-CHECKLIST.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)

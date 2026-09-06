@@ -33,6 +33,37 @@ The adapter's sequencing depends on how much code already exists.
 - **Scaffold only** — run immediately, at blocking severity. The backlog is near zero and this is the cheapest moment the repository will ever offer. Strip any settings the project template emitted that the root config now owns.
 - **Existing codebase** — run early but non-blocking. Report the violation count and hand it to `work-planner` as remediation work: a mechanical formatting phase, then a judgment-required phase, then a final slice that flips enforcement to blocking. Do not leave the ramp at non-blocking indefinitely; a warning nobody fails on is ignored within a week.
 
+## Mixed-Stack Repositories
+
+A repository may contain more than one stack, so more than one adapter runs against it. Adapters must not know about each other; the rules below arbitrate. They apply whenever detection matches two or more adapters.
+
+### Shared Config Arbitration
+
+When two adapters target the same physical file — most often a root `.editorconfig` — the file stays single-rooted and ownership is split by glob:
+
+- The shared preamble (`root = true` plus cross-stack whitespace such as end of line, charset, final newline, trailing whitespace) is written once, by the first adapter to run.
+- Every other setting sits under a glob owned by exactly one adapter.
+- A setting whose correct value differs per stack — indent size above all — must never appear in the `[*]` section. One stack would be silently wrong, and whoever notices will "fix" it in the direction that breaks the other.
+- Second and later adapters run in amendment mode: they add or edit only their own glob sections and leave the preamble and other adapters' sections untouched.
+
+### Run Order
+
+Run the adapter whose stack owns the repository's primary build first; it establishes the shared file and the solution-level enforcement point. Remaining adapters follow in amendment mode. Where no stack is clearly primary, the order is free but must be reported.
+
+### Enforcement Points Stay Separate
+
+Do not merge stacks into one verification command by having one build system invoke another. It couples unrelated failures, produces cryptic output, and breaks anyone working inside a single stack's directory.
+
+Each adapter keeps its own verification command, and verification becomes scope-aware: a change verifies with the command(s) for the stacks whose files it touched, and a boundary-crossing change runs all of them. Phase-end verification runs every stack's command regardless of scope.
+
+### Cross-Stack Config Leakage
+
+An enforcement mechanism that resolves by directory position will reach projects of other stacks sitting under the same root. Each adapter must check whether its enforcement file can be picked up by a foreign project type and, if so, guard it by condition rather than expecting the other stack to opt out.
+
+### Reporting
+
+Report violation counts, enforcement severity, and verification results **per stack**. A single merged number hides which side carries the backlog and makes the remediation handoff to `work-planner` unplannable.
+
 ## Formatting Existing Code
 
 Reformatting is a separate, explicitly requested step, never a side effect of configuration. When it happens it is one commit, no behavior change, verified by the existing test suite staying green.

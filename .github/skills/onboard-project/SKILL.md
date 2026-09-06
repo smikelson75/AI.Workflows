@@ -84,10 +84,12 @@ Match the detected stack to its adapter, which applies [`code-style/protocol.md`
 | Stack evidence | Adapter |
 | --- | --- |
 | `*.sln`, `*.csproj` | `dotnet-editorconfig` |
-| `package.json` | none yet |
+| `package.json` with TypeScript | `ts-eslint` |
 | `pyproject.toml` | none yet |
 
-If no adapter exists for the detected stack, say so plainly and stop that step. Do not improvise a configuration; report the gap so an adapter can be added.
+Detection matches **all** stacks present, not the first one. A repository containing both a `.csproj` and a `package.json` runs both adapters, per the protocol's mixed-stack rules: the adapter owning the primary build runs first and establishes the shared root config, the rest follow in amendment mode, and violation counts are reported per stack.
+
+If no adapter exists for a detected stack, say so plainly and stop that step for that stack only; other stacks still proceed. Do not improvise a configuration; report the gap so an adapter can be added.
 
 ## Rule 4: Dispatch The Mutation-Testing Adapter By Stack And Test-Suite State
 
@@ -99,12 +101,14 @@ Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only 
 | `package.json` | none yet |
 | `pyproject.toml` | none yet |
 
+As in Rule 3, detection matches all stacks present. Each stack keeps its own config file, its own threshold walkthrough, and its own reported score; do not average scores across stacks or let one stack's threshold stand in for another's.
+
 For a `mature` repository, branch on test-suite maturity:
 
 - **No test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
 - **Existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
 
-If no adapter exists for the detected stack, say so plainly and stop that step, same as Rule 3.
+If no adapter exists for a detected stack, say so plainly and stop that step for that stack only, same as Rule 3.
 
 ## Rule 5: Ground The Product Skills In Evidence
 

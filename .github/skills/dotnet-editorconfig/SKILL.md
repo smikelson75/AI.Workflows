@@ -56,6 +56,7 @@ How the protocol's non-negotiables map to MSBuild, per [references/ENFORCEMENT.m
 - Settings forbidden in an individual `.csproj`, because a project-level value silently overrides the shared one: `EnforceCodeStyleInBuild`, `EnableNETAnalyzers`, `AnalysisLevel`, `AnalysisMode`, `Nullable`, `LangVersion`, `TreatWarningsAsErrors`. Strip them when a project template emits them.
 - No nested `.editorconfig` may set `root = true`.
 - A nested `Directory.Build.props` must import its parent explicitly, or it stops the upward search.
+- `Directory.Build.props` is imported by every MSBuild project type, so a co-located `.esproj`/`.njsproj` inherits the analyzer properties. Guard them with `Condition="'$(MSBuildProjectExtension)' == '.csproj'"` when another stack shares the root.
 - If a project sits outside the root directory tree, say so explicitly instead of silently leaving it unenforced.
 
 ## Verification
