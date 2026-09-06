@@ -56,7 +56,13 @@ Adapters for other stacks do not exist yet; `onboard-project` reports the gap ra
 
 ### `stryker-dotnet`
 
-The C#/.NET adapter for the generic mutation-testing protocol. Invoke with `/stryker-dotnet` to write `stryker-config.json`, scoped to unit tests only (integration/e2e tests are permanently excluded), and to run a guided threshold walkthrough instead of silently picking a mutation-score bar. Cadence (phase's final integration slice, incremental scope), blocking policy, repository maturity paths, and survivor remediation live in the shared protocol, not here. Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
+The C#/.NET adapter for the generic mutation-testing protocol. Invoke with `/stryker-dotnet` to write `stryker-config.json`, scoped to unit tests only (integration/e2e tests are permanently excluded), and to run a guided threshold walkthrough instead of silently picking a mutation-score bar. Cadence (phase's final integration slice, incremental scope), blocking policy, repository maturity paths, and survivor remediation live in the shared protocol, not here.
+
+### `stryker-js`
+
+The TypeScript/JavaScript adapter for the same protocol, covering Angular and React. Invoke with `/stryker-js` to write the root `stryker.config.json` and run the same guided threshold walkthrough. Two stack facts are load-bearing: the test runner is a separate plugin that must match the repository's actual runner, and the TypeScript checker plugin is required or non-compiling mutants poison the score. On the frontend the mutate scope is services, stores, selectors, guards, pipes, hooks, and validators — components and Angular templates are thin wiring, and a near-empty scope is the protocol's architecture-boundary signal. The unit boundary is jsdom tests in, real-browser tests out.
+
+Adapters for other stacks do not exist yet; `onboard-project` reports the gap rather than improvising.
 
 ## Change Journaling
 

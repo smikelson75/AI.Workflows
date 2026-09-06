@@ -65,7 +65,7 @@ For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 4. Repeat for the remaining behavior.
 5. Finish with the full `dotnet test` suite.
 
-A phase's **final integration slice** additionally applies `/stryker-dotnet` (or the matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
+A phase's **final integration slice** additionally applies `/stryker-dotnet` or `/stryker-js` (or another matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 
 ### 6. Record and commit
 

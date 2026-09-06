@@ -98,7 +98,7 @@ Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only 
 | Stack evidence | Adapter |
 | --- | --- |
 | `*.sln`, `*.csproj` | `stryker-dotnet` |
-| `package.json` | none yet |
+| `package.json` with a unit test runner | `stryker-js` |
 | `pyproject.toml` | none yet |
 
 As in Rule 3, detection matches all stacks present. Each stack keeps its own config file, its own threshold walkthrough, and its own reported score; do not average scores across stacks or let one stack's threshold stand in for another's.

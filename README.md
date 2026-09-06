@@ -11,7 +11,7 @@ The repository separates decisions by ownership:
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` and `ts-eslint` are the C#/.NET and TypeScript/Node adapters.
-- **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` is the C#/.NET adapter.
+- **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` and `stryker-js` are the C#/.NET and TypeScript/JavaScript adapters.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
 - **Change journal**: `conventional-commit` creates coherent Conventional Commits.
 - **Decision record**: `adr-writer` records a hard-to-reverse, surprising, trade-off-driven technical decision, gated from within `prd-writer` and `work-planner`.
@@ -55,6 +55,10 @@ If the repository holds both C# and TypeScript, both adapters run: the primary b
 ### C#/.NET mutation testing setup
 
 Normally dispatched by `/onboard-project`, which knows the repository's test-suite maturity and offers the one-time full-repo baseline only when it applies. To run it directly: `/stryker-dotnet`. It writes `stryker-config.json` scoped to unit tests only (integration/e2e tests are always excluded), runs a guided walkthrough to propose score thresholds instead of picking them silently, and wires the mutation run into each phase's final integration slice. The first cycle is measure-only; blocking is a deliberate later step once the survivor backlog clears.
+
+### TypeScript/JavaScript mutation testing setup
+
+Same dispatch story; to run it directly: `/stryker-js`. It writes the root `stryker.config.json`, installs the runner plugin matching the repository's actual runner plus the TypeScript checker, and applies the same measure-first policy. In Angular and React the useful mutate scope is services, stores, selectors, guards, pipes, hooks, and validators — Angular templates are never mutated and JSX is only partially mutated, so logic stranded in a component surfaces as an architecture-boundary signal rather than as coverage. Real-browser tests (Playwright, Cypress) are always excluded.
 
 ### Resuming after a lost session
 
