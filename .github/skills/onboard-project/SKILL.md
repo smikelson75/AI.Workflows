@@ -126,7 +126,7 @@ It needs context, PRD, plan, and the enforced style config as inputs, so it runs
 
 ## Rule 7: Deterministic Verification Bootstrap
 
-After the normal routing sequence, if deterministic-verification artifacts are present (`.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, `.github/skills/deterministic-verification/hooks/pre-commit`, and `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`), run `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`.
+After the normal routing sequence, if deterministic-verification artifacts are present (`.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, `.github/skills/deterministic-verification/hooks/pre-commit`, and `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`), run `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`. On Windows, default to Git Bash first (e.g. `& "C:\Program Files\Git\bin\bash.exe"` or resolved from `git.exe`); never invoke `bash` directly as a Windows command because it resolves to the WindowsApps/WSL stub and fails.
 
 This step must fail closed with a clear message if prerequisites are missing, especially `jq`.
 

@@ -38,6 +38,18 @@
       "problemMatcher": []
     },
     {
+      "label": "report:validate",
+      "type": "shell",
+      "command": "./.github/skills/deterministic-verification/scripts/validate-report.sh",
+      "args": [
+        "--kind",
+        "${input:reportKind}",
+        "--report",
+        "${input:report}"
+      ],
+      "problemMatcher": []
+    },
+    {
       "label": "slice:pass-a",
       "type": "shell",
       "command": "./.github/skills/deterministic-verification/scripts/run-unit-verification.sh",
@@ -101,7 +113,13 @@
     {
       "id": "report",
       "type": "promptString",
-      "description": "Engineer A report path"
+      "description": "Engineer report path"
+    },
+    {
+      "id": "reportKind",
+      "type": "promptString",
+      "description": "Report kind (a or b)",
+      "default": "a"
     },
     {
       "id": "unitCommand",

@@ -10,7 +10,7 @@ You execute an approved implementation plan by dispatching one slice at a time t
 
 Your context is long-lived and expensive. Every subagent context is fresh and disposable. Push work down; keep only decisions and outcomes.
 
-For every completed Pass A, invoke the `deterministic-verification` workflow: validate the Engineer A report, run `.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, and treat its JSON output as authoritative. When `integrationRequired` is true, dispatch the same `Engineer` role for an integration-only Pass B before completing the slice. Do not mark the slice complete while a required report or verification is missing.
+For every completed Pass A, invoke the `deterministic-verification` workflow: validate the Engineer A report, run `.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh` (on Windows, default to Git Bash first: `& "C:\Program Files\Git\bin\bash.exe"`, never bare `bash`), and treat its JSON output as authoritative. When `integrationRequired` is true, dispatch the same `Engineer` role for an integration-only Pass B before completing the slice. Do not mark the slice complete while a required report or verification is missing.
 
 ## Token And Artifact Budget
 

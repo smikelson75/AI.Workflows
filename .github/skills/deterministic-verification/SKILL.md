@@ -29,6 +29,13 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 7. Run `.github/skills/deterministic-verification/scripts/run-phase-e2e.sh` only for the phase-final E2E slice.
 8. The `pre-commit` hook also runs `.github/skills/deterministic-verification/scripts/check-role-scope.sh`, which fails closed if an Engineer report is present alongside a changed `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/**`, `docs/plans/**`, or `AGENTS.md` file. This does not replace the `Engineer`/`onboard-project` scope boundaries; it is a backstop for the case where a report exists but scope was still violated. It cannot detect an Engineer dispatch that skipped the report protocol entirely.
 
+## Script Execution On Windows
+
+- On Windows, bash scripts must default to Git Bash first instead of invoking `bash` directly as a Windows command. Running bare `bash` on Windows resolves to the Microsoft Store / WSL stub `bash.exe` and fails when WSL is unconfigured.
+- Locate Git Bash: check `C:\Program Files\Git\bin\bash.exe`, standard install paths (`C:\Program Files (x86)\Git\bin\bash.exe`, `%LOCALAPPDATA%\Programs\Git\bin\bash.exe`), or resolve from `git.exe` (e.g. `(Get-Command git.exe).Source -replace 'cmd\\git\.exe','bin\bash.exe'`).
+- Execute in PowerShell: `& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/<script>.sh [args]`, or run the corresponding task in `.vscode/tasks.json`.
+- On POSIX platforms (Linux/macOS): execute scripts directly (`./.github/skills/deterministic-verification/scripts/<script>.sh [args]`) or via `bash`.
+
 ## Fail-Closed Rules
 
 - Missing or invalid reports block completion.
@@ -37,6 +44,7 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 - Missing project-specific verification commands is an error; this repository does not assume a stack.
 - Engineer B may change integration tests and minimal harness code only. Behavior fixes return to Engineer A.
 - An Engineer report present alongside a changed product-truth file (see step 8) blocks the commit until reverted or reconciled through the owning skill.
+- On Windows, invoking bare `bash` instead of Git Bash is an error; all bash scripts must run through Git Bash or configured VS Code tasks.
 
 ## Durable Artifacts
 

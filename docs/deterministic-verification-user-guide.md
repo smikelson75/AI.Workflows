@@ -165,9 +165,51 @@ Targets:
 - phase-e2e
 
 How they are used:
-- standard local entrypoints for setup and verification
+- standard local entrypoints for setup and verification (POSIX or Git Bash)
+
+### 7. VS Code Tasks
+
+Purpose:
+- provide native IDE execution across platforms, defaulting to Git Bash on Windows
+
+File:
+- [.vscode/tasks.json](../.vscode/tasks.json)
+
+Tasks:
+- deterministic:ready
+- report:validate
+- slice:pass-a
+- slice:gate
+- slice:pass-b
+- phase:e2e
+- clean:reports
 
 ## Typical Usage Sequence
+
+### Running On Windows
+
+On Windows, bash scripts must default to Git Bash rather than running `bash` as a raw command in Windows (bare `bash` invokes the WindowsApps/WSL stub and fails).
+
+In PowerShell, invoke via Git Bash directly:
+```powershell
+# 1. One-time setup
+& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh
+
+# 2. Validate report
+& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/validate-report.sh --kind a --report out/engineer-a-report.json
+
+# 3. Evaluate gate
+& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh --report out/engineer-a-report.json
+
+# 4. Pass B verification (if gate requires integration)
+& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/run-integration-verification.sh --slice <slice-path> "<integration-command>"
+
+# 5. Phase-end E2E
+& "C:\Program Files\Git\bin\bash.exe" .github/skills/deterministic-verification/scripts/run-phase-e2e.sh --phase <phase-path> "<e2e-command>"
+```
+Alternatively, run the equivalent tasks in VS Code via the Task runner (which automatically runs through Git Bash).
+
+### Running On POSIX (macOS / Linux)
 
 1. One-time setup per clone
 
@@ -227,6 +269,10 @@ Scalability:
 - easier onboarding due to explicit rules and repeatable commands
 
 ## Troubleshooting
+
+Script execution on Windows fails with bash.exe / WindowsApps error:
+- running `bash <script>` in Windows PowerShell resolves to `C:\Users\<user>\AppData\Local\Microsoft\WindowsApps\bash.exe` (WSL stub)
+- run via Git Bash instead: `& "C:\Program Files\Git\bin\bash.exe" <path-to-script>` or use VS Code tasks
 
 Bootstrap fails with jq error:
 - install jq
