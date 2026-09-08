@@ -20,6 +20,30 @@ done
 changed_files="$(git diff --cached --name-only | awk 'NF && !seen[$0]++')"
 [[ -n "$changed_files" ]] || exit 0
 
+# Check if the staged commit belongs to an Engineer run:
+# Either a report is explicitly staged in this commit, or staged files include files from an active Engineer report.
+engineer_commit=false
+for candidate in "${reports[@]}"; do
+  if printf '%s\n' "$changed_files" | grep -Fxq "$candidate"; then
+    engineer_commit=true
+    break
+  fi
+  if [[ -f "$candidate" ]]; then
+    reported_files="$(jq -r '.changedFiles[]?' "$candidate" 2>/dev/null || true)"
+    if [[ -n "$reported_files" ]]; then
+      while IFS= read -r rf; do
+        [[ -z "$rf" ]] && continue
+        if printf '%s\n' "$changed_files" | grep -Fxq "$rf"; then
+          engineer_commit=true
+          break 2
+        fi
+      done <<< "$reported_files"
+    fi
+  fi
+done
+
+[[ "$engineer_commit" == true ]] || exit 0
+
 denylist=(
   'CONTEXT.md'
   'UBIQUITOUS-LANGUAGE.md'

@@ -1,4 +1,4 @@
-.PHONY: slice-pass-a slice-gate slice-pass-b phase-e2e setup-hooks deterministic-ready
+.PHONY: slice-pass-a slice-gate slice-pass-b phase-e2e setup-hooks deterministic-ready clean-reports
 
 slice-pass-a:
 	./.github/skills/deterministic-verification/scripts/run-unit-verification.sh --slice "$(SLICE)" $(COMMAND)
@@ -17,3 +17,6 @@ setup-hooks:
 
 deterministic-ready:
 	./.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh
+
+clean-reports:
+	rm -rf out/engineer-*.json

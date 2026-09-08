@@ -23,10 +23,11 @@ printf '%s\n' "${files[@]}" | awk 'NF && !seen[$0]++' | while IFS= read -r file;
   case "$file" in
     *route*|*controller*|*handler*|*http*|*api*|*client*) printf '%s\thttp\n' "$file" ;;
     *migration*|*repository*|*repo*|*query*|*database*|*storage*) printf '%s\tdatabase\n' "$file" ;;
-    *file*|*filesystem*|*fs*|*path*) printf '%s\tfilesystem\n' "$file" ;;
-    *queue*|*consumer*|*producer*|*pubsub*|*message*) printf '%s\tqueue\n' "$file" ;;
+    *filesystem*|*filestore*|*file_system*|*storage_adapter*) printf '%s\tfilesystem\n' "$file" ;;
+    *queue*|*consumer*|*producer*|*pubsub*|*message*|*eventhub*|*topic*) printf '%s\tqueue\n' "$file" ;;
     *sdk*|*adapter*|*integration*|*external*) printf '%s\texternal_api\n' "$file" ;;
     *serial*|*protocol*|*wire*|*dto*|*schema*) printf '%s\tserialization\n' "$file" ;;
+    *test*|*spec*|*domain*|*entity*|*entities*|*model*|*models*|*calc*|*util*|*helper*|*service*|*core*|*.md|*.txt|*.json|*.yml|*.yaml|*.props|*.config|*.editorconfig|*.gitignore|*.sh|*Makefile*|*makefile*|*.cs|*.ts|*.js|*.jsx|*.tsx|*.py|*.go|*.rs|*.java|*.cpp|*.h|*.c) printf '%s\tinternal\n' "$file" ;;
     *) printf '%s\tunknown\n' "$file" ;;
   esac
 done

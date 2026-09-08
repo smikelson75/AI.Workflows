@@ -13,6 +13,8 @@ The gate evaluates changed files and the Engineer A report. Integration is requi
 | `external_api` | SDK wrappers and third-party API adapters |
 | `serialization` | serializers, protocol models, wire-format mapping |
 
+Files classified as `internal` (such as pure domain models, business logic, calculations, utilities, and unit tests) do not trigger integration verification on their own.
+
 If classification is uncertain, the gate requires integration. The gate output is authoritative and machine-readable. Suggested targets come from the report and are advisory scope for Pass B.
 
 ## Change-Set Authority

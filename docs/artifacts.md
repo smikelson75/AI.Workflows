@@ -24,6 +24,10 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 
+### Disposable Execution Artifacts
+
+- `out/engineer-a-report.json` and `out/engineer-b-report.json`: transient execution handoff reports owned by `deterministic-verification`. They provide machine-checkable structured inputs for integration gate evaluation during slice execution. They are disposable and should be cleaned up between slices (or via `clean-reports`).
+
 Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
 ## Status Rules

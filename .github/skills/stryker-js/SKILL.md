@@ -73,7 +73,7 @@ Ask one focused question at a time, offering a sensible default so the user can 
 2. How critical is the code in scope (domain and business rules vs. generic utility)? Higher criticality pulls `high`/`break` upward.
 3. Is this the first enabled phase (measure-only per the protocol), or has a backlog already been cleared (blocking allowed)?
 
-Propose `high`, `low`, and `break` values from the answers and StrykerJS's typical default bands; confirm with the user before writing `stryker.config.json`. Do not silently pick values.
+Propose `high`, `low`, and `break` values from the answers and StrykerJS's typical default bands; confirm with the user before writing `stryker.config.json`. Do not silently pick values. If this is the first enabled phase (measure-only), omit `break` (or set `break: 0`) so the run measures and reports scores and survivors without failing the verification command; `break` is configured only after the survivor backlog is cleared.
 
 ## Verification
 

@@ -7,9 +7,24 @@ validator="$root/.github/skills/deterministic-verification/scripts/validate-repo
 gate_eval="$root/.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh"
 [[ -x "$validator" && -x "$gate_eval" ]] || { printf '%s\n' 'missing deterministic verification scripts' >&2; exit 1; }
 
+diff_base=""
+if read -r local_ref local_sha remote_ref remote_sha; then
+  if [[ -n "$remote_sha" && "$remote_sha" != "0000000000000000000000000000000000000000" ]] && git rev-parse --verify "$remote_sha" >/dev/null 2>&1; then
+    diff_base="$remote_sha"
+  fi
+fi
+
+if [[ -z "$diff_base" ]]; then
+  if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+    diff_base="HEAD~1"
+  fi
+fi
+
 if [[ -f out/engineer-a-report.json ]]; then
   "$validator" --kind a --report out/engineer-a-report.json >/dev/null
-  gate="$("$gate_eval" --report out/engineer-a-report.json)"
+  gate_args=(--report out/engineer-a-report.json)
+  [[ -n "$diff_base" ]] && gate_args+=(--diff-base "$diff_base")
+  gate="$("$gate_eval" "${gate_args[@]}")"
   if [[ "$(jq -r '.integrationRequired' <<< "$gate")" == true ]]; then
     [[ -f out/engineer-b-report.json ]] || { printf '%s\n' 'integration gate requires out/engineer-b-report.json' >&2; exit 1; }
     "$validator" --kind b --report out/engineer-b-report.json >/dev/null
