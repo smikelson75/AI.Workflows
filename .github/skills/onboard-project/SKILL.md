@@ -53,9 +53,10 @@ Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as t
 3. `work-planner` — Phase 0 must be a scaffolding phase
 4. Execute the scaffolding slice via `Orchestrator`, run as the active agent mode (switch to it directly), never invoked through a subagent-dispatch tool — it needs `agent`/`execute` tool parity to dispatch `Engineer` and verify. `Orchestrator` dispatches the actual scaffolding to `Engineer` — it must not write product files itself.
 5. Style adapter (see Rule 3), now that something is buildable
-6. `agent-instructions`
+6. Mutation-testing adapter (see Rule 4), establishing root config (`stryker-config.json` or `stryker.config.json`) and test-runner tooling at measure-only (`break: 0`) before planning subsequent feature phases
+7. `agent-instructions`
 
-The empty-repository path is not onboarded when scaffolding alone passes. The style adapter and `agent-instructions` steps remain required after the scaffold exists; do not report onboarding complete while either is deferred.
+The empty-repository path is not onboarded when scaffolding alone passes. The style adapter, mutation-testing adapter (when an adapter exists for the stack), and `agent-instructions` steps remain required after the scaffold exists; do not report onboarding complete while any is deferred.
 
 Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
 
@@ -64,10 +65,11 @@ Before executing the first scaffolding slice in an empty repository, establish a
 **`scaffold`** — the stack is known and the style backlog is near zero. Order:
 
 1. Style adapter at blocking severity, committed on its own
-2. `brain-storm` -> `prd-writer` -> `work-planner`
-3. `agent-instructions`
+2. Mutation-testing adapter (see Rule 4), establishing root config at measure-only (`break: 0`)
+3. `brain-storm` -> `prd-writer` -> `work-planner`
+4. `agent-instructions`
 
-Running the style adapter first is the point: this is the cheapest moment the repository will ever offer, and it strips the settings the project template emitted before they spread.
+Running the style adapter first is the point: this is the cheapest moment the repository will ever offer, and it strips the settings the project template emitted before they spread. Establishing mutation testing config right after ensures `work-planner` can wire the phase-closing verification commands automatically.
 
 **`mature`** — run discovery, and treat the style backlog as plan work. Order:
 
@@ -93,7 +95,7 @@ If no adapter exists for a detected stack, say so plainly and stop that step for
 
 ## Rule 4: Dispatch The Mutation-Testing Adapter By Stack And Test-Suite State
 
-Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only relevant once code maturity is `mature`; `empty` and `scaffold` defer per the protocol's repository maturity paths, with no action needed here.
+Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Mutation testing does not get its own phase or slice; it is configured during onboarding so that root configuration is established and `work-planner` can automatically wire the phase-scoped mutation command into each phase's final integration/E2E slice.
 
 | Stack evidence | Adapter |
 | --- | --- |
@@ -103,10 +105,11 @@ Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Only 
 
 As in Rule 3, detection matches all stacks present. Each stack keeps its own config file, its own threshold walkthrough, and its own reported score; do not average scores across stacks or let one stack's threshold stand in for another's.
 
-For a `mature` repository, branch on test-suite maturity:
+Branch by code maturity and test-suite state:
 
-- **No test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
-- **Existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
+- **`empty` (post-scaffolding) or `scaffold`** — unit test projects and runners are present or just scaffolded. Run the matching adapter to create root-level config (`stryker-config.json` or `stryker.config.json`) with measure-only baseline thresholds (`break: 0`) and install local tooling/plugins. No full-repository baseline run is needed because there is no legacy debt.
+- **`mature`, no test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
+- **`mature`, existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Establish root configuration and report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
 
 If no adapter exists for a detected stack, say so plainly and stop that step for that stack only, same as Rule 3.
 

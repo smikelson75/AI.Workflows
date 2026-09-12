@@ -10,6 +10,7 @@ Mutation testing measures whether the test suite actually detects introduced fau
 
 Runs at each phase's **final end-to-end validation slice**, scoped incrementally to that phase's diff since phase start — not every slice, not only at release.
 
+- Mutation testing does not get its own slice; it is wired directly into that final slice's verification command alongside the integration/E2E test suite.
 - Not every slice: a mutation run reruns the suite per surviving mutant. It does not fit the fast Red-Green-Refactor inner loop, and running it there would make that loop unusable.
 - Not release-only: by then, multiple phases of weak tests would already be entrenched, defeating shift-left testing and turning remediation into a big-bang cleanup.
 - Incremental scoping (diff since phase start, not the whole repository) keeps cost proportional to the phase.
@@ -36,8 +37,8 @@ This mutation-only scope rule does not relax normal verification expectations: i
 
 First-run behavior depends on two independent facts: code maturity (empty/scaffold/mature) and whether a meaningful test suite already exists.
 
-- **No code yet** — not applicable; mutation testing waits for a scaffolding slice.
-- **Scaffold, no real tests yet** — not applicable yet, but this is the clean case: no legacy debt to measure. The adapter activates cold at phase 1's final end-to-end validation slice; no baseline run is needed.
+- **No code yet** — waits for Phase 0 scaffolding. Once Phase 0 establishes the test harness, the adapter configures root-level config at measure-only (`break: 0`) before feature phases begin.
+- **Scaffold / new projects with test harness** — clean case with no legacy debt. The adapter configures root configuration during onboarding at measure-only (`break: 0`), ready for phase 1's final end-to-end validation slice; no baseline run is needed.
 - **Mature codebase, no test suite at all** — blocked. Mutation testing cannot run without tests to kill mutants. Hand this to `work-planner` as a required prerequisite phase (write a baseline test suite) before any mutation-testing phase can start.
 - **Mature codebase, existing test suite** — no prior phase boundary exists yet to scope an incremental diff against. Offer a one-time, **opt-in, cost-flagged** full-repository baseline run: non-blocking, reporting score and survivor hotspots to `work-planner` as backlog. Do not run this automatically the way a cheap linter runs automatically — the cost can be large, and the user should choose to pay it. After the baseline (or if declined), the incremental per-phase cadence takes over from the next phase forward.
 
@@ -53,6 +54,7 @@ First-run behavior depends on two independent facts: code maturity (empty/scaffo
 3. First cycle on newly enabled work is measure-only; blocking is a deliberate later step.
 4. A low score is resolved by writing a better test or by an explicit, recorded scope decision — never by silently weakening a test or lowering a threshold to pass.
 5. Config changes are their own commit, never mixed with behavior changes.
+6. Mutation testing does not get its own phase or slice; it runs as part of the phase-final integration/E2E slice's verification command (except for prerequisite test-writing or survivor remediation backlogs).
 
 ## Boundaries For Every Adapter
 

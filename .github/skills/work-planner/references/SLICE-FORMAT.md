@@ -9,7 +9,7 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 ## Sizing
 
 - one slice is one vertical behavior, thin through every layer it touches
-- the final slice of every phase is an integration and/or end-to-end slice that proves the phase's vertical behavior works as intended
+- the final slice of every phase is an integration and/or end-to-end slice that proves the phase's vertical behavior works as intended. When a supported mutation-testing adapter exists for the stack, that final slice's verification command must automatically include the phase-scoped mutation-testing run; mutation testing does not receive a standalone slice
 - if a slice needs more than one vertical behavior to be useful, the phase is shaped wrong; resplit the phase rather than growing the slice
 - if a slice cannot state a verification command, it is not ready to dispatch
 

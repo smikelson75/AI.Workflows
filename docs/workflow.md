@@ -8,7 +8,7 @@ This system is a staged workflow. Each stage owns a different kind of truth and 
 
 Use `/onboard-project` first, unless the user already knows the repository is onboarded (context, PRD, plan, and `AGENTS.md` are current). It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills for that state, calling `brain-storm` itself as its first owned step. For existing code it discovers repository evidence first and hands a findings draft downstream. It may sequence `brain-storm`, `prd-writer`, `work-planner`, the matching code style adapter, the matching mutation-testing adapter, and `agent-instructions`, but those skills remain responsible for their own artifacts.
 
-The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before any style config can run; a scaffold takes style config immediately at blocking severity; a mature codebase takes it non-blocking and turns the violation count into plan phases; `agent-instructions` always runs last and once.
+The routing it encodes so the user does not have to remember it: resolve competing instruction files first; an empty repo settles the stack in `prd-writer` before style or mutation-testing config can run, with both adapters establishing root configuration once the scaffold exists; a scaffold takes style config at blocking severity and mutation testing at measure-only before feature planning; a mature codebase takes style non-blocking, checks mutation-testing readiness, and turns gaps/violations into plan phases; `agent-instructions` always runs last and once.
 
 For an empty repository, create the initial Git baseline after context, PRD, and plan artifacts exist but before the first scaffolding slice is executed. Keep the slice files out of that baseline. This gives the Git-based integration gate a meaningful starting point and keeps the Engineer report scoped to the assigned slice. The primary agent or user owns this commit boundary; `Engineer` never creates it.
 
@@ -65,7 +65,7 @@ For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
 4. Repeat for the remaining behavior.
 5. Finish with the full `dotnet test` suite.
 
-A phase's **final integration slice** additionally applies `/stryker-dotnet` or `/stryker-js` (or another matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared. Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
+A phase's **final integration slice** additionally applies `/stryker-dotnet` or `/stryker-js` (or another matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared (mutation testing does not receive a dedicated slice; it is wired into this final verification command). Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 
 ### 6. Record and commit
 
