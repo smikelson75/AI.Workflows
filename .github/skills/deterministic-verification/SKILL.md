@@ -12,6 +12,7 @@ Use this skill when an implementation slice needs the deterministic integration-
 ## Ownership
 
 - `work-planner` owns slice scope, verification commands, and acceptance checks.
+- `qa-design` owns the phase acceptance feature; human approval is recorded in the main plan.
 - `Orchestrator` owns routing, gate evaluation, and plan status.
 - `Engineer` owns implementation, tests, and the structured report for its assigned pass.
 - This skill owns the policy, schemas, scripts, hooks, and task entry points that make those handoffs deterministic.
@@ -26,7 +27,7 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 4. If `integrationRequired` is `true`, have `Orchestrator` dispatch Pass B to `Engineer` with only the gate targets and integration scope.
 5. Validate the Engineer B report and run its integration verification command.
 6. Allow `Orchestrator` to mark the slice complete only after all required checks pass.
-7. Run `.github/skills/deterministic-verification/scripts/run-phase-e2e.sh` only for the phase-final E2E slice.
+7. Require approved phase Gherkin, then run `.github/skills/deterministic-verification/scripts/run-phase-e2e.sh` only for the phase-final E2E slice and verify scenario-ID traceability across all test levels.
 8. The `pre-commit` hook also runs `.github/skills/deterministic-verification/scripts/check-role-scope.sh`, which fails closed if an Engineer report is present alongside a changed `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/**`, `docs/plans/**`, or `AGENTS.md` file. This does not replace the `Engineer`/`onboard-project` scope boundaries; it is a backstop for the case where a report exists but scope was still violated. It cannot detect an Engineer dispatch that skipped the report protocol entirely.
 
 ## Script Execution On Windows
@@ -42,6 +43,7 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 - A mismatch between the report's `changedFiles` and Git's change set blocks completion. This supports uncommitted work but requires multiple slices or unrelated edits to be committed, isolated, evaluated from a known baseline, or explicitly reconciled as one scope.
 - Unknown boundary classification requires integration.
 - Missing project-specific verification commands is an error; this repository does not assume a stack.
+- Missing QA approval, scenario-ID mappings, or approved exception reasons blocks the final integration/E2E slice.
 - Engineer B may change integration tests and minimal harness code only. Behavior fixes return to Engineer A.
 - An Engineer report present alongside a changed product-truth file (see step 8) blocks the commit until reverted or reconciled through the owning skill.
 - On Windows, invoking bare `bash` instead of Git Bash is an error; all bash scripts must run through Git Bash or configured VS Code tasks.

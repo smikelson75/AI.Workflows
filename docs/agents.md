@@ -13,6 +13,8 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Engineer`;
 - confirms verification and records `completed`, or records a blocker;
+- records explicit human approval or invalidation of the active phase's QA review gate;
+- permits ordinary slices while QA review is pending and blocks the final integration/E2E slice until approval;
 - advances phase status only after its final integration slice;
 - dispatches small, out-of-plan changes (bug fix, typo, no-op refactor) as an ad hoc brief without touching the plan, when they carry no target-truth change;
 - refuses to dispatch and names the redirect (`work-planner`, `prd-writer`, or `brain-storm`) when a request changes target truth, product truth, or is ambiguous between tiers;
@@ -40,14 +42,30 @@ It must not expand scope or guess at unresolved intent. Its default behavior fol
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Those repository-boundary operations belong to the primary agent or user.
 
+## QA
+
+Definition: [`.github/agents/qa.agent.md`](../.github/agents/qa.agent.md)
+
+Use `QA` after an active phase has been planned. It applies the `qa-design` contract to:
+
+- derive black-box Gherkin from context, PRD acceptance signals, phase invariants, and slice outcomes;
+- classify every scenario as `@unit`, `@integration`, or `@e2e`;
+- write only the phase's `acceptance.feature` for human review;
+- route requirement gaps to `prd-writer` and planning or environment gaps to `work-planner`.
+
+`QA` does not inspect source code or implementation tests, execute tests, edit plans or requirements, record approval, or dispatch `Engineer`. It may draft while ordinary slices are in progress. Revisions require `Orchestrator` to invalidate prior approval first.
+
 ## Relationship
 
 ```mermaid
 sequenceDiagram
     participant P as Work Planner
+    participant Q as QA
     participant O as Orchestrator
     participant C as Engineer
+    P->>Q: requirements and active phase plan
     P->>O: main plan, phase invariants, next slice
+    Q-->>O: acceptance.feature ready for human review
     O->>O: apply dispatch gate
     O->>C: copy slice and invariants verbatim
     C->>C: implement, test, verify

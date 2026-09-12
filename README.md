@@ -9,6 +9,7 @@ The repository separates decisions by ownership:
 - **Target truth**: `prd-writer` defines what the finished v1 must do and the constraints it must satisfy.
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
+- **QA design**: `QA` applies `qa-design` to produce requirement-based phase Gherkin for human review while ordinary slices proceed.
 - **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` and `ts-eslint` are the C#/.NET and TypeScript/Node adapters.
 - **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` and `stryker-js` are the C#/.NET and TypeScript/JavaScript adapters.
@@ -25,10 +26,12 @@ The repository separates decisions by ownership:
 2. Confirm the resulting `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
 3. Run `/prd-writer` to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
 4. Run `/work-planner` to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
-5. Ask `Orchestrator` to run the next slice.
-6. Let `Engineer` implement and verify the dispatched slice.
-7. Repeat the orchestrator loop until the plan is complete.
-8. Run `/conventional-commit` to journal each coherent change.
+5. Start `QA` or `/qa-design` to draft the active phase's Gherkin; this may run alongside ordinary slice implementation.
+6. Ask `Orchestrator` to run the next slice.
+7. Review the Gherkin and ask `Orchestrator` to record approval before the final integration/E2E slice.
+8. Let `Engineer` implement and verify dispatched slices, including approved E2E scenarios in the final slice.
+9. Repeat the orchestrator loop until the plan is complete.
+10. Run `/conventional-commit` to journal each coherent change.
 
 ### Small or mid-session change
 
@@ -85,7 +88,10 @@ flowchart LR
     F --> G[docs/prd/&lt;artifact-slug&gt;-prd.md]
     G --> H[work-planner]
     H --> I[Main plan + phase + slice artifacts]
+    I --> Q[QA drafts acceptance.feature]
     I --> J[Orchestrator]
+    Q --> R[Human review]
+    R --> J
     J --> K[Engineer]
     K --> L[Focused verification]
     L --> J

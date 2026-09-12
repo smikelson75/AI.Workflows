@@ -40,6 +40,10 @@ Invoked directly, or from within `prd-writer`/`work-planner` when a decision is 
 
 Invoke with `/work-planner` after context and PRD are current. It owns the implementation gap, phase and slice artifacts, sequencing, and status assumptions. The main plan is the single status record.
 
+### `qa-design`
+
+Invoke with `/qa-design` after the active phase is planned. It derives implementation-independent Gherkin from context, PRD acceptance signals, phase invariants, and slice outcomes, then writes `docs/plans/phases/phase-XX/acceptance.feature` for human review. Drafting may run alongside ordinary implementation slices; `Orchestrator` blocks the final integration/E2E slice until approval is recorded in the main plan.
+
 ### `tdd-csharp`
 
 Invoke for C# behavior changes. It requires xUnit and Moq references, a failing test before production code, focused test loops, and a final full `dotnet test`.
@@ -77,6 +81,7 @@ Use the references beside each skill for its format or protocol details:
 - [`brain-storm` references](../.github/skills/brain-storm/references/CONTEXT-FORMAT.md)
 - [`prd-writer` references](../.github/skills/prd-writer/references/PRD-FORMAT.md)
 - [`work-planner` references](../.github/skills/work-planner/references/PLAN-FORMAT.md)
+- [`qa-design` Gherkin format](../.github/skills/qa-design/references/GHERKIN-FORMAT.md)
 - [`adr-writer` references](../.github/skills/adr-writer/references/ADR-FORMAT.md)
 - [`tdd` protocol](../.github/skills/tdd/protocol.md)
 - [`tdd` test design](../.github/skills/tdd/test-design.md)

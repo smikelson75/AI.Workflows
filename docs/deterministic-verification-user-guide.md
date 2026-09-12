@@ -41,6 +41,7 @@ This protects software quality without forcing integration tests on every slice.
 
 Primary ownership model:
 - work-planner: defines slice scope, verification command, and acceptance checks
+- qa-design: defines phase acceptance scenarios and test-level traceability from requirements and plans
 - Orchestrator: routes work, runs gate decision process, records status
 - Engineer: implements Pass A and Pass B scope, writes reports
 - deterministic-verification skill package: owns policies, schemas, templates, scripts, hooks, and make targets
@@ -63,6 +64,8 @@ flowchart TD
     G --> H
     H --> I[Orchestrator Marks Slice Completed]
     I --> J[Phase End E2E Slice]
+    K[QA Drafts Gherkin Asynchronously] --> L[Human Approval Recorded In Main Plan]
+    L --> J
 ```
 
 ## Component Map
@@ -238,6 +241,8 @@ Command shape:
 make -f .github/skills/deterministic-verification/Makefile slice-pass-b SLICE=<slice-path> COMMAND="<integration-command>"
 
 5. At phase end, run E2E
+
+Before this step, confirm that the main plan records QA review as `approved`. The final slice implements non-excepted `@e2e` scenarios from the phase's `acceptance.feature` and verifies scenario-ID mappings for unit and integration tests.
 
 Command shape:
 make -f .github/skills/deterministic-verification/Makefile phase-e2e PHASE=<phase-path> COMMAND="<e2e-command>"

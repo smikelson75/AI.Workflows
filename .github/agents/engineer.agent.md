@@ -13,7 +13,7 @@ Behavioral guidelines to reduce common LLM coding mistakes and provide instructi
 
 ## Scope Boundary
 
-`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it.
+`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `qa-design`, `agent-instructions`, or a style/mutation-testing adapter, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, a phase `acceptance.feature`, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it. The final integration/E2E slice may read the approved feature and implement its tests, but it must route scenario changes to `qa-design`.
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Repository setup and commit boundaries belong to the primary agent or user.
 

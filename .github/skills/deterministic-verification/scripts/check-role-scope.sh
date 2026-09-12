@@ -66,13 +66,14 @@ done <<< "$changed_files"
 
 if [[ ${#violations[@]} -gt 0 ]]; then
   {
-    printf '%s\n' 'role-scope violation: an Engineer-role report is present, but these product-truth files changed:'
+    printf '%s\n' 'role-scope violation: an Engineer-role report is present, but these workflow-owned artifacts changed:'
     printf '  - %s\n' "${violations[@]}"
     printf '%s\n' 'Engineer implements and tests assigned code slices only. It must not author CONTEXT.md, UBIQUITOUS-LANGUAGE.md, docs/prd/**, docs/plans/**, or AGENTS.md.'
     printf '%s\n' 'What to do:'
     printf '%s\n' '  - If this content belongs to product/domain truth: revert these files and run /brain-storm instead.'
     printf '%s\n' '  - If this content belongs to target behavior, scope, or architecture: revert these files and run /prd-writer instead.'
     printf '%s\n' '  - If this content belongs to sequencing, phases, or slices: revert these files and run /work-planner instead.'
+    printf '%s\n' '  - If this content is a phase acceptance.feature: revert it and run /qa-design instead.'
     printf '%s\n' '  - If this content belongs to repository-wide agent guidance: revert this file and run /agent-instructions instead.'
     printf '%s\n' '  - Only Orchestrator may write plan status transitions; even it may only touch the main plan and a single slice Outcome line.'
   } >&2

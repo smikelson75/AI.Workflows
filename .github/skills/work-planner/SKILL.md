@@ -27,6 +27,7 @@ Plan artifacts exist to serve the `orchestrator` agent, which dispatches enginee
 - main plan: routing table. Which phase is active, which slice is next, what is done.
 - phase detail: cross-slice invariants and boundaries that no single slice owns.
 - slice detail: the self-contained payload the orchestrator turns into a subagent brief.
+- phase acceptance feature: a `qa-design`-owned black-box contract drafted asynchronously after phase planning.
 
 A slice must carry strong enough success criteria for a subagent to loop independently. If it cannot, it is under-specified, not under-sized.
 
@@ -54,9 +55,10 @@ Before finalizing, check any newly settled sequencing or implementation-architec
 - Use zero-padded numbering and relative links.
 - Use only phase/slice statuses `planned`, `in progress`, `completed`; normally one phase is `in progress`.
 - Record every status in the main plan only. Phase and slice documents carry no status field, so they stay effectively write-once and the orchestrator updates one file per transition.
+- For the active phase, record a QA review gate in the main plan with state `pending` or `approved` and the expected `phases/phase-XX/acceptance.feature` path. Initialize it to `pending`; only `Orchestrator` records explicit human approval or invalidation.
 - Keep roadmap at phase level; link to detail. Retain completed artifacts and update statuses rather than deleting/collapsing them.
 - Never duplicate a field across artifacts. The main plan links to phase detail rather than restating it, and phase detail lists slice links rather than restating slice content.
-- Size a slice as one vertical behavior. The final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended. Mutation testing does not get its own slice; when a mutation-testing adapter is supported for the detected stack, that final slice's verification command must automatically include the phase-scoped mutation-testing run (e.g. `dotnet stryker` or `npx stryker run`). If the root adapter config is missing, prompt or dispatch the matching adapter rather than silently dropping mutation testing. Route survivors and any required prerequisite test-writing phase per [`mutation-testing/protocol.md`](../mutation-testing/protocol.md).
+- Size a slice as one vertical behavior. The final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended. Scope that slice to the phase's `acceptance.feature`: implement every non-excepted `@e2e` scenario and verify that all `@unit` and `@integration` scenario IDs map to executable tests. Mutation testing does not get its own slice; when a mutation-testing adapter is supported for the detected stack, that final slice's verification command must automatically include the phase-scoped mutation-testing run (e.g. `dotnet stryker` or `npx stryker run`). If the root adapter config is missing, prompt or dispatch the matching adapter rather than silently dropping mutation testing. Route survivors and any required prerequisite test-writing phase per [`mutation-testing/protocol.md`](../mutation-testing/protocol.md).
 - Design coherent phases around end-to-end value; keep future phase detail sufficient for later slices and active slices execution-ready.
 - Do not use `Step`; use `Slice`. Do not add code-task lists, `Immediate start`, or execution checklists outside active slices.
 
@@ -66,7 +68,7 @@ Before finalizing, check any newly settled sequencing or implementation-architec
 2. Detect current state: project maturity, architecture direction in place, implemented/in-progress/absent areas, hard sequencing constraints, plan freshness, phase statuses, artifact drift, and configured/supported test and mutation adapters.
 3. Derive the gap between current state and the PRD target, and record it in the main plan's current-state summary.
 4. Clarify only ordering/dependency changes, current status, active-slice needs, and unsettled planner assumptions.
-5. Write current-truth artifacts using the format references, omitting empty fields. For the final integration/E2E slice of each phase, automatically include the phase-scoped mutation-testing verification command if the stack supports an adapter.
+5. Write current-truth artifacts using the format references, omitting empty fields. Initialize the active phase's QA review gate to `pending`. For the final integration/E2E slice, include the acceptance-feature scope and traceability checks, and automatically include the phase-scoped mutation-testing verification command if the stack supports an adapter.
 6. Apply the ADR Gate to any newly settled sequencing or implementation-architecture decision.
 
 Write only when inputs, dependencies, statuses, active-slice needs, and artifact requirements are clear. Otherwise ask the next blocking question and do not write.

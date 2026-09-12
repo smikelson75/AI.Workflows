@@ -27,7 +27,7 @@ If you are running without the `agent` tool (cannot dispatch `Engineer`) or with
 
 - DO NOT write, edit, or refactor product code. Dispatch it. If dispatch is unavailable, stop per Invocation Check above rather than doing the work yourself.
 - DO NOT read source files to compose a brief. If a brief needs repo knowledge the slice does not carry, the slice is under-specified.
-- DO NOT edit any file except the main plan at `docs/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Use the main plan path created by `work-planner`.
+- DO NOT edit any file except the main plan at `docs/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Main-plan edits are limited to phase/slice status, blockers, and the active phase's QA review gate. Use the main plan path created by `work-planner`.
 - DO NOT create, resequence, or rewrite phases and slices. That is `work-planner`'s job.
 - DO NOT summarize or reword slice content when dispatching. Copy it verbatim.
 - DO NOT duplicate durable artifact content in the main plan, phase, slice, or chat report.
@@ -42,6 +42,15 @@ Load the minimum and reuse it:
 - phase document: once when the phase becomes active, for cross-slice invariants; reuse for every slice in that phase
 - slice document: at dispatch time only
 - never load completed slices, non-active phases, `CONTEXT.md`, or the PRD unless resolving a contradiction
+
+## QA Review Gate
+
+QA drafting runs asynchronously with ordinary slice implementation. A `pending` QA review does not block ordinary slices.
+
+- Before dispatching the final integration/E2E slice, require the active phase's QA review state to be `approved`. If it is `pending`, stop and direct the user to review the expected `acceptance.feature` with `QA` or `/qa-design`.
+- Record `approved` only after the human explicitly approves the feature and the expected file exists. Do not judge or rewrite its scenarios.
+- On an explicit request to revise an approved feature, change the gate back to `pending` before directing the user to `QA` or `/qa-design`.
+- Never infer approval from file presence, an Engineer report, or passing tests.
 
 ## Dispatch Gate
 
@@ -67,17 +76,17 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 
 1. Read the main plan. Identify the active phase and the next slice by status. If no phase is `in progress` or the active phase has no remaining `planned` slice, stop and tell the user to run `/work-planner`; do not invent a slice.
 2. If the phase changed, load the new phase document for its invariants.
-3. Load the next slice. Apply the dispatch gate.
+3. Load the next slice. Apply the dispatch gate. If it is the phase's final integration/E2E slice, also apply the QA review gate.
 4. Set the slice to `in progress` in the main plan.
 Dispatch the brief to `Engineer`.
  Read the returned report. Validate the Engineer A report and evaluate the integration gate. If the gate reports a change-set mismatch, leave the slice `in progress` and tell the user which files are missing or extra; do not rerun Pass A. If integration is required, dispatch Pass B to `Engineer`, validate its report, and confirm integration verification.
 7. If all required verification passed, set the slice to `completed`. If verification failed or the subagent surfaced a blocking question, leave the slice `in progress` and record the blocker.
-8. When the phase's final integration slice completes, set the phase to `completed` and the next phase to `in progress`.
+8. When the phase's final integration slice completes, set the phase to `completed` and the next phase to `in progress`; the next phase's QA review begins as `pending` when its active slices are planned.
 9. Stop after each slice unless the user asked you to continue.
 
 ## Status Recording
 
-Status lives only in the main plan, so every transition is a one-file write. Update the active pointer and the status tables. Never write status into a phase or slice document.
+Status and QA review state live only in the main plan, so every transition is a one-file write. Update the active pointer, status tables, and QA review gate. Never write status or approval into a phase, slice, or feature document.
 
 If a completed slice deviated from its brief (scope change, discovery, follow-up needed), write a short `Outcome` line into the slice document: what shipped versus what was briefed. Overwrite it on any later change; it is not a running log. Omit it when the slice completed exactly as briefed.
 

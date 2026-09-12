@@ -8,6 +8,7 @@ Purpose: define the canonical file layout and naming rules for the `work-planner
 - phase detail root: `docs/plans/phases/`
 - phase detail document: `docs/plans/phases/phase-01/phase.md`
 - slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
+- phase acceptance feature: `docs/plans/phases/phase-01/acceptance.feature`, created by `qa-design`
 
 ## Naming Rules
 - use zero-padded two-digit numbering for phases: `phase-01`, `phase-02`
@@ -24,6 +25,8 @@ Purpose: define the canonical file layout and naming rules for the `work-planner
 - always create or retain a separate phase detail document for each phase
 - create slice detail documents only for the single `in progress` phase
 - make the final slice of every phase an integration and/or end-to-end slice
+- initialize the active phase's QA review gate to `pending`; QA drafting may proceed alongside ordinary slices
+- scope the final slice to the approved phase acceptance feature and its scenario IDs
 - when a phase becomes `completed`, keep its phase document and slice documents; update statuses in the main plan rather than collapsing or deleting them
 - link from the main plan to each phase document without restating its detail
 - list slice links in each phase document without restating slice content
@@ -40,6 +43,7 @@ docs/plans/
   <artifact-slug>-implementation-plan.md
   phases/
     phase-01/
+      acceptance.feature
       phase.md
       slice-01-bootstrap-authentication.md
       slice-02-add-login-flow.md
@@ -50,6 +54,7 @@ docs/plans/
 ## Drift To Avoid
 - do not keep full phase detail inline in the main plan
 - do not record status anywhere except the main plan
+- do not treat QA review as slice completion; it is a separate final-slice dispatch gate
 - do not restate a phase or slice field in more than one artifact
 - do not create slice files for planned future phases
 - do not rename completed artifacts into archive-only names that hide their baseline value

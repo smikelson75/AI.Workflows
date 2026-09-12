@@ -9,12 +9,15 @@ The main plan is the orchestrator's routing table and the single record of statu
 - problem and approach
 - current-state summary and gap to the PRD target
 - an active pointer naming the current phase and next slice
+- each phase's QA review gate and expected acceptance-feature path
 - a phase table with status and links
 - a slice status list for the `in progress` phase only
 
 ## Rules
 
 - this is the only artifact that records status; phase and slice documents carry none
+- QA review is a gate state, not phase or slice status; use only `pending` or `approved`
+- initialize each phase's QA review to `pending`; `Orchestrator` records explicit human approval or invalidation
 - keep all phase detail out of the main plan; carry one line of intent per phase, no more
 - never restate a field that exists in a phase or slice document
 - the orchestrator updates status here and nowhere else, so a transition is a one-file write
@@ -54,11 +57,11 @@ The main plan is the orchestrator's routing table and the single record of statu
 
 ## Phase plan
 
-| # | Phase | Status | Outcome | Detail |
-|---|-------|--------|---------|--------|
-| 01 | <name> | completed | <one line> | [detail](phases/phase-01/phase.md) |
-| 02 | <name> | in progress | <one line> | [detail](phases/phase-02/phase.md) |
-| 03 | <name> | planned | <one line> | [detail](phases/phase-03/phase.md) |
+| # | Phase | Status | QA review | Acceptance | Outcome | Detail |
+|---|-------|--------|-----------|------------|---------|--------|
+| 01 | <name> | completed | approved | `phases/phase-01/acceptance.feature` | <one line> | [detail](phases/phase-01/phase.md) |
+| 02 | <name> | in progress | pending | `phases/phase-02/acceptance.feature` | <one line> | [detail](phases/phase-02/phase.md) |
+| 03 | <name> | planned | pending | `phases/phase-03/acceptance.feature` | <one line> | [detail](phases/phase-03/phase.md) |
 
 ## Slice status - Phase 02
 

@@ -21,6 +21,7 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 | `docs/plans/<artifact-slug>-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
 | `docs/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
 | `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
+| `docs/plans/phases/phase-XX/acceptance.feature` | `qa-design` | Human-reviewed black-box acceptance scenarios and test-level traceability for one phase |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 
@@ -33,12 +34,13 @@ Derive `<artifact-slug>` from the canonical project, product, or system name in 
 ## Status Rules
 
 - Valid phase and slice statuses are `planned`, `in progress`, and `completed`.
+- Valid QA review states are `pending` and `approved`; they are recorded only in the main plan.
 - Normally one phase is `in progress`.
 - Status is recorded only in the main plan.
 - Phase and slice detail documents retain durable content; they do not become status logs.
 - Completed phase and slice artifacts remain in place.
 - Only the current in-progress phase receives new slice files unless explicitly directed.
-- The final slice of each phase is integration or end-to-end validation. When a mutation-testing adapter is supported for the stack, that slice's verification command automatically includes the phase-scoped mutation-testing run (mutation testing does not receive a dedicated slice) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md).
+- QA drafting may proceed asynchronously with ordinary slices. The final slice of each phase is integration or end-to-end validation and cannot start until the phase's `acceptance.feature` has human approval recorded in the main plan. When a mutation-testing adapter is supported for the stack, that slice's verification command automatically includes the phase-scoped mutation-testing run (mutation testing does not receive a dedicated slice) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md).
 
 ## Plan Shape
 
@@ -47,6 +49,7 @@ docs/plans/
   <artifact-slug>-implementation-plan.md
   phases/
     phase-01/
+      acceptance.feature
       phase.md
       slice-01-<slug>.md
 ```
@@ -58,6 +61,7 @@ Use zero-padded numbering and relative links. The main plan links to phase detai
 - Product discovery changes update context and glossary through `brain-storm`.
 - Target behavior or architecture changes update the PRD through `prd-writer`.
 - Implementation discoveries, sequencing, and status update plans through `work-planner` or `Orchestrator` according to the workflow.
+- Phase acceptance scenarios update through `qa-design`; approval and invalidation are recorded by `Orchestrator` in the main plan.
 - Stable repository conventions update `AGENTS.md` through `agent-instructions`.
 - A hard-to-reverse, surprising, real-trade-off decision is recorded once through `adr-writer`, gated from within `prd-writer` (target architecture) or `work-planner` (sequencing/implementation architecture). An ADR is never edited in place; a new one supersedes it.
 

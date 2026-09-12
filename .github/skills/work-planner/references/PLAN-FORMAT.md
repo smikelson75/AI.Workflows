@@ -8,6 +8,7 @@ The artifact set serves the `orchestrator` agent, which dispatches engineers gov
 - main plan: problem and approach
 - main plan: current-state summary and gap to the PRD target
 - main plan: active pointer, phase table, and all statuses
+- main plan: active phase QA review gate and expected acceptance-feature path
 - phase detail document for each phase
 
 ## Exclude
@@ -38,12 +39,14 @@ The artifact set serves the `orchestrator` agent, which dispatches engineers gov
 Status is recorded only in the main plan.
 - phase: `planned`, `in progress`, `completed`
 - slice: `planned`, `in progress`, `completed`
+- QA review gate: `pending`, `approved`
 
 ## Artifact Layout
 - artifact slug: derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when the glossary has no project name
 - main plan: `docs/plans/<artifact-slug>-implementation-plan.md`
 - phase detail document: `docs/plans/phases/phase-01/phase.md`
 - slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
+- phase acceptance feature: `docs/plans/phases/phase-01/acceptance.feature`, owned by `qa-design`
 
 Use zero-padded numbering. Do not include a slug in the phase folder name. Do not repeat the phase number in the slice filename.
 
@@ -55,7 +58,7 @@ Use zero-padded numbering. Do not include a slug in the phase folder name. Do no
 ## Slice Rules
 - slices are allowed only under the single current `in progress` phase unless the user explicitly directs otherwise
 - one slice is one vertical behavior
-- the final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended
+- the final slice of every phase is an integration and/or end-to-end slice proving the phase's vertical behavior works as intended against the approved `acceptance.feature`
 - a slice must be self-contained enough to become a subagent brief, including a verification command and files in scope
 - completed slice documents are retained as planning baseline after the phase completes
 

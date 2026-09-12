@@ -49,11 +49,19 @@ The planner creates execution-ready slices. Every slice needs a user-visible out
 
 Before finalizing, `work-planner` applies the same ADR test to any newly settled sequencing or implementation-architecture decision and hands off to `adr-writer` when it holds.
 
+### 4.5 Design phase acceptance
+
+After the active phase is planned, run `QA` or `/qa-design` to derive `docs/plans/phases/phase-XX/acceptance.feature` from product context, PRD acceptance signals, phase invariants, and slice outcomes. QA does not read application source code or implementation tests. It tags every scenario with a stable ID and exactly one test level: `@unit`, `@integration`, or `@e2e`.
+
+QA drafting proceeds asynchronously with ordinary implementation slices. Human review may happen at any time before the final integration/E2E slice. `Orchestrator` records explicit approval in the main plan; it does not infer approval from file presence. Requirement gaps return to `prd-writer`, while phase boundary or test-environment gaps return to `work-planner`.
+
 ### 5. Execute a slice
 
 Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
 `Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
+
+Ordinary slices may proceed while QA review is pending. Before the final integration/E2E slice, `Orchestrator` requires the main plan's QA review gate to be `approved`. That slice implements all non-excepted `@e2e` scenarios and confirms that `@unit` and `@integration` scenario IDs map to executable tests. `Engineer` cannot edit Gherkin; proposed revisions return to `qa-design` and require renewed human approval.
 
 For local deterministic integration gating, invoke `/deterministic-verification`. After Pass A, `Orchestrator` validates the structured report and runs the gate. The gate derives the changed-file set from Git, so an uncommitted slice is supported; a mismatch blocks completion until the user commits or isolates other work, supplies a known baseline, or intentionally reconciles a combined scope. A required Pass B is dispatched to the existing `Engineer` role with integration-only scope; it is not a separate agent. Phase-end E2E remains a separate final validation step.
 
@@ -88,7 +96,9 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 | Discovery to context | Problem, users, workflow, scope, constraints, success, and vocabulary are answerable |
 | Context to PRD | Context and glossary are current and confirmed |
 | PRD to plan | Target behavior, constraints, and acceptance signals are settled |
+| Plan to QA | The active phase exposes its intended behavior, boundaries, slices, and test-environment constraints |
 | Plan to orchestrator | The next slice has outcome, scope, verification command, and acceptance checks |
+| QA to final E2E slice | `acceptance.feature` exists and human approval is recorded in the main plan |
 | Orchestrator to engineer | Slice and active phase invariants are copied verbatim |
 | Slice completion | Verification passes and the result is reported |
 | Commit | Staging scope is coherent and the message follows Conventional Commits 1.0.0 |
@@ -99,6 +109,8 @@ Do not write a separate "session status" artifact to make step 3 cheaper: it wou
 - A changed required behavior, scope boundary, hard constraint, or target architecture goes to `prd-writer`.
 - A sequencing, dependency, status, or active-slice issue goes to `work-planner`.
 - A slice that lacks a verification command stays blocked and returns to `work-planner`.
+- Missing or contradictory Gherkin inputs route to `prd-writer` for target behavior or `work-planner` for phase/test-environment detail.
+- A requested change to approved Gherkin first returns to `Orchestrator` to invalidate approval, then to `qa-design` for revision and renewed review.
 - A failed verification keeps the slice `in progress` until repaired and rerun.
 - A hard-to-reverse, surprising, real-trade-off technical decision goes to `adr-writer`; a routine or reversible one does not.
 
