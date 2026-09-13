@@ -10,7 +10,7 @@ Invoke with `/brain-storm` when product intent is vague or changing. It intervie
 
 ### `onboard-project`
 
-Invoke with `/onboard-project` as the entry point to the workflow. It detects code maturity (empty, scaffold, mature), artifact maturity, and stack, then sequences the owning skills in the correct order for that state. It resolves competing instruction files first, dispatches the matching code style adapter, and performs evidence-based discovery for existing codebases. It writes no artifact itself.
+Invoke with `/onboard-project` as the entry point to the workflow. It acts as a thin classifier and router: it detects code maturity (empty, scaffold, mature), artifact presence, and detected stacks once, then sequences the owning skills using tailored in-memory handoffs. It resolves competing instruction files first and reports an aggregate brief. It writes no durable artifact or status file of its own, delegating all domain setup and decisions to the owning skills.
 
 ## Target And Repository Guidance
 
@@ -91,5 +91,6 @@ Use the references beside each skill for its format or protocol details:
 - [`ts-eslint` baseline](../.github/skills/ts-eslint/references/BASELINE.md)
 - [`ts-eslint` enforcement](../.github/skills/ts-eslint/references/ENFORCEMENT.md)
 - [`mutation-testing` protocol](../.github/skills/mutation-testing/protocol.md)
+- [`onboard-project` handoff reference](../.github/skills/onboard-project/references/ONBOARDING-HANDOFF.md)
 - [`onboard-project` discovery checklist](../.github/skills/onboard-project/references/DISCOVERY-CHECKLIST.md)
 - [`conventional-commit` types](../.github/skills/conventional-commit/references/types.md)

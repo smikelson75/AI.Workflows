@@ -9,6 +9,16 @@ user-invocable: true
 
 Create a black-box acceptance contract from settled requirements and plans while implementation proceeds independently.
 
+## Onboarding Input
+
+When invoked following `work-planner` after active phase creation:
+- Derive scenarios solely from settled target requirements (`docs/prd/`) and active phase scope (`phase.md`).
+- Never inspect, execute, or reverse-engineer existing unit, integration, or E2E tests, and never read implementation code.
+- Draft asynchronously in the primary conversation; human review may remain pending when onboarding completes its routing brief. The phase-final integration/E2E slice remains blocked until the gate records explicit human approval.
+- Return a concise scenario brief; never write or update an onboarding status artifact.
+
+When invoked directly without an onboarding envelope, follow the standard read order below.
+
 ## Inputs And Read Order
 
 1. `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md` for user intent and canonical terms.

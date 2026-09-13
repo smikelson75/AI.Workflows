@@ -9,6 +9,16 @@ user-invocable: true
 
 Create or update the repository's durable, project-wide instructions for engineers.
 
+## Onboarding Input
+
+When invoked from `onboard-project` with an in-memory [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md), receive `onboarding_mode`, `repository_scope`, `detected_stacks`, `workflow_artifacts`, and `competing_instructions`.
+1. Verify presence of durable product context, PRD, plan, and enforced conventions.
+2. If competing instruction files exist, verify that normalization was completed or prompt the user.
+3. Draft or amend `AGENTS.md` incorporating verified conventions (including code-style and verification commands).
+4. Return a concise outcome to the caller; never write or update an onboarding status artifact.
+
+When invoked directly without an onboarding envelope, follow the standard read order and mode detection below.
+
 ## Purpose
 
 `AGENTS.md` is a compact operating guide for work across the repository. It records stable conventions and constraints that apply to most coding tasks. It is not a product specification, implementation plan, progress report, or decision log.

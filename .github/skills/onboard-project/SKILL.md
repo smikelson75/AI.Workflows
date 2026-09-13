@@ -7,9 +7,9 @@ user-invocable: true
 
 # Onboard Project
 
-The entry point to the workflow. Detect what the repository actually contains, then sequence the owning skills so the user never has to work out the order themselves.
+The entry point to the workflow. Detect repository-wide facts once, then sequence the owning skills with tailored in-memory handoffs so the user never has to work out the order themselves.
 
-This skill writes no durable artifact of its own. It detects, routes, and supplies the repo-grounded discovery step that no other skill owns.
+This skill writes no durable artifact of its own, produces no onboarding status or TODO file, and decides no domain policies. It acts as a thin repository classifier and workflow router.
 
 ## When To Use
 
@@ -19,131 +19,109 @@ Do not use it when only one artifact is missing and the rest are current — cal
 
 ## Detect First
 
-Read-only. Establish two independent facts before routing.
+Read-only inspection per [references/DISCOVERY-CHECKLIST.md](references/DISCOVERY-CHECKLIST.md). Establish repository-wide facts before routing.
 
 **Code maturity**
 
 | Signal | State |
 | --- | --- |
-| No manifest anywhere (`*.sln`/`*.csproj`, `package.json`, `pyproject.toml`, `go.mod`) | `empty` |
-| Manifest present, but source is only template output | `scaffold` |
-| Manifest plus real source and/or tests | `mature` |
+| No manifest anywhere in scope (`*.sln`/`*.csproj`, `package.json`, `pyproject.toml`, `go.mod`) | `empty` |
+| Manifest present, but source is only default template or generator boilerplate | `scaffold` |
+| Manifest present with real source and/or tests | `mature` |
 
-**Test-suite maturity** (only relevant once code maturity is `mature`) — whether a real unit test suite exists, versus no tests at all. This drives the `mutation-testing` dispatch in Rule 4 and is independent of code maturity: a mature codebase can still have zero tests.
+**Artifact maturity** — presence and apparent currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
 
-**Artifact maturity** — presence and currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
+**Detected stacks** — record detected manifests and languages.
 
-Also record the detected **stack** from the manifest, and whether a code style config exists and is actually enforced.
+**Instruction file condition** — check for competing root instruction files (`AGENT.md`, `AGENTS.md`, `.github/copilot-instructions.md`).
+
+**Git condition** — check whether Git is initialized and whether a clean baseline exists.
+
+Do not assess test-suite maturity, style violations, mutation testing thresholds, E2E readiness, or acceptance criteria in this skill. Those decisions belong strictly to their respective domain owners.
 
 ## Rule 1: Resolve Competing Instruction Files First
 
-Blocking and mechanical. Before any skill runs:
+Blocking and mechanical repository normalization. Before any skill runs:
 
 - `AGENT.md` (singular) must be renamed to `AGENTS.md`. Never leave both.
-- If both `AGENTS.md` and `.github/copilot-instructions.md` exist, ask which is canonical and remove the other. `agent-instructions` will stop and ask anyway; resolving it here avoids a wasted run.
+- If both `AGENTS.md` and `.github/copilot-instructions.md` exist, ask the user which is canonical and remove the other. Resolving this here avoids redundant stops downstream.
 
-Treat any pre-existing `AGENTS.md` as unverified evidence to reconcile, not as truth. It was written without a PRD or plan and may assert conventions the code no longer follows.
+Treat any pre-existing `AGENTS.md` as unverified startup evidence, not durable truth. `agent-instructions` reconciles guidance against PRD, plan, and conventions when it runs.
 
-## Rule 2: Route By Code Maturity
+## Rule 2: Tailored, Disposable Handoffs
 
-**`empty`** — the stack is unknown, so no style adapter can run and nothing can be verified. Order:
+All handoffs to downstream skills and agents are conducted in-memory using the envelope specification in [references/ONBOARDING-HANDOFF.md](references/ONBOARDING-HANDOFF.md).
+- Tailor each handoff by selecting only the fields needed by the recipient.
+- Never write the envelope or an onboarding status checklist to disk.
+- If an owner is already current (idempotent re-entry), that owner reports completion immediately without repeating work.
 
-1. `brain-storm` (pure interview; no discovery to do)
-2. `prd-writer` — this is where the stack and target architecture get settled
-3. `work-planner` — Phase 0 must be a scaffolding phase
-4. Execute the scaffolding slice via `Orchestrator`, run as the active agent mode (switch to it directly), never invoked through a subagent-dispatch tool — it needs `agent`/`execute` tool parity to dispatch `Engineer` and verify. `Orchestrator` dispatches the actual scaffolding to `Engineer` — it must not write product files itself.
-5. Style adapter (see Rule 3), now that something is buildable
-6. Mutation-testing adapter (see Rule 4), establishing root config (`stryker-config.json` or `stryker.config.json`) and test-runner tooling at measure-only (`break: 0`) before planning subsequent feature phases
-7. `agent-instructions`
+## Rule 3: Route By Code Maturity
 
-The empty-repository path is not onboarded when scaffolding alone passes. The style adapter, mutation-testing adapter (when an adapter exists for the stack), and `agent-instructions` steps remain required after the scaffold exists; do not report onboarding complete while any is deferred.
+**`empty`** — the stack is unknown, so no stack-specific adapters can run:
 
-Tell the user to `git init` and add a stack-appropriate ignore file first. No skill owns that, and `conventional-commit` needs a repository.
+1. `brain-storm` — interview to establish product context; outputs `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
+2. `prd-writer` — settle target architecture, stack, and constraints; outputs `docs/prd/PRD.md`.
+3. `work-planner` — plan Phase 0 as a scaffolding phase; outputs `docs/plans/PLAN.md`.
+4. Establish clean Git baseline containing onboarding artifacts created so far.
+5. Execute scaffolding slice via `Orchestrator` (run as active agent mode, never through a subagent tool; dispatches implementation to `Engineer`).
+6. Code-style protocol / matching adapter (see Rule 4), now that a manifest exists.
+7. Mutation-testing protocol / matching adapter (see Rule 5), establishing root config.
+8. `agent-instructions` (see Rule 6).
+9. `deterministic-verification` (see Rule 7).
 
 Before executing the first scaffolding slice in an empty repository, establish a clean Git baseline containing the onboarding artifacts created so far, while leaving the planned slice files uncommitted. Do this as the primary agent or user, never by dispatching it to `Engineer`; the deterministic gate compares the slice report with the post-baseline change set.
 
-**`scaffold`** — the stack is known and the style backlog is near zero. Order:
+**`scaffold`** — manifest and stack are known; style and mutation config can be established immediately:
 
-1. Style adapter at blocking severity, committed on its own
-2. Mutation-testing adapter (see Rule 4), establishing root config at measure-only (`break: 0`)
-3. `brain-storm` -> `prd-writer` -> `work-planner`
-4. `agent-instructions`
+1. Code-style protocol / matching adapter (see Rule 4) at blocking severity.
+2. Mutation-testing protocol / matching adapter (see Rule 5) establishing root configuration.
+3. `brain-storm` -> `prd-writer` -> `work-planner`.
+4. `agent-instructions` (see Rule 6).
+5. `deterministic-verification` (see Rule 7).
 
-Running the style adapter first is the point: this is the cheapest moment the repository will ever offer, and it strips the settings the project template emitted before they spread. Establishing mutation testing config right after ensures `work-planner` can wire the phase-closing verification commands automatically.
+**`mature`** — existing code and tests present; treat legacy debt as plan work:
 
-**`mature`** — run discovery, and treat the style backlog as plan work. Order:
+1. Code-style protocol / matching adapter (see Rule 4) at non-blocking severity.
+2. Mutation-testing protocol / matching adapter (see Rule 5) to establish config and report baseline status.
+3. `brain-storm` -> `prd-writer` -> `work-planner`. `work-planner` receives the style and mutation findings, inspects E2E readiness directly, and sequences necessary remediation into phase slices.
+4. `agent-instructions` (see Rule 6).
+5. `deterministic-verification` (see Rule 7).
 
-1. Style adapter at non-blocking severity, to measure the violation count without blocking anyone
-2. Discovery per [references/DISCOVERY-CHECKLIST.md](references/DISCOVERY-CHECKLIST.md)
-3. Mutation-testing check per Rule 4, handing its result to `work-planner` alongside the violation count
-4. `brain-storm` -> `prd-writer` -> `work-planner`, handing the planner the violation count so remediation becomes real phases
-5. `agent-instructions`
+## Rule 4: Route Code Style Setup
 
-## Rule 3: Dispatch The Style Adapter By Stack
+Delegate code style configuration to the code-style protocol and matching adapter per [`code-style/protocol.md`](../code-style/protocol.md):
+- .NET (`*.sln`, `*.csproj`) -> `dotnet-editorconfig`
+- TypeScript / JavaScript (`package.json`) -> `ts-eslint`
+- Other stacks -> report missing adapter plainly; continue routing other steps.
 
-Match the detected stack to its adapter, which applies [`code-style/protocol.md`](../code-style/protocol.md):
+The code-style adapter self-assesses configuration presence, executes setup, verifies formatting/linting, and reports its outcome.
 
-| Stack evidence | Adapter |
-| --- | --- |
-| `*.sln`, `*.csproj` | `dotnet-editorconfig` |
-| `package.json` with TypeScript | `ts-eslint` |
-| `pyproject.toml` | none yet |
+## Rule 5: Route Mutation Testing Setup
 
-Detection matches **all** stacks present, not the first one. A repository containing both a `.csproj` and a `package.json` runs both adapters, per the protocol's mixed-stack rules: the adapter owning the primary build runs first and establishes the shared root config, the rest follow in amendment mode, and violation counts are reported per stack.
+Delegate mutation testing setup to the mutation-testing protocol and matching adapter per [`mutation-testing/protocol.md`](../mutation-testing/protocol.md):
+- .NET (`*.sln`, `*.csproj`) -> `stryker-dotnet`
+- TypeScript / JavaScript (`package.json`) -> `stryker-js`
+- Other stacks -> report missing adapter plainly; continue routing other steps.
 
-If no adapter exists for a detected stack, say so plainly and stop that step for that stack only; other stacks still proceed. Do not improvise a configuration; report the gap so an adapter can be added.
+The mutation-testing adapter self-assesses test framework readiness, guides root configuration walkthrough, and reports its status.
 
-## Rule 4: Dispatch The Mutation-Testing Adapter By Stack And Test-Suite State
+## Rule 6: `agent-instructions` Runs After Conventions And Plans Exist
 
-Applies [`mutation-testing/protocol.md`](../mutation-testing/protocol.md). Mutation testing does not get its own phase or slice; it is configured during onboarding so that root configuration is established and `work-planner` can automatically wire the phase-scoped mutation command into each phase's final integration/E2E slice.
+`agent-instructions` requires durable context (`CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`), PRD, plan, and confirmed repository conventions to generate or update `AGENTS.md`. It runs near the end of the routing sequence.
 
-| Stack evidence | Adapter |
-| --- | --- |
-| `*.sln`, `*.csproj` | `stryker-dotnet` |
-| `package.json` with a unit test runner | `stryker-js` |
-| `pyproject.toml` | none yet |
+## Rule 7: Route Deterministic Verification Idempotently
 
-As in Rule 3, detection matches all stacks present. Each stack keeps its own config file, its own threshold walkthrough, and its own reported score; do not average scores across stacks or let one stack's threshold stand in for another's.
-
-Branch by code maturity and test-suite state:
-
-- **`empty` (post-scaffolding) or `scaffold`** — unit test projects and runners are present or just scaffolded. Run the matching adapter to create root-level config (`stryker-config.json` or `stryker.config.json`) with measure-only baseline thresholds (`break: 0`) and install local tooling/plugins. No full-repository baseline run is needed because there is no legacy debt.
-- **`mature`, no test suite at all** — do not attempt a run. Report the gap to `work-planner` as a required prerequisite phase (a baseline test suite) that must land before any mutation-testing phase can start.
-- **`mature`, existing test suite** — offer the protocol's one-time, opt-in, cost-flagged full-repository baseline run. State the cost trade-off plainly and let the user decide; do not run it automatically the way the style adapter's non-blocking measurement runs automatically. Establish root configuration and report the outcome (run, declined, or deferred) to `work-planner` as backlog context alongside the style violation count.
-
-If no adapter exists for a detected stack, say so plainly and stop that step for that stack only, same as Rule 3.
-
-## Rule 5: Ground The Product Skills In Evidence
-
-For a `mature` repository, discovery produces a disposable findings draft: candidate problem/users/workflow, current architecture and stack, apparent conventions, glossary candidates, contradictions and unknowns.
-
-Hand it to `brain-storm` as pre-filled context. The interview confirms or corrects the draft and resolves genuine ambiguity; it does not re-ask what discovery already answered. Wait for `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md` before continuing.
-
-For `prd-writer`, the target state of an existing project is normally "current architecture as confirmed" plus explicitly requested changes; ask what should change versus stay before it writes. For `work-planner`, expect most existing behavior to land as already-implemented foundation phases.
-
-If discovery contradicts the stated purpose, surface the contradiction and let the user resolve it before anything is written.
-
-## Rule 6: `agent-instructions` Runs Last, Once
-
-It needs context, PRD, plan, and the enforced style config as inputs, so it runs at the end regardless of path. Choose bootstrap or amendment mode from detection, and fold the style adapter's handoff text into the same run rather than amending twice.
-
-## Rule 7: Deterministic Verification Bootstrap
-
-After the normal routing sequence, if deterministic-verification artifacts are present (`.github/skills/deterministic-verification/scripts/evaluate-integration-gate.sh`, `.github/skills/deterministic-verification/hooks/pre-commit`, and `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`), run `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh`. On Windows, default to Git Bash first (e.g. `& "C:\Program Files\Git\bin\bash.exe"` or resolved from `git.exe`); never invoke `bash` directly as a Windows command because it resolves to the WindowsApps/WSL stub and fails.
-
-This step must fail closed with a clear message if prerequisites are missing, especially `jq`.
-
-If those artifacts are absent, report that deterministic verification is not installed in this repository and continue without inventing replacements.
+Route explicitly to `deterministic-verification`, passing `onboarding_mode` and `repository_scope`.
+`deterministic-verification` owns running its bootstrap command idempotently, verifying required tooling (such as `jq` and Git Bash on Windows), and reporting bootstrap status. `onboard-project` does not invoke scripts or restate tool prerequisites directly.
 
 ## Boundaries
 
-- Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style configuration directly. Always delegate to the owning skill.
-- Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or a style/mutation-testing adapter to `Engineer` or any other subagent. Run each directly in the primary conversation, turn by turn with the user; a stateless subagent cannot hold the interview these skills require, and compressing it into one dispatched brief is not equivalent to running it.
-- Do not skip a downstream skill's interview because discovery produced a draft; the draft narrows questions, it does not replace confirmation.
-- Do not scaffold projects or choose a directory layout. That is a `prd-writer` target-architecture decision, and letting a scaffolding tool pick it silently overwrites a deliberate choice.
-- If the repo is too large for full discovery, scope to a confirmed subtree rather than sampling randomly.
-- Re-running this skill is a no-op for any step whose artifact is already current.
+- Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style/mutation configs directly. Always delegate to the owning skill.
+- Never write an onboarding status file, TODO artifact, or checklist in the repository. Canonical plans remain the sole record of project progress.
+- Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or code-style/mutation-testing adapters to `Engineer` or any other subagent. Run each directly in the primary conversation with the user.
+- Do not inspect test code, assert test-suite adequacy, design acceptance scenarios, or evaluate E2E harness readiness in this skill. `work-planner` owns E2E discovery and slice planning; `qa-design` / `QA` owns requirement-based scenario design.
+- Re-running this skill is idempotent: owners verify their own domain state and skip already-current artifacts.
 
 ## Exit
 
-Return a brief listing: detected code and artifact maturity, detected stack, instruction-file conflicts resolved, key discovery findings and unresolved contradictions, which skills ran, deterministic verification bootstrap status (ran, skipped, or blocked), and which artifacts were created or updated. The written artifacts are durable; this brief is disposable.
+Return a concise aggregate brief: detected code maturity, detected stacks, instruction-file conflicts resolved, which skills ran, and which artifacts were created or updated. All durable state lives in owned artifacts; this brief is disposable.

@@ -39,7 +39,7 @@ Stay in `Orchestrator` and describe the change. It dispatches directly if the ch
 
 ### Any repository not already in the loop
 
-Run `/onboard-project`. It detects whether the repo is empty, a bare scaffold, or a mature codebase, plus which artifacts exist and which stack is in use, then sequences the owning skills in the right order for that state. It also runs deterministic verification bootstrap when those artifacts are present so local hooks and prerequisites are verified up front. It does not replace their interviews or write their artifacts directly.
+Run `/onboard-project`. It acts as a thin classifier and router: it detects whether the repo is empty, a bare scaffold, or a mature codebase, plus which artifacts exist and which stack is in use, then sequences the owning skills with tailored in-memory handoffs. Each domain owner (style, mutation testing, planning, QA, deterministic verification) self-assesses its state and performs its own setup. It writes no durable status or TODO artifact itself.
 
 ### C# behavior change
 

@@ -1,2 +1,4 @@
 # Disposable execution reports
 out/
+*.[Ll]ocal.*
+[Ll]ocal/

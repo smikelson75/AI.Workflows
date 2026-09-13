@@ -9,6 +9,16 @@ user-invocable: true
 
 Use this skill when an implementation slice needs the deterministic integration-gate workflow: structured Engineer handoff reports, an automated integration-gate evaluation, and phase-end E2E verification, as detailed below.
 
+## Onboarding Input
+
+When routed from `onboard-project`, this skill receives `onboarding_mode`, `repository_scope`, and `git_condition` via the [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md).
+1. Runs `.github/skills/deterministic-verification/scripts/bootstrap-deterministic-verification.sh` idempotently.
+2. Checks necessary prerequisites (such as `jq` and Git Bash on Windows).
+3. If prerequisites are missing or artifacts are absent, reports the setup status or failure plainly.
+4. Returns the bootstrap outcome to the caller; never writes an onboarding status or TODO artifact.
+
+When invoked directly without an onboarding envelope, performs local checks and script runs as requested.
+
 ## Ownership
 
 - `work-planner` owns slice scope, verification commands, and acceptance checks.

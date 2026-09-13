@@ -9,6 +9,10 @@ user-invocable: true
 
 Turn vague product intent into current context and a durable glossary before planning/building.
 
+## Onboarding Input
+
+When invoked from `onboard-project` with an in-memory [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md), use `repository_scope` and `unresolved_contradictions` as initial hints. Self-assess existing product context (`CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`), ground interview questions in repository reality, and return a concise outcome without writing or modifying an onboarding status artifact. When invoked directly without an envelope, proceed with standard mode detection.
+
 ## Mode
 
 - Missing `CONTEXT.md` => new.

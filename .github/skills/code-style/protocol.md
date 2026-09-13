@@ -2,6 +2,16 @@
 
 Stack-agnostic requirements for any code style adapter. An adapter supplies the tools, file formats, stack-specific enforcement point, and verification commands; this file supplies the rules that do not change between stacks.
 
+## Onboarding Input
+
+When invoked from `onboard-project` with an in-memory [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md), adapters receive `onboarding_mode`, `repository_scope`, and `detected_stacks`. The adapter:
+1. Self-assesses whether root configuration is present and whether enforcement is already current (idempotent re-entry).
+2. If the stack is supported, executes configuration walkthrough, measures or enforces rules per the maturity rules below, and reports violation counts and enforcement severity per stack.
+3. If no adapter exists for a detected stack, reports the missing adapter plainly so onboarding can continue routing supported stacks.
+4. Returns a concise outcome to the caller; never writes an onboarding status or TODO artifact.
+
+When invoked directly without an onboarding envelope, adapters detect stack and configuration state locally without assuming maturity.
+
 ## Outcome
 
 Style is enforced by the repository's standard verification command, not by reviewer discipline. A violation must fail something a developer or agent already runs.

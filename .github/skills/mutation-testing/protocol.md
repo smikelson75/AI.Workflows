@@ -2,6 +2,17 @@
 
 Stack-agnostic requirements for any mutation-testing adapter. An adapter supplies the tool, config format, and stack-specific scoping mechanics; this file supplies the rules that do not change between stacks.
 
+## Onboarding Input
+
+When invoked from `onboard-project` with an in-memory [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md), adapters receive `onboarding_mode`, `repository_scope`, and `detected_stacks`. The adapter:
+1. Self-assesses whether unit test projects exist and whether root configuration is already established (idempotent re-entry).
+2. If supported, establishes root configuration (e.g., `stryker-config.json` or `stryker.config.json`) with measure-only baseline thresholds (`break: 0`).
+3. For mature repositories, self-assesses test-suite presence: if absent, reports the prerequisite test suite gap; if present, offers the opt-in baseline run.
+4. If no adapter exists for a detected stack, reports the missing adapter plainly so onboarding can continue routing supported stacks.
+5. Returns a concise outcome to the caller; never writes an onboarding status or TODO artifact.
+
+When invoked directly without an onboarding envelope, adapters detect stack and test configuration locally without assuming maturity.
+
 ## Outcome
 
 Mutation testing measures whether the test suite actually detects introduced faults (a mutation score). This is a different signal than coverage: coverage proves a line executed, mutation testing proves a test would fail if the line's behavior changed.

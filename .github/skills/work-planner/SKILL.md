@@ -9,6 +9,29 @@ user-invocable: true
 
 After `brain-storm` and `prd-writer`, maintain the living implementation plan.
 
+## Onboarding Input
+
+When invoked from `onboard-project` with an in-memory [onboarding handoff](../onboard-project/references/ONBOARDING-HANDOFF.md), receive `onboarding_mode`, `repository_scope`, `workflow_artifacts`, and any style or mutation violation counts reported during onboarding.
+1. Self-assess plan currency and phase readiness locally.
+2. For mature codebases, perform targeted inspection of existing E2E harness maturity per the Evidence-Based E2E Readiness rules below.
+3. Sequence necessary style backlog, mutation testing prerequisite/remediation, or E2E harness setup into phase slices.
+4. Return a concise planning outcome; never write or update an onboarding status artifact.
+
+When invoked directly without an onboarding envelope, detect existing artifacts and current repository reality using standard read order.
+
+## Evidence-Based E2E Readiness
+
+In mature codebases, `work-planner` directly assesses the existing E2E test harness rather than relying on arbitrary percentage thresholds or ungrounded assumptions:
+
+| Evidence-Based E2E Condition | Planning Behavior |
+| --- | --- |
+| No discoverable E2E framework/configuration or runnable command | Add a harness/setup prerequisite slice before phase-final E2E automation. |
+| Documented command executes, but one or more active-phase user journeys lack an existing executable test | Reuse the harness; scope the phase-final slice to implement missing approved scenarios. |
+| Documented command executes and existing tests cover the active phase's user journeys | Preserve the suite; phase-final slice maps approved scenario IDs and adds only uncovered behavior discovered during mapping. |
+| Command cannot execute in documented environment, or relevant tests have recorded quarantine/flaky/retry evidence | Add focused remediation slice before the affected journey becomes a phase gate. |
+
+Record the command, observed result, and specific affected journey for every readiness conclusion. Legacy E2E debt does not automatically block unrelated phase work; scope blocking remediation strictly to journeys required by the active phase and sequence other verified gaps into future phases.
+
 Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, `docs/prd/<artifact-slug>-prd.md`, the existing main plan and phase/slice artifacts; write the main plan and required phase/slice artifacts.
 
 ## Artifact Naming

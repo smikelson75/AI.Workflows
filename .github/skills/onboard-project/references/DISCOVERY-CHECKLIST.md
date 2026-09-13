@@ -1,41 +1,48 @@
 # Repo Discovery Checklist
 
-Purpose: ground `brain-storm`, `prd-writer`, and `work-planner` in real repo evidence before their normal workflows run. Read-only; produces a disposable findings draft, not a written artifact.
+Purpose: guide read-only repository inspection to gather repository-wide facts needed to classify maturity and build the tailored [ONBOARDING-HANDOFF.md](ONBOARDING-HANDOFF.md) envelope. Read-only; produces in-memory facts, not a written or durable artifact.
 
-## Read First
+Product intent, user identification, architecture inference, and glossary drafting are owned by `brain-storm` and are not performed here.
 
-- Root `README.md` and any docs folder index.
-- Package/project manifests (`package.json`, `*.csproj`, `pyproject.toml`, `go.mod`, etc.) for stack, dependencies, and scripts.
-- Top-level folder structure to infer architecture shape (layered, modular, monolith, services).
-- CI/build config (`.github/workflows`, `Makefile`, task runners) for build/test/lint commands.
-- Existing lint/format config for code style conventions.
+## 1. Scope And Manifests
 
-## Infer Product Intent
+- Confirm requested repository scope (root `.` or named subtree).
+- Inspect package/project manifests (`package.json`, `*.sln`/`*.csproj`, `pyproject.toml`, `go.mod`, etc.).
+- Identify detected stacks and build tools.
 
-- What problem the code appears to solve, from entry points, primary modules, and README framing.
-- Who the primary user/actor appears to be (CLI user, API consumer, end user, internal service).
-- Primary workflow: trace the main entry point or top-level use case through the code.
-- Apparent v1/current scope: what's implemented vs. stubbed, feature-flagged, or TODO.
+## 2. Code Maturity Classification
 
-## Infer Architecture And Conventions
+- **`empty`**: no project manifest found anywhere in scope.
+- **`scaffold`**: manifest present, but source code is only default template or generator boilerplate.
+- **`mature`**: manifest present with real application source code and/or tests.
 
-- Layering and dependency direction (e.g., domain/application/infrastructure boundaries).
-- Naming patterns for projects, namespaces, folders, and aggregates.
-- Testing approach and frameworks in use.
-- Any existing but undocumented conventions worth carrying into `AGENTS.md` later.
+## 3. Workflow Artifact Presence
 
-## Build A Glossary Candidate
+Check presence and apparent currency of canonical workflow files:
+- `CONTEXT.md`
+- `UBIQUITOUS-LANGUAGE.md`
+- `docs/prd/`
+- `docs/plans/`
+- `AGENTS.md`
 
-- Domain terms repeated across code, tests, and docs (class names, module names, comments).
-- Note apparent synonyms so `brain-storm` can confirm the canonical term.
-- Do not invent terms; only surface what evidence supports.
+## 4. Root Instruction Files
 
-## Flag, Don't Resolve
+Check for competing instruction files to normalize before routing:
+- `AGENT.md` (singular)
+- `AGENTS.md`
+- `.github/copilot-instructions.md`
 
-- Contradictions between README/docs and actual code behavior.
-- Dead or unused modules that could mislead the workflow trace.
-- Areas where intent cannot be inferred confidently — mark unknown rather than guessing.
+## 5. Git Condition
+
+- Is Git initialized (`.git` directory present)?
+- Is working tree clean?
+- Is baseline established when needed for scaffolding?
+
+## 6. Repository-Wide Contradictions
+
+- Surface-level mismatches (e.g., README claims stack X while codebase manifests specify stack Y).
+- Flag without attempting to resolve domain questions; pass flagged items to `brain-storm` or `prd-writer`.
 
 ## Output
 
-A disposable findings draft covering: candidate problem/users/workflow, current architecture and stack, apparent conventions, glossary candidates, and a short list of contradictions/unknowns to raise during the `brain-storm` interview.
+In-memory classification facts used to populate the tailored [ONBOARDING-HANDOFF.md](ONBOARDING-HANDOFF.md) envelope for the next owning skill or agent. Never written to a file.
