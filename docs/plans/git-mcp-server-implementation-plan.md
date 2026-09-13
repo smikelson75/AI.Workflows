@@ -18,7 +18,7 @@
 
 ## Active work
 - **Current phase:** [Phase 01 - Scaffolding & Git Execution Engine](phases/phase-01/phase.md)
-- **Next slice:** [Slice 02 - GitExecutor engine & error handling](phases/phase-01/slice-02-git-executor-engine.md)
+- **Next slice:** [Slice 03 - Server bootstrap & execution verification (integration/E2E)](phases/phase-01/slice-03-server-bootstrap-integration.md)
 - **Blockers:** None
 
 ## Phase plan
@@ -35,5 +35,5 @@
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
 | 01 | Package and toolchain setup | completed | [detail](phases/phase-01/slice-01-package-toolchain-setup.md) |
-| 02 | GitExecutor engine & error handling | in progress | [detail](phases/phase-01/slice-02-git-executor-engine.md) |
+| 02 | GitExecutor engine & error handling | completed | [detail](phases/phase-01/slice-02-git-executor-engine.md) |
 | 03 | Server bootstrap & execution verification (integration/E2E) | planned | [detail](phases/phase-01/slice-03-server-bootstrap-integration.md) |
