@@ -1,0 +1,24 @@
+# Phase 04 - Branch, Stash & E2E Validation
+
+- **Phase objective:** Implement and register workspace isolation tools (`git_branch` and `git_stash`), complete the full 10-tool surface, and perform end-to-end integration validation simulating a real agent workflow.
+- **User-visible outcome:** The Git MCP server provides all 10 tools, enabling agents to isolate in-progress work via stashes, manage development branches, and execute full multi-step workflows with zero shell escapes.
+- **Backend/data scope:** `src/tools/branch/branch.ts`, `src/tools/stash/stash.ts`, `src/models/workspace.ts`, `test/tools/branch/*.test.ts`, `test/tools/stash/*.test.ts`, `test/e2e/workflow.test.ts`.
+- **UI/workflow scope:** Full MCP server deployment and client integration.
+- **Cross-slice invariants:**
+  - Branch creation and deletion operations must validate ref names against Git naming rules.
+  - Stash operations must clearly report success and provide message identification.
+  - Full test suite passes against Windows, Linux, and macOS environments.
+- **Prerequisites:** Phase 03 completed.
+- **Blockers:** None.
+- **Acceptance checks:**
+  - `git_branch` lists local and remote branches and supports creating and safely deleting branches.
+  - `git_stash` saves dirty states, lists entries, and pops cleanly.
+  - End-to-end test executes full agent lifecycle: Discover -> Diff -> Stage -> Stash -> Pop -> Commit -> Log.
+  - Verification gate `npm run verify` passes with zero lint, format, or typecheck violations.
+- **Useful-if-stopped statement:** Delivers the complete v1 production-ready Git MCP server.
+- **Risks and mitigations:**
+  - Risk: Stash pop conflicts.
+  - Mitigation: Detect conflict exit codes and return structured diagnostics instead of crashing.
+- **Test checkpoints:**
+  - Comprehensive end-to-end test suite running through realistic developer workflows.
+- **Definition of done:** All 10 tools functional, end-to-end suite passing, verification script clean, and documentation complete.
