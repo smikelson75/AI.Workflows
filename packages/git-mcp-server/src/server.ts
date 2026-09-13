@@ -2,7 +2,16 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import {
+  CallToolRequestSchema,
+  ErrorCode,
+  ListToolsRequestSchema,
+  McpError,
+} from "@modelcontextprotocol/sdk/types.js";
 import { GitExecutor } from "./git/executor.js";
+import { GitInfoInputSchema, GitStatusInputSchema } from "./models/inspection.js";
+import { executeGitInfo, GIT_INFO_TOOL_DEFINITION } from "./tools/inspection/info.js";
+import { executeGitStatus, GIT_STATUS_TOOL_DEFINITION } from "./tools/inspection/status.js";
 
 export const SERVER_NAME = "git-mcp-server";
 export const SERVER_VERSION = "0.1.0";
@@ -32,6 +41,85 @@ export class GitMcpServer {
         },
       },
     );
+    this.registerTools();
+  }
+
+  private registerTools(): void {
+    this.server.setRequestHandler(ListToolsRequestSchema, () => {
+      return {
+        tools: [GIT_STATUS_TOOL_DEFINITION, GIT_INFO_TOOL_DEFINITION],
+      };
+    });
+
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      const { name, arguments: args } = request.params;
+      switch (name) {
+        case "git_status": {
+          const parseResult = GitStatusInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_status: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitStatus(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_info": {
+          const parseResult = GitInfoInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_info: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitInfo(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        default:
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+      }
+    });
   }
 
   public getServer(): Server {
