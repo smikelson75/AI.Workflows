@@ -49,10 +49,10 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 
 ## Fail-Closed Rules
 
-- Missing or invalid reports block completion.
+- Missing or invalid reports block completion. Validator returns machine-readable JSON error payloads (e.g. `ERR_MISSING_REPORT`, `ERR_MISSING_RED_EVIDENCE`, `ERR_UNKNOWN_PROPERTIES`).
 - Behavior slices missing required Red evidence or lacking a test-bearing unit verification command fail validation and block completion.
 - Non-behavior slices without an explicit justification reason fail validation and block completion.
-- A mismatch between the report's `changedFiles` and Git's change set blocks completion. This supports uncommitted work but requires multiple slices or unrelated edits to be committed, isolated, evaluated from a known baseline, or explicitly reconciled as one scope.
+- A mismatch between the report's `changedFiles` and Git's change set blocks completion with machine-readable error `ERR_CHANGE_SET_MISMATCH` including `details.missingFromReport` and `details.notInWorktree`. This supports uncommitted work but requires multiple slices or unrelated edits to be committed, isolated, evaluated from a known baseline, or explicitly reconciled as one scope.
 - Unknown boundary classification requires integration.
 - Missing project-specific verification commands is an error; this repository does not assume a stack.
 - Missing QA approval, scenario-ID mappings, or approved exception reasons blocks the final integration/E2E slice.

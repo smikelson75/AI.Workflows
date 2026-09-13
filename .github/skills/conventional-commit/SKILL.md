@@ -6,14 +6,14 @@ argument-hint: "Optional: describe your change to override the diff-based sugges
 
 # Conventional Commit
 
-Invoke as `/conventional-commit` to journal work: prepare each coherent, reviewable commit by default. Read the diff, stage only its files, and create a Conventional Commits 1.0.0 message. Always ask for explicit user approval before executing `git commit`. Ask before staging when scope is unclear, changes are mixed, or the user explicitly requests review first.
+Invoke as `/conventional-commit` to journal work: prepare each coherent, reviewable commit by default. Read the diff, stage only its files, and create a Conventional Commits 1.0.0 message. Always ask for explicit user approval before executing `git commit` in interactive human sessions. When invoked autonomously by `Orchestrator` as part of an approved plan execution where all slice gates and verifications have passed, commits may be executed automatically without prompting. Ask before staging when scope is unclear, changes are mixed, or the user explicitly requests review first.
 
 ## Workflow
 
 1. Inspect `git status --short`, then `git diff` and `git diff --staged`.
 2. Keep unrelated changes separate. Stage one coherent slice or group of files; preserve existing staged scope unless it is mixed. Repeat for additional groups.
 3. Choose one type from [./references/types.md](./references/types.md) based on primary intent and an optional noun scope.
-4. Propose the commit message below and ask for explicit user approval before running `git commit`.
+4. Propose the commit message below and ask for explicit user approval before running `git commit` (unless running in autonomous mode under `Orchestrator`).
 5. Report the commit output and resulting SHA. If hooks reject it, fix the issue and retry.
 
 ```text

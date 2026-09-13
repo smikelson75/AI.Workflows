@@ -78,11 +78,20 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 2. If the phase changed, load the new phase document for its invariants.
 3. Load the next slice. Apply the dispatch gate. If it is the phase's final integration/E2E slice, also apply the QA review gate.
 4. Set the slice to `in progress` in the main plan.
-Dispatch the brief to `Engineer`.
- Read the returned report. Validate the Engineer A report and evaluate the integration gate. If the gate reports a change-set mismatch, leave the slice `in progress` and tell the user which files are missing or extra; do not rerun Pass A. If integration is required, dispatch Pass B to `Engineer`, validate its report, and confirm integration verification.
-7. If all required verification passed, set the slice to `completed`. If verification failed or the subagent surfaced a blocking question, leave the slice `in progress` and record the blocker.
-8. When the phase's final integration slice completes, set the phase to `completed` and the next phase to `in progress`; the next phase's QA review begins as `pending` when its active slices are planned.
-9. Stop after each slice unless the user asked you to continue.
+5. Dispatch the brief to `Engineer`.
+6. Read the returned report. Validate the Engineer A report (`validate-report.sh`) and evaluate the integration gate (`evaluate-integration-gate.sh`).
+   - If the gate reports `ERR_CHANGE_SET_MISMATCH`, leave the slice `in progress` and present a structured decision menu (see Escalation & Decision Menus).
+   - If integration is required (`integrationRequired: true`), autonomously compose the Pass B brief (scoped strictly to gate targets and test harness) and dispatch to `Engineer` without pausing for human prompt. Validate the Engineer B report and confirm integration verification.
+   - If Engineer B discovers a defect in production code, autonomously route a focused remediation brief back to Engineer A with the failing test output as Red evidence.
+7. If all required verification passed:
+   - Set the slice status to `completed` in the main plan.
+   - In autonomous multi-slice execution, invoke `/conventional-commit` autonomously to commit the slice files with a coherent Conventional Commit message.
+   - Check if the next slice in the active phase is `planned` and meets the dispatch gate. If yes, advance automatically to the next slice.
+8. When the phase reaches the final integration/E2E slice, halt for explicit human QA review gate approval if not yet `approved`. Once approved and the final integration slice completes, set the phase to `completed` and the next phase to `in progress`; the next phase's QA review begins as `pending` when its active slices are planned.
+9. Halt autonomous execution when:
+   - The phase reaches the final integration/E2E slice (requires human QA review gate approval).
+   - All planned slices in the phase are complete.
+   - An unresolvable blocker occurs (triggering Tier 2 Decision Menu).
 
 ## Status Recording
 
@@ -112,9 +121,39 @@ The user may ask for a bug fix, typo, or no-op refactor that is not the next sli
 
 An ad hoc brief still follows the dispatch gate and brief-composition rules; you are only skipping the plan-artifact lookup, not the verification discipline. Always name the redirect explicitly in your response; the user should never need to remember to leave the loop themselves.
 
-## Escalation
+## Escalation & Decision Menus
 
-- subagent reports the slice was wrong or infeasible: stop, record the discovery, route to `work-planner`
+When the workflow cannot proceed autonomously (due to gate mismatch, missing requirements, QA review gate, or subagent escalation), DO NOT dump raw terminal stack traces or ask open-ended questions. Keep blocker handoffs strictly under 30 lines and present a structured decision menu:
+
+```markdown
+### ⚠️ Workflow Blocker: <Short Title>
+
+**Situation**: <1-2 sentences explaining what failed and why the system cannot proceed automatically.>
+
+#### Available Options
+
+- **Option 1: <Action Name>**
+  - **Execution**: [Agent Automated | Human Action Required]
+  - **How it solves the problem**: <Explanation of how this unblocks the workflow>
+  - **Tradeoffs / Downstream impact**: <Any scope or test implications>
+
+- **Option 2: <Action Name>**
+  - **Execution**: [Agent Automated | Human Action Required]
+  - **How it solves the problem**: <Explanation of how this unblocks the workflow>
+  - **Tradeoffs / Downstream impact**: <Any scope or test implications>
+
+- **Option 3: <Action Name>**
+  - **Execution**: [Agent Automated | Human Action Required]
+  - **How it solves the problem**: <Explanation of how this unblocks the workflow>
+  - **Tradeoffs / Downstream impact**: <Any scope or test implications>
+
+**Recommendation**: Choose **Option X** because <brief justification>.
+
+---
+*Please reply with 1, 2, or 3 to proceed.*
+```
+
+- subagent reports the slice was wrong or infeasible: present decision menu or route to `work-planner`
 - the work implies a changed target, constraint, or architecture direction: route to `prd-writer`
 - the work implies changed domain, users, workflow, or vocabulary: route to `brain-storm`
 

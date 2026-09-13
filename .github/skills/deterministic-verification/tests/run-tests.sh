@@ -13,6 +13,7 @@ run_test() {
   local name="$1"
   local expected_exit="$2"
   local json_content="$3"
+  local expected_code="${4:-}"
   local report_file="$temp_dir/report.json"
 
   printf '%s' "$json_content" > "$report_file"
@@ -21,12 +22,22 @@ run_test() {
   status=$?
   set -e
 
-  if [[ $status -eq $expected_exit ]]; then
-    printf 'PASS: %s\n' "$name"
-  else
+  if [[ $status -ne $expected_exit ]]; then
     printf 'FAIL: %s (expected exit %d, got %d)\nOutput: %s\n' "$name" "$expected_exit" "$status" "$out"
     failed=$((failed + 1))
+    return
   fi
+
+  if [[ -n "$expected_code" ]]; then
+    actual_code=$(printf '%s' "$out" | jq -r '.code // empty' 2>/dev/null || true)
+    if [[ "$actual_code" != "$expected_code" ]]; then
+      printf 'FAIL: %s (expected code %s, got %s)\nOutput: %s\n' "$name" "$expected_code" "$actual_code" "$out"
+      failed=$((failed + 1))
+      return
+    fi
+  fi
+
+  printf 'PASS: %s\n' "$name"
 }
 
 # 1. Valid behavior report
@@ -65,7 +76,7 @@ run_test "behavior report missing redVerification" 1 '{
   "tddNotApplicableReason": null,
   "integrationTargetsSuggested": [],
   "risks": []
-}'
+}' "ERR_MISSING_RED_EVIDENCE"
 
 # 3. Behavior report with empty command
 run_test "behavior report with empty command" 1 '{
@@ -163,7 +174,7 @@ run_test "unknown property rejection" 1 '{
   "tddNotApplicableReason": null,
   "integrationTargetsSuggested": [],
   "risks": []
-}'
+}' "ERR_UNKNOWN_PROPERTIES"
 
 # 8. evaluate-integration-gate detects untracked files and blocks mismatch
 test_gate_mismatch() {
@@ -194,8 +205,10 @@ test_gate_mismatch() {
   set -e
   rm -f "$test_untracked"
 
-  if [[ $gate_status -ne 0 && "$gate_out" == *"report changedFiles does not match the Git change set"* ]]; then
-    printf 'PASS: evaluate-integration-gate detects untracked files and rejects mismatch\n'
+  local code
+  code=$(printf '%s' "$gate_out" | grep -v '^warning:' | jq -r '.code // empty' 2>/dev/null || true)
+  if [[ $gate_status -ne 0 && "$code" == "ERR_CHANGE_SET_MISMATCH" ]]; then
+    printf 'PASS: evaluate-integration-gate detects untracked files and rejects mismatch with ERR_CHANGE_SET_MISMATCH\n'
   else
     printf 'FAIL: evaluate-integration-gate failed to block untracked file mismatch\nOutput: %s\n' "$gate_out"
     failed=$((failed + 1))

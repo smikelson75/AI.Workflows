@@ -13,6 +13,8 @@ Use `Orchestrator` when an approved implementation plan should move forward. It:
 - marks the slice `in progress` in the main plan;
 - dispatches exactly the slice plus phase invariants to `Engineer`;
 - confirms verification and records `completed`, or records a blocker;
+- advances autonomously through Routine (Tier 1) deterministic cycles: automatically triggering Pass B when integration is required, routing production defects back to Engineer A with Red test evidence, auto-committing clean slices via `conventional-commit`, and dispatching the next planned slice;
+- escalates via Structured Decision Menus (Tier 2) kept under 30 lines with 2–3 actionable choices when human judgment is needed (change-set mismatch, missing verification command, or QA approval pending);
 - records explicit human approval or invalidation of the active phase's QA review gate;
 - permits ordinary slices while QA review is pending and blocks the final integration/E2E slice until approval;
 - advances phase status only after its final integration slice;

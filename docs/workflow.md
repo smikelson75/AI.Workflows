@@ -63,6 +63,10 @@ QA drafting proceeds asynchronously with ordinary implementation slices. Human r
 
 Use `Orchestrator` to execute an approved plan, run as the active agent mode with both `agent` and `execute` tools — never dispatched through a subagent tool, which strips the tool parity it needs to dispatch `Engineer` and verify (see [docs/agents.md](agents.md)). It reads only the main plan, active phase invariants, and next slice, then copies those contents into an `Engineer` brief. It does not implement product code, invent slices, or rewrite the plan.
 
+Orchestration operates on two tiers:
+1. **Tier 1 (Autonomous Forward Progress)**: Routine deterministic cycles advance without human prompting. This includes inner TDD verification, dispatching Pass B when the gate returns `integrationRequired: true`, routing integration bugs back to Engineer A with failing test evidence, committing completed slices via `/conventional-commit`, and advancing to the next planned slice.
+2. **Tier 2 (Structured Decision Menus)**: When human judgment is genuinely required (scope creep, uncommitted file collisions, missing requirements, QA review gate approval), the agent does not dump raw terminal output or ask vague questions. It presents a concise decision menu (under 30 lines) with a 1–2 sentence situation summary, 2–3 mutually exclusive options (clearly labeled as Agent Automated vs Human Action Required), and a policy-based recommendation.
+
 `Engineer` implements the assigned slice within scope. It clarifies ambiguity, favors the smallest change, verifies behavior, and reports changed files, verification results, and risks.
 
 Ordinary slices may proceed while QA review is pending. Before the final integration/E2E slice, `Orchestrator` requires the main plan's QA review gate to be `approved`. That slice implements all non-excepted `@e2e` scenarios and confirms that `@unit` and `@integration` scenario IDs map to executable tests. `Engineer` cannot edit Gherkin; proposed revisions return to `qa-design` and require renewed human approval.

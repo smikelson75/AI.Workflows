@@ -11,12 +11,24 @@ while [[ $# -gt 0 ]]; do
     --diff-base) diff_base="$2"; shift 2 ;;
     --report) report="$2"; shift 2 ;;
     --output) output="$2"; shift 2 ;;
-    *) printf 'unknown argument: %s\n' "$1" >&2; exit 2 ;;
+    *)
+      err_json="$(jq -n --arg arg "$1" '{status: "blocked", code: "ERR_UNKNOWN_ARGUMENT", message: ("unknown argument: " + $arg)}')"
+      printf '%s\n' "$err_json" >&2
+      exit 2
+      ;;
   esac
 done
-[[ -n "$report" && -f "$report" ]] || { printf '%s\n' 'a readable --report is required' >&2; exit 2; }
+if [[ -z "$report" || ! -f "$report" ]]; then
+  err_json="$(jq -n --arg report "$report" '{status: "blocked", code: "ERR_MISSING_REPORT", message: "a readable --report is required", details: {report: $report}, suggestedActions: ["PROVIDE_VALID_REPORT"]}')"
+  printf '%s\n' "$err_json" >&2
+  exit 2
+fi
 root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[[ -n "$root" ]] || { printf '%s\n' 'gate must run inside a Git repository' >&2; exit 2; }
+if [[ -z "$root" ]]; then
+  err_json="$(jq -n '{status: "blocked", code: "ERR_NOT_IN_GIT", message: "gate must run inside a Git repository", details: {}, suggestedActions: ["INITIALIZE_OR_NAVIGATE_TO_GIT_REPO"]}')"
+  printf '%s\n' "$err_json" >&2
+  exit 2
+fi
 report_path="$report"
 [[ "$report_path" == /* ]] && report_path="${report_path#"$root"/}"
 output_path="$output"
@@ -31,10 +43,28 @@ reported_files="$(jq -r '.changedFiles[]?' "$report" | sort -u)"
 missing_from_report="$(comm -23 <(printf '%s\n' "$actual_files" | awk 'NF') <(printf '%s\n' "$reported_files" | awk 'NF'))"
 not_in_worktree="$(comm -13 <(printf '%s\n' "$actual_files" | awk 'NF') <(printf '%s\n' "$reported_files" | awk 'NF'))"
 if [[ -n "$missing_from_report" || -n "$not_in_worktree" ]]; then
-  printf '%s\n' 'report changedFiles does not match the Git change set; completion is blocked' >&2
-  [[ -n "$missing_from_report" ]] && printf 'missing from report:\n%s\n' "$missing_from_report" >&2
-  [[ -n "$not_in_worktree" ]] && printf 'not in Git change set:\n%s\n' "$not_in_worktree" >&2
-  printf '%s\n' 'commit or isolate completed/unrelated work, provide --diff-base, or reconcile the intentional combined scope' >&2
+  missing_arr="$(printf '%s\n' "$missing_from_report" | awk 'NF' | jq -Rsc 'split("\n") | map(select(length > 0))')"
+  not_in_worktree_arr="$(printf '%s\n' "$not_in_worktree" | awk 'NF' | jq -Rsc 'split("\n") | map(select(length > 0))')"
+  err_json="$(jq -n \
+    --arg code "ERR_CHANGE_SET_MISMATCH" \
+    --arg message "report changedFiles does not match the Git change set; completion is blocked" \
+    --argjson missing "$missing_arr" \
+    --argjson notInWorktree "$not_in_worktree_arr" \
+    '{
+      status: "blocked",
+      code: $code,
+      message: $message,
+      details: {
+        missingFromReport: $missing,
+        notInWorktree: $notInWorktree
+      },
+      suggestedActions: [
+        "RECONCILE_REPORT",
+        "STASH_EXTRA_FILES",
+        "SPECIFY_DIFF_BASE"
+      ]
+    }')"
+  printf '%s\n' "$err_json" >&2
   exit 1
 fi
 slice_id="$(jq -r '.sliceId' "$report")"
