@@ -1,0 +1,21 @@
+# Slice 02 - git_diff & git_log tools
+
+- **User-visible outcome:** MCP clients can call `git_diff` with multiple modes (`patch`, `stat`, `name_only`, `check`) and target scopes (`staged`, references, paths) and `git_log` with pagination and revision range parsing.
+- **Backend/data slice:** `packages/git-mcp-server/src/tools/inspection/diff.ts`, `packages/git-mcp-server/src/tools/inspection/log.ts`, `packages/git-mcp-server/src/models/inspection.ts`, `packages/git-mcp-server/src/server.ts`, `packages/git-mcp-server/test/tools/diff.test.ts`, `packages/git-mcp-server/test/tools/log.test.ts`.
+- **UI/workflow slice:** Registration of `git_diff` and `git_log` tools on the MCP server with JSON Schema input validation and structured JSON result serialization.
+- **Files/modules in scope:**
+  - `packages/git-mcp-server/src/models/inspection.ts`
+  - `packages/git-mcp-server/src/tools/inspection/diff.ts`
+  - `packages/git-mcp-server/src/tools/inspection/log.ts`
+  - `packages/git-mcp-server/src/server.ts`
+  - `packages/git-mcp-server/test/tools/diff.test.ts`
+  - `packages/git-mcp-server/test/tools/log.test.ts`
+- **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
+- **Acceptance checks:**
+  - `git_diff` tool parses working tree vs index diffs and staged vs HEAD diffs with path filtering.
+  - `git_diff` supports `patch`, `stat`, `name_only`, and `check` modes with structured response models.
+  - `git_log` parses commit history into structured commit records (`hash`, `author`, `date`, `subject`, `body`, `files_changed`).
+  - `git_log` respects `max_count`, `paths`, and `revision_range` constraints.
+  - All tools reject invalid input options and return descriptive error details.
+  - Unit tests with `node:test` against temporary git fixture repositories verify diff calculations and log formatting.
+- **Useful-if-stopped statement:** Equips agents to inspect diffs and historical commits with structured data filtering.

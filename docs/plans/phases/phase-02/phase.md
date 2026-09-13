@@ -20,6 +20,10 @@
 - **Risks and mitigations:**
   - Risk: Diff output size could exceed MCP message limits on large changesets.
   - Mitigation: Enforce reasonable output truncation or line limits with clear truncation indicators.
-- **Test checkpoints:**
-  - Unit tests for each tool against fixture repos verifying accurate parsing of complex git states.
 - **Definition of done:** All inspection tools registered, verified with unit tests, and passing acceptance tests.
+
+## Slice order
+
+1. [Slice 01 - git_status & git_info tools](slice-01-git-status-info.md)
+2. [Slice 02 - git_diff & git_log tools](slice-02-git-diff-log.md)
+3. [Slice 03 - Inspection tools integration & E2E verification](slice-03-inspection-integration.md)
