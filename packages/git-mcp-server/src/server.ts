@@ -15,10 +15,20 @@ import {
   GitLogInputSchema,
   GitStatusInputSchema,
 } from "./models/inspection.js";
+import {
+  GitCommitInputSchema,
+  GitRestoreInputSchema,
+  GitStageInputSchema,
+  GitUnstageInputSchema,
+} from "./models/mutation.js";
 import { executeGitDiff, GIT_DIFF_TOOL_DEFINITION } from "./tools/inspection/diff.js";
 import { executeGitInfo, GIT_INFO_TOOL_DEFINITION } from "./tools/inspection/info.js";
 import { executeGitLog, GIT_LOG_TOOL_DEFINITION } from "./tools/inspection/log.js";
 import { executeGitStatus, GIT_STATUS_TOOL_DEFINITION } from "./tools/inspection/status.js";
+import { executeGitCommit, GIT_COMMIT_TOOL_DEFINITION } from "./tools/mutation/commit.js";
+import { executeGitRestore, GIT_RESTORE_TOOL_DEFINITION } from "./tools/mutation/restore.js";
+import { executeGitStage, GIT_STAGE_TOOL_DEFINITION } from "./tools/mutation/stage.js";
+import { executeGitUnstage, GIT_UNSTAGE_TOOL_DEFINITION } from "./tools/mutation/unstage.js";
 
 export const SERVER_NAME = "git-mcp-server";
 export const SERVER_VERSION = "0.1.0";
@@ -59,6 +69,10 @@ export class GitMcpServer {
           GIT_INFO_TOOL_DEFINITION,
           GIT_DIFF_TOOL_DEFINITION,
           GIT_LOG_TOOL_DEFINITION,
+          GIT_STAGE_TOOL_DEFINITION,
+          GIT_UNSTAGE_TOOL_DEFINITION,
+          GIT_RESTORE_TOOL_DEFINITION,
+          GIT_COMMIT_TOOL_DEFINITION,
         ],
       };
     });
@@ -169,6 +183,130 @@ export class GitMcpServer {
           }
           try {
             const result = await executeGitLog(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_stage": {
+          const parseResult = GitStageInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_stage: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitStage(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_unstage": {
+          const parseResult = GitUnstageInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_unstage: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitUnstage(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_restore": {
+          const parseResult = GitRestoreInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_restore: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitRestore(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_commit": {
+          const parseResult = GitCommitInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_commit: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitCommit(this.executor, parseResult.data);
             return {
               content: [
                 {

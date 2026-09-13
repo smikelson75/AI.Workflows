@@ -12,6 +12,12 @@ import type {
   GitLogResult,
   GitStatusResult,
 } from "../../src/models/inspection.js";
+import type {
+  GitCommitResult,
+  GitRestoreResult,
+  GitStageResult,
+  GitUnstageResult,
+} from "../../src/models/mutation.js";
 import { createGitMcpServer, type GitMcpServer } from "../../src/index.js";
 import { createFixtureRepo, type FixtureRepo } from "../helpers/fixture-repo.js";
 
@@ -61,7 +67,16 @@ describe("Inspection tools end-to-end integration", () => {
     it("lists all 4 inspection tools with descriptions and input schemas", async () => {
       const { tools } = await client.listTools();
       const names = tools.map((tool) => tool.name).sort();
-      assert.deepEqual(names, ["git_diff", "git_info", "git_log", "git_status"]);
+      assert.deepEqual(names, [
+        "git_commit",
+        "git_diff",
+        "git_info",
+        "git_log",
+        "git_restore",
+        "git_stage",
+        "git_status",
+        "git_unstage",
+      ]);
 
       for (const tool of tools) {
         assert.ok(
@@ -145,6 +160,226 @@ describe("Inspection tools end-to-end integration", () => {
       const log = parseToolResult(logResult) as GitLogResult;
       assert.equal(log.commits.length, 2);
       assert.equal(log.commits[0].subject, "Add tracked file");
+    });
+  });
+
+  describe("stage and unstage sequence against a dirty repository", () => {
+    let repo: FixtureRepo;
+
+    before(async () => {
+      repo = await createFixtureRepo("inspection-e2e-stage-");
+      await writeFile(repo.path, "README.md", "# Fixture\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+      await writeFile(repo.path, "tracked.txt", "tracked content\n");
+      await writeFile(repo.path, "untracked.txt", "untracked content\n");
+    });
+
+    after(async () => {
+      await repo.cleanup();
+    });
+
+    it("stages explicit paths, reflects them in git_status, then unstages them via git_unstage", async () => {
+      const stageResult = await client.callTool({
+        name: "git_stage",
+        arguments: { repo_path: repo.path, paths: ["tracked.txt", "untracked.txt"] },
+      });
+      const stage = parseToolResult(stageResult) as GitStageResult;
+      assert.deepEqual(stage.staged_paths, ["tracked.txt", "untracked.txt"]);
+      assert.equal(stage.all, false);
+
+      const statusAfterStage = parseToolResult(
+        await client.callTool({
+          name: "git_status",
+          arguments: { repo_path: repo.path },
+        }),
+      ) as GitStatusResult;
+      const stagedPaths = statusAfterStage.entries.map((entry) => entry.path).sort();
+      assert.deepEqual(stagedPaths, ["tracked.txt", "untracked.txt"]);
+      for (const entry of statusAfterStage.entries) {
+        assert.equal(entry.staged_status !== "unmodified", true, `${entry.path} must be staged`);
+      }
+
+      const unstageResult = await client.callTool({
+        name: "git_unstage",
+        arguments: { repo_path: repo.path, paths: ["tracked.txt", "untracked.txt"] },
+      });
+      const unstage = parseToolResult(unstageResult) as GitUnstageResult;
+      assert.deepEqual(unstage.unstaged_paths, ["tracked.txt", "untracked.txt"]);
+
+      const statusAfterUnstage = parseToolResult(
+        await client.callTool({
+          name: "git_status",
+          arguments: { repo_path: repo.path },
+        }),
+      ) as GitStatusResult;
+      const unstagedPaths = statusAfterUnstage.entries.map((entry) => entry.path).sort();
+      assert.deepEqual(unstagedPaths, ["tracked.txt", "untracked.txt"]);
+      const untrackedEntry = statusAfterUnstage.entries.find(
+        (entry) => entry.path === "untracked.txt",
+      );
+      assert.equal(untrackedEntry?.staged_status, "untracked");
+    });
+  });
+
+  describe("git_restore broad path confirmation", () => {
+    let repo: FixtureRepo;
+
+    before(async () => {
+      repo = await createFixtureRepo("inspection-e2e-restore-");
+      await writeFile(repo.path, "README.md", "# Fixture\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+    });
+
+    after(async () => {
+      await repo.cleanup();
+    });
+
+    // @qa-p03-008: Rejecting broad or wildcard restore requests without explicit confirmation
+    it("rejects a broad or wildcard-only path request without confirm via CallTool", async () => {
+      await writeFile(repo.path, "README.md", "# Fixture\nmodified\n");
+
+      const restoreResult = await client.callTool({
+        name: "git_restore",
+        arguments: { repo_path: repo.path, paths: ["*"] },
+      });
+      assert.equal(restoreResult.isError, true);
+
+      const content = await fs.readFile(path.join(repo.path, "README.md"), "utf8");
+      assert.equal(content, "# Fixture\nmodified\n");
+    });
+
+    // @qa-p03-007: Restoring working tree modifications for explicitly named paths
+    it("succeeds when explicit paths are given", async () => {
+      const restoreResult = await client.callTool({
+        name: "git_restore",
+        arguments: { repo_path: repo.path, paths: ["README.md"] },
+      });
+      const restore = parseToolResult(restoreResult) as GitRestoreResult;
+      assert.deepEqual(restore.restored_paths, ["README.md"]);
+
+      const content = await fs.readFile(path.join(repo.path, "README.md"), "utf8");
+      assert.equal(content.replace(/\r\n/g, "\n"), "# Fixture\n");
+    });
+  });
+
+  describe("git_commit empty commit rejection and amend support", () => {
+    let repo: FixtureRepo;
+
+    before(async () => {
+      repo = await createFixtureRepo("inspection-e2e-commit-");
+      await writeFile(repo.path, "README.md", "# Fixture\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+    });
+
+    after(async () => {
+      await repo.cleanup();
+    });
+
+    // @qa-p03-010: Rejecting an empty commit attempt without explicit override
+    it("rejects an empty commit when no staged changes are present", async () => {
+      const commitResult = await client.callTool({
+        name: "git_commit",
+        arguments: { repo_path: repo.path, subject: "empty attempt" },
+      });
+      assert.equal(commitResult.isError, true);
+
+      const logResult = await client.callTool({
+        name: "git_log",
+        arguments: { repo_path: repo.path },
+      });
+      const log = parseToolResult(logResult) as GitLogResult;
+      assert.equal(log.commits.length, 1);
+    });
+
+    // @qa-p03-011: Amending the previous commit
+    it("supports amend: true to replace the previous commit", async () => {
+      await writeFile(repo.path, "README.md", "# Fixture\namended content\n");
+      await git(repo.path, ["add", "README.md"]);
+
+      const commitResult = await client.callTool({
+        name: "git_commit",
+        arguments: { repo_path: repo.path, subject: "Amended initial commit", amend: true },
+      });
+      const commit = parseToolResult(commitResult) as GitCommitResult;
+      assert.equal(commit.amended, true);
+      assert.equal(commit.subject, "Amended initial commit");
+
+      const logResult = await client.callTool({
+        name: "git_log",
+        arguments: { repo_path: repo.path },
+      });
+      const log = parseToolResult(logResult) as GitLogResult;
+      assert.equal(log.commits.length, 1);
+      assert.equal(log.commits[0].subject, "Amended initial commit");
+    });
+  });
+
+  describe("end-to-end stage, unstage, restore, and commit workflow", () => {
+    let repo: FixtureRepo;
+
+    before(async () => {
+      repo = await createFixtureRepo("inspection-e2e-full-workflow-");
+      await writeFile(repo.path, "README.md", "# Fixture\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+    });
+
+    after(async () => {
+      await repo.cleanup();
+    });
+
+    // @qa-p03-012: End-to-end stage, unstage, restore, and commit workflow over stdio
+    it("drives git_stage -> git_unstage -> git_restore -> git_commit and reflects the final state", async () => {
+      await writeFile(repo.path, "staged.txt", "staged content\n");
+      await writeFile(repo.path, "unstage-me.txt", "unstage content\n");
+      await writeFile(repo.path, "restore-me.txt", "restore content\n");
+      await git(repo.path, ["add", "restore-me.txt"]);
+
+      const stageResult = await client.callTool({
+        name: "git_stage",
+        arguments: { repo_path: repo.path, paths: ["staged.txt", "unstage-me.txt"] },
+      });
+      const stage = parseToolResult(stageResult) as GitStageResult;
+      assert.deepEqual(stage.staged_paths, ["staged.txt", "unstage-me.txt"]);
+
+      const unstageResult = await client.callTool({
+        name: "git_unstage",
+        arguments: { repo_path: repo.path, paths: ["unstage-me.txt"] },
+      });
+      const unstage = parseToolResult(unstageResult) as GitUnstageResult;
+      assert.deepEqual(unstage.unstaged_paths, ["unstage-me.txt"]);
+
+      await writeFile(repo.path, "restore-me.txt", "restore content\nmodified\n");
+      const restoreResult = await client.callTool({
+        name: "git_restore",
+        arguments: { repo_path: repo.path, paths: ["restore-me.txt"] },
+      });
+      const restore = parseToolResult(restoreResult) as GitRestoreResult;
+      assert.deepEqual(restore.restored_paths, ["restore-me.txt"]);
+      const restoredContent = await fs.readFile(path.join(repo.path, "restore-me.txt"), "utf8");
+      assert.equal(restoredContent.replace(/\r\n/g, "\n"), "restore content\n");
+
+      const commitResult = await client.callTool({
+        name: "git_commit",
+        arguments: { repo_path: repo.path, subject: "Add staged.txt" },
+      });
+      const commit = parseToolResult(commitResult) as GitCommitResult;
+      assert.equal(commit.subject, "Add staged.txt");
+
+      const statusResult = await client.callTool({
+        name: "git_status",
+        arguments: { repo_path: repo.path },
+      });
+      const status = parseToolResult(statusResult) as GitStatusResult;
+      const remainingPaths = status.entries.map((entry) => entry.path).sort();
+      assert.deepEqual(remainingPaths, ["unstage-me.txt"]);
+      assert.equal(
+        status.entries.find((entry) => entry.path === "unstage-me.txt")?.staged_status,
+        "untracked",
+      );
     });
   });
 
