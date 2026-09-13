@@ -26,7 +26,7 @@
 | # | Phase | Status | QA review | Acceptance | Outcome | Detail |
 |---|-------|--------|-----------|------------|---------|--------|
 | 01 | Scaffolding & Git Execution Engine | completed | approved | `phases/phase-01/acceptance.feature` | Runnable TypeScript package with safe `GitExecutor` and stdio server harness | [detail](phases/phase-01/phase.md) |
-| 02 | Inspection & Read-Only Tools | in progress | pending | `phases/phase-02/acceptance.feature` | `git_status`, `git_diff`, `git_log`, and `git_info` tools registered with structured models | [detail](phases/phase-02/phase.md) |
+| 02 | Inspection & Read-Only Tools | in progress | approved | `phases/phase-02/acceptance.feature` | `git_status`, `git_diff`, `git_log`, and `git_info` tools registered with structured models | [detail](phases/phase-02/phase.md) |
 | 03 | Staging & Mutation Tools | planned | pending | `phases/phase-03/acceptance.feature` | `git_stage`, `git_unstage`, `git_restore`, and `git_commit` tools with safety safeguards | [detail](phases/phase-03/phase.md) |
 | 04 | Branch, Stash & E2E Validation | planned | pending | `phases/phase-04/acceptance.feature` | `git_branch`, `git_stash`, and end-to-end agent workflow verification | [detail](phases/phase-04/phase.md) |
 
@@ -36,4 +36,4 @@
 |---|-------|--------|--------|
 | 01 | git_status & git_info tools | completed | [detail](phases/phase-02/slice-01-git-status-info.md) |
 | 02 | git_diff & git_log tools | completed | [detail](phases/phase-02/slice-02-git-diff-log.md) |
-| 03 | Inspection tools integration & E2E verification (integration/E2E) | planned | [detail](phases/phase-02/slice-03-inspection-integration.md) |
+| 03 | Inspection tools integration & E2E verification (integration/E2E) | in progress | [detail](phases/phase-02/slice-03-inspection-integration.md) |
