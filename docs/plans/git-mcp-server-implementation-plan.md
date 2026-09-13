@@ -18,7 +18,7 @@
 
 ## Active work
 - **Current phase:** [Phase 02 - Inspection & Read-Only Tools](phases/phase-02/phase.md)
-- **Next slice:** [Slice 01 - git_status & git_info tools](phases/phase-02/slice-01-git-status-info.md)
+- **Next slice:** [Slice 02 - git_diff & git_log tools](phases/phase-02/slice-02-git-diff-log.md)
 - **Blockers:** None
 
 ## Phase plan
@@ -34,6 +34,6 @@
 
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
-| 01 | git_status & git_info tools | in progress | [detail](phases/phase-02/slice-01-git-status-info.md) |
+| 01 | git_status & git_info tools | completed | [detail](phases/phase-02/slice-01-git-status-info.md) |
 | 02 | git_diff & git_log tools | planned | [detail](phases/phase-02/slice-02-git-diff-log.md) |
 | 03 | Inspection tools integration & E2E verification (integration/E2E) | planned | [detail](phases/phase-02/slice-03-inspection-integration.md) |
