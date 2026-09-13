@@ -17,15 +17,15 @@
 - Assumptions: Host system has `git` CLI available on PATH. Ephemeral test repositories can be created in temporary directories.
 
 ## Active work
-- **Current phase:** [Phase 01 - Scaffolding & Git Execution Engine](phases/phase-01/phase.md)
-- **Next slice:** [Slice 03 - Server bootstrap & execution verification (integration/E2E)](phases/phase-01/slice-03-server-bootstrap-integration.md)
+- **Current phase:** [Phase 02 - Inspection & Read-Only Tools](phases/phase-02/phase.md)
+- **Next slice:** [Phase 02 Slice 01](phases/phase-02/phase.md)
 - **Blockers:** None
 
 ## Phase plan
 
 | # | Phase | Status | QA review | Acceptance | Outcome | Detail |
 |---|-------|--------|-----------|------------|---------|--------|
-| 01 | Scaffolding & Git Execution Engine | in progress | approved | `phases/phase-01/acceptance.feature` | Runnable TypeScript package with safe `GitExecutor` and stdio server harness | [detail](phases/phase-01/phase.md) |
+| 01 | Scaffolding & Git Execution Engine | completed | approved | `phases/phase-01/acceptance.feature` | Runnable TypeScript package with safe `GitExecutor` and stdio server harness | [detail](phases/phase-01/phase.md) |
 | 02 | Inspection & Read-Only Tools | planned | pending | `phases/phase-02/acceptance.feature` | `git_status`, `git_diff`, `git_log`, and `git_info` tools registered with structured models | [detail](phases/phase-02/phase.md) |
 | 03 | Staging & Mutation Tools | planned | pending | `phases/phase-03/acceptance.feature` | `git_stage`, `git_unstage`, `git_restore`, and `git_commit` tools with safety safeguards | [detail](phases/phase-03/phase.md) |
 | 04 | Branch, Stash & E2E Validation | planned | pending | `phases/phase-04/acceptance.feature` | `git_branch`, `git_stash`, and end-to-end agent workflow verification | [detail](phases/phase-04/phase.md) |
@@ -36,4 +36,4 @@
 |---|-------|--------|--------|
 | 01 | Package and toolchain setup | completed | [detail](phases/phase-01/slice-01-package-toolchain-setup.md) |
 | 02 | GitExecutor engine & error handling | completed | [detail](phases/phase-01/slice-02-git-executor-engine.md) |
-| 03 | Server bootstrap & execution verification (integration/E2E) | in progress | [detail](phases/phase-01/slice-03-server-bootstrap-integration.md) |
+| 03 | Server bootstrap & execution verification (integration/E2E) | completed | [detail](phases/phase-01/slice-03-server-bootstrap-integration.md) |
