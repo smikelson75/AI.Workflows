@@ -49,7 +49,7 @@ denylist=(
   'UBIQUITOUS-LANGUAGE.md'
   'AGENTS.md'
   'docs/prd/*'
-  'docs/plans/*'
+  'docs/plans/phases/*'
 )
 
 violations=()
@@ -68,7 +68,7 @@ if [[ ${#violations[@]} -gt 0 ]]; then
   {
     printf '%s\n' 'role-scope violation: an Engineer-role report is present, but these workflow-owned artifacts changed:'
     printf '  - %s\n' "${violations[@]}"
-    printf '%s\n' 'Engineer implements and tests assigned code slices only. It must not author CONTEXT.md, UBIQUITOUS-LANGUAGE.md, docs/prd/**, docs/plans/**, or AGENTS.md.'
+    printf '%s\n' 'Engineer implements and tests assigned code slices only. It must not author CONTEXT.md, UBIQUITOUS-LANGUAGE.md, docs/prd/**, docs/plans/phases/**, or AGENTS.md.'
     printf '%s\n' 'What to do:'
     printf '%s\n' '  - If this content belongs to product/domain truth: revert these files and run /brain-storm instead.'
     printf '%s\n' '  - If this content belongs to target behavior, scope, or architecture: revert these files and run /prd-writer instead.'

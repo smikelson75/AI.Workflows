@@ -86,7 +86,9 @@ A phase's **final integration slice** additionally applies `/stryker-dotnet` or 
 
 ### 6. Record and commit
 
-After a successful slice, `Orchestrator` records status in the main plan. It stops after each slice unless asked to continue. Use `/conventional-commit` to inspect the diff, keep unrelated changes separate, and create a Conventional Commit for the coherent change.
+After a successful slice, `Orchestrator` records status in the main plan:
+- In **interactive single-slice mode**: `Orchestrator` stops after the slice and prompts the user to review the diff and run `/conventional-commit`.
+- In **autonomous multi-slice mode**: `Orchestrator` automatically invokes `/conventional-commit` to stage the verified slice changes and main plan status update, cleans up transient reports, creates a Conventional Commit, and advances immediately to the next planned slice until human intervention is required.
 
 ## Resuming After Context Loss
 

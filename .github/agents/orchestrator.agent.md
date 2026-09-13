@@ -85,7 +85,7 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
    - If Engineer B discovers a defect in production code, autonomously route a focused remediation brief back to Engineer A with the failing test output as Red evidence.
 7. If all required verification passed:
    - Set the slice status to `completed` in the main plan.
-   - In autonomous multi-slice execution, invoke `/conventional-commit` autonomously to commit the slice files with a coherent Conventional Commit message.
+   - In autonomous multi-slice execution, invoke `/conventional-commit` autonomously to commit the slice files (stage the slice's verified `changedFiles` and main plan status update; clean up transient reports `out/engineer-*.json`) with a coherent Conventional Commit message.
    - Check if the next slice in the active phase is `planned` and meets the dispatch gate. If yes, advance automatically to the next slice.
 8. When the phase reaches the final integration/E2E slice, halt for explicit human QA review gate approval if not yet `approved`. Once approved and the final integration slice completes, set the phase to `completed` and the next phase to `in progress`; the next phase's QA review begins as `pending` when its active slices are planned.
 9. Halt autonomous execution when:

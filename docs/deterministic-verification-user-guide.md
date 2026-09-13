@@ -247,17 +247,59 @@ Before this step, confirm that the main plan records QA review as `approved`. Th
 Command shape:
 make -f .github/skills/deterministic-verification/Makefile phase-e2e PHASE=<phase-path> COMMAND="<e2e-command>"
 
-## Gate Output And Meaning
+## Gate and Validation Diagnostic Outputs
 
-The gate emits JSON with:
-- sliceId
-- integrationRequired
-- reasons
-- targets
+### Success Gate Payload
+The integration gate emits machine-readable JSON on stdout:
+```json
+{
+  "sliceId": "phase-01/slice-01",
+  "integrationRequired": false,
+  "reasons": [],
+  "targets": []
+}
+```
+- `integrationRequired: false`: no Pass B required for this slice
+- `integrationRequired: true`: Pass B required before completion
 
-Interpretation:
-- integrationRequired false: no Pass B required for this slice
-- integrationRequired true: Pass B required before completion
+### Structured Error Payloads
+When validation or gate evaluation blocks progress, scripts emit structured JSON diagnostics to stderr (exit code 1 or 2) to enable automated diagnosis and structured remediation menus:
+
+#### 1. Change-Set Mismatch (`ERR_CHANGE_SET_MISMATCH`)
+Emitted by `evaluate-integration-gate.sh` when working tree modifications differ from `changedFiles` in the report:
+```json
+{
+  "status": "blocked",
+  "code": "ERR_CHANGE_SET_MISMATCH",
+  "message": "report changedFiles does not match the Git change set; completion is blocked",
+  "details": {
+    "missingFromReport": ["packages/example/src/extra.ts"],
+    "notInWorktree": []
+  },
+  "suggestedActions": [
+    "RECONCILE_REPORT",
+    "STASH_EXTRA_FILES",
+    "SPECIFY_DIFF_BASE"
+  ]
+}
+```
+
+#### 2. Report Validation Errors
+Emitted by `validate-report.sh` when an Engineer handoff report fails semantic schema validation:
+- `ERR_MISSING_REPORT`: Report file not found or empty.
+- `ERR_JSON_SYNTAX_ERROR`: Report file is invalid JSON syntax.
+- `ERR_MISSING_RED_EVIDENCE`: Behavior change report is missing required `redVerification` object.
+- `ERR_MISSING_TDD_REASON`: Non-behavior change report is missing required `tddNotApplicableReason`.
+- `ERR_UNKNOWN_PROPERTIES`: Report contains undeclared properties outside the schema.
+- `ERR_INVALID_UNIT_KIND`: Unit verification kind does not match `changeKind` (e.g. `static` on behavior change).
+
+```json
+{
+  "status": "invalid",
+  "code": "ERR_MISSING_RED_EVIDENCE",
+  "message": "redVerification object is required for behavior changes"
+}
+```
 
 ## What This Improves In Software Engineering
 
