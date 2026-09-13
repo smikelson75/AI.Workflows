@@ -9,8 +9,15 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitExecutor } from "./git/executor.js";
-import { GitInfoInputSchema, GitStatusInputSchema } from "./models/inspection.js";
+import {
+  GitDiffInputSchema,
+  GitInfoInputSchema,
+  GitLogInputSchema,
+  GitStatusInputSchema,
+} from "./models/inspection.js";
+import { executeGitDiff, GIT_DIFF_TOOL_DEFINITION } from "./tools/inspection/diff.js";
 import { executeGitInfo, GIT_INFO_TOOL_DEFINITION } from "./tools/inspection/info.js";
+import { executeGitLog, GIT_LOG_TOOL_DEFINITION } from "./tools/inspection/log.js";
 import { executeGitStatus, GIT_STATUS_TOOL_DEFINITION } from "./tools/inspection/status.js";
 
 export const SERVER_NAME = "git-mcp-server";
@@ -47,7 +54,12 @@ export class GitMcpServer {
   private registerTools(): void {
     this.server.setRequestHandler(ListToolsRequestSchema, () => {
       return {
-        tools: [GIT_STATUS_TOOL_DEFINITION, GIT_INFO_TOOL_DEFINITION],
+        tools: [
+          GIT_STATUS_TOOL_DEFINITION,
+          GIT_INFO_TOOL_DEFINITION,
+          GIT_DIFF_TOOL_DEFINITION,
+          GIT_LOG_TOOL_DEFINITION,
+        ],
       };
     });
 
@@ -95,6 +107,68 @@ export class GitMcpServer {
           }
           try {
             const result = await executeGitInfo(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_diff": {
+          const parseResult = GitDiffInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_diff: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitDiff(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_log": {
+          const parseResult = GitLogInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_log: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitLog(this.executor, parseResult.data);
             return {
               content: [
                 {
