@@ -23,3 +23,9 @@
 - **Test checkpoints:**
   - Mutation tests verifying selective staging, clean rollbacks, and commit creations on fixture repos.
 - **Definition of done:** All mutation tools registered, verified with unit tests, and passing acceptance tests.
+
+## Slice order
+
+1. [Slice 01 - git_stage & git_unstage tools](slice-01-stage-unstage-tools.md)
+2. [Slice 02 - git_restore & git_commit tools](slice-02-restore-commit-tools.md)
+3. [Slice 03 - Mutation tools integration & E2E verification](slice-03-mutation-integration.md)

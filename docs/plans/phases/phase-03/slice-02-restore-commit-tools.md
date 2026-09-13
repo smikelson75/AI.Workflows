@@ -1,0 +1,21 @@
+# Slice 02 - git_restore & git_commit tools
+
+- **User-visible outcome:** MCP clients can safely discard working directory modifications for explicitly named paths with `git_restore`, and record staged changes as Conventional Commits with `git_commit`, including optional body, footers, and amend support.
+- **Backend/data slice:** `packages/git-mcp-server/src/tools/mutation/restore.ts`, `packages/git-mcp-server/src/tools/mutation/commit.ts`, `packages/git-mcp-server/src/models/mutation.ts`, `packages/git-mcp-server/src/server.ts`, `packages/git-mcp-server/test/tools/restore.test.ts`, `packages/git-mcp-server/test/tools/commit.test.ts`.
+- **UI/workflow slice:** Registration of `git_restore` and `git_commit` tools on the MCP server with JSON Schema input validation and structured JSON result serialization.
+- **Files/modules in scope:**
+  - `packages/git-mcp-server/src/models/mutation.ts`
+  - `packages/git-mcp-server/src/tools/mutation/restore.ts`
+  - `packages/git-mcp-server/src/tools/mutation/commit.ts`
+  - `packages/git-mcp-server/src/server.ts`
+  - `packages/git-mcp-server/test/tools/restore.test.ts`
+  - `packages/git-mcp-server/test/tools/commit.test.ts`
+- **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
+- **Acceptance checks:**
+  - `git_restore` requires an explicit, non-empty path list, rejects broad/wildcard-only requests without an explicit confirmation flag, and discards only working tree modifications for the named paths (`git restore -- <paths>`).
+  - `git_restore` validates that every requested path resolves strictly within the repository root before execution.
+  - `git_commit` verifies the index contains staged changes before committing, returning a structured error instead of creating an empty commit unless explicitly overridden.
+  - `git_commit` composes a Conventional Commit message from subject, optional body, and optional footers without shell newline escaping corruption, and supports `amend: true`.
+  - Both tools reject invalid or missing input options with structured validation errors before invoking `GitExecutor`.
+  - Unit tests with `node:test` against temporary git fixture repositories verify safe restores, empty-commit rejection, multi-line commit message formatting, and amend behavior.
+- **Useful-if-stopped statement:** Equips agents to safely roll back disk changes and produce well-formed commits.
