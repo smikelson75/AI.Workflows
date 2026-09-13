@@ -21,7 +21,7 @@ It does this by combining:
 - phase-end E2E verification
 
 In short:
-- Pass A ships behavior and unit tests
+- Pass A ships behavior and unit tests with recorded Red evidence (or explicit non-behavior justification)
 - the gate decides if integration coverage is required
 - Pass B is integration-only when required
 - Orchestrator completes the slice only when required checks are green

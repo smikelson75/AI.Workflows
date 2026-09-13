@@ -54,9 +54,17 @@ Do not survey the repo for maturity or progress, and do not read `docs/plans/`. 
 1. Validate context and glossary against current intent. Any mismatch in language, workflow, or v1 scope blocks finalization; redirect to `brain-storm`.
 2. Determine whether this is a new target or an amendment to the existing target.
 3. Clarify until clear: required behaviors, scope refinements beyond the context guardrails, target architecture direction, hard constraints, acceptance signals, and planner-safe assumptions.
-4. Resolve contradictions among user direction, context, glossary, and existing PRD before writing.
-5. Write/update `docs/prd/<artifact-slug>-prd.md` using [references/PRD-FORMAT.md](references/PRD-FORMAT.md).
-6. Apply the ADR Gate to any newly settled architecture direction or hard constraint.
+4. Apply a target-level failure-contract pass. For each capability, identify externally observable adverse contracts:
+   - Which invalid requests must be rejected?
+   - Which safety or authorization boundaries are externally required?
+   - Which unmet preconditions matter to callers?
+   - Which dependency failures require a stable diagnostic category?
+   - What state must remain unchanged after failure?
+   - Must the service remain usable after a failed request?
+   Acceptance signals must include externally important adverse outcomes when requirements mention safety, validation, diagnostics, timeout, authorization, or destructive operations. Do not add implementation exceptions, source branches, test cases, or framework error types to the PRD.
+5. Resolve contradictions among user direction, context, glossary, and existing PRD before writing.
+6. Write/update `docs/prd/<artifact-slug>-prd.md` using [references/PRD-FORMAT.md](references/PRD-FORMAT.md).
+7. Apply the ADR Gate to any newly settled architecture direction or hard constraint.
 
 Ask one focused question at a time; use 2-4 only when coupled. Push vague answers, request real examples, and ask what `work-planner` would get wrong about the target.
 

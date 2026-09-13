@@ -50,6 +50,8 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 ## Fail-Closed Rules
 
 - Missing or invalid reports block completion.
+- Behavior slices missing required Red evidence or lacking a test-bearing unit verification command fail validation and block completion.
+- Non-behavior slices without an explicit justification reason fail validation and block completion.
 - A mismatch between the report's `changedFiles` and Git's change set blocks completion. This supports uncommitted work but requires multiple slices or unrelated edits to be committed, isolated, evaluated from a known baseline, or explicitly reconciled as one scope.
 - Unknown boundary classification requires integration.
 - Missing project-specific verification commands is an error; this repository does not assume a stack.

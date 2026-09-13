@@ -28,6 +28,7 @@ Feature: <phase user-visible capability>
 - Keep `Given` clauses to externally meaningful state, `When` clauses to one action or event, and `Then` clauses to observable outcomes.
 - Give each scenario one primary behavior and enough isolated setup to run independently. Split a scenario when it contains separately meaningful behaviors, when later actions depend on earlier assertions, or when one failure could hide whether another behavior works.
 - A multi-action scenario is appropriate only when the complete sequence is itself a required user journey. It supplements rather than replaces focused scenarios for independently required behaviors.
+- Systematically partition requirement outcomes into success, invalid input, unmet precondition, safety rejection, dependency failure, state preservation, and recovery; select materially distinct contracts rather than combining them into one broad scenario.
 - Use `Background` only for a prerequisite shared by most scenarios.
 - Use `Scenario Outline` only when examples represent materially distinct acceptance cases.
 - Preserve scenario IDs during revisions. Add new IDs rather than renumbering existing scenarios.

@@ -1,9 +1,19 @@
 {
   "sliceId": "phase-XX/slice-XX",
+  "changeKind": "behavior",
   "changedFiles": [],
   "boundaryChanges": [],
+  "redVerification": {
+    "command": "",
+    "expectedFailure": "",
+    "observedFailure": ""
+  },
+  "unitVerificationKind": "test",
   "unitVerificationCommand": "",
   "unitVerificationResult": "",
+  "staticVerificationCommand": null,
+  "staticVerificationResult": null,
+  "tddNotApplicableReason": null,
   "integrationTargetsSuggested": [],
   "risks": []
 }

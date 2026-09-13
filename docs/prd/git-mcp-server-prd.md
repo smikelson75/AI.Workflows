@@ -16,8 +16,11 @@
 - The server must initialize an MCP server using `@modelcontextprotocol/sdk` and listen on standard input/output (`StdioServerTransport`).
 - The execution engine must invoke the host's `git` executable using `child_process.execFile` with explicit argument arrays, bypassing shell interpreters (`cmd.exe`, `powershell.exe`, `/bin/sh`).
 - Path handling must resolve relative paths against the resolved repository root and normalize directory separators across Windows and POSIX systems.
-- Command executions must enforce configurable timeouts (default 15 seconds) to prevent hanging processes on unexpected lock contention or prompts.
-- All tool input parameters must be validated with schemas before command dispatch, rejecting malformed, dangerous, or unauthorized options.
+- Command executions must enforce configurable timeouts (default 15 seconds) to prevent hanging processes on unexpected lock contention or prompts, returning stable diagnostics that distinguish timeouts from standard command errors.
+- All tool input parameters must be validated with schemas before command dispatch: malformed requests must return MCP `InvalidParams` protocol errors without executing subprocesses.
+- When domain preconditions or Git commands fail (e.g. non-git directory, empty commit, path outside repository), the tool must return an actionable tool error result (`isError: true`) without terminating the server process.
+- Rejected or failed mutations must guarantee state preservation: working tree contents, staging index, and commit history must remain unaltered.
+- A failed tool call must not impair or terminate the server connection; subsequent valid tool calls must proceed normally.
 
 ### Inspection & Read-Only Tools
 - `git_status`:
@@ -77,8 +80,10 @@
 ## Acceptance Signals
 - The target is met when:
   - `npm --prefix packages/git-mcp-server run verify` succeeds with zero TypeScript errors, zero ESLint warnings, and zero Prettier diffs.
-  - `npm --prefix packages/git-mcp-server test` executes unit tests covering all 10 tools using `node:test` against temporary local git fixtures.
+  - `npm --prefix packages/git-mcp-server test` executes unit and integration tests covering all registered tools using `node:test` against temporary local git fixtures.
   - An MCP inspector or client can connect via stdio to the built server and successfully perform an inspect -> stage -> commit -> log loop.
+  - Malformed tool requests return protocol errors (`InvalidParams`) without dispatching commands.
+  - Safety-rejected mutation requests return actionable errors (`isError: true`), preserve repository state, and leave the server fully operational for subsequent tool calls.
 
 ## Planner Assumptions
 - `work-planner` may assume `packages/git-mcp-server` is an isolated package with its own `package.json`, `tsconfig.json`, and source tree.

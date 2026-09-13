@@ -38,7 +38,7 @@ Use `Engineer` for an assigned vertical slice. Its brief must include the outcom
 - verifies the result before reporting;
 - returns changed files, verification, tradeoffs, and risks.
 
-It must not expand scope or guess at unresolved intent. Its default behavior follows Red-Green-Refactor for behavior changes.
+It must not expand scope or guess at unresolved intent. Its default behavior follows Red-Green-Refactor with recorded Red evidence for behavior changes, and explicit non-behavior justification when tests are not applicable.
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Those repository-boundary operations belong to the primary agent or user.
 

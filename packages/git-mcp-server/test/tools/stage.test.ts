@@ -19,6 +19,7 @@ describe("git_stage tool", () => {
       assert.equal(parsed.all, true);
     });
 
+    // @qa-p03-003 @unit
     it("rejects a request with neither paths nor all", () => {
       assert.throws(() => {
         GitStageInputSchema.parse({});
@@ -45,6 +46,7 @@ describe("git_stage tool", () => {
       assert.equal(resolved.replace(/\\/g, "/"), `${repoRoot}/src/file.txt`);
     });
 
+    // @qa-p03-001 @unit
     it("rejects traversal paths outside the repository root", () => {
       const repoRoot = process.cwd().replace(/\\/g, "/");
       assert.throws(() => {
@@ -66,6 +68,7 @@ describe("git_stage tool", () => {
       await fixture.cleanup();
     });
 
+    // @qa-p03-004 @integration
     it("stages explicit paths", async () => {
       await fs.writeFile(path.join(fixture.path, "explicit.txt"), "content");
 
@@ -83,6 +86,7 @@ describe("git_stage tool", () => {
       assert.match(statusResult.stdout, /^A {2}explicit\.txt/m);
     });
 
+    // @qa-p03-005 @integration
     it("stages all modified and untracked files when all: true", async () => {
       await fs.writeFile(path.join(fixture.path, "all-1.txt"), "content");
       await fs.writeFile(path.join(fixture.path, "all-2.txt"), "content");

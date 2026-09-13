@@ -46,6 +46,7 @@ describe("git_commit tool", () => {
       );
     });
 
+    // @qa-p03-002 @unit
     it("composes a subject, body, and footers as distinct sections without escaping corruption", () => {
       const message = composeCommitMessage("feat: add feature", "Body text.", [
         "Refs: #123",
@@ -81,6 +82,7 @@ describe("git_commit tool", () => {
       await fixture.cleanup();
     });
 
+    // @qa-p03-010 @integration
     it("rejects an empty commit attempt without an explicit override", async () => {
       await assert.rejects(
         executeGitCommit(executor, { repo_path: fixture.path, subject: "feat: no-op" }),
@@ -88,6 +90,7 @@ describe("git_commit tool", () => {
       );
     });
 
+    // @qa-p03-009 @integration
     it("creates a commit with a multi-line message from subject, body, and footers", async () => {
       await fs.writeFile(path.join(fixture.path, "feature.txt"), "content");
       await executeGitStage(executor, { repo_path: fixture.path, paths: ["feature.txt"] });
@@ -126,6 +129,7 @@ describe("git_commit tool", () => {
       assert.equal(logResult.stdout.trim(), "chore: empty marker commit");
     });
 
+    // @qa-p03-011 @integration
     it("amends the previous commit with updated staged changes and message", async () => {
       await fs.writeFile(path.join(fixture.path, "amend-target.txt"), "v1");
       await executeGitStage(executor, { repo_path: fixture.path, paths: ["amend-target.txt"] });

@@ -6,7 +6,7 @@ Use two implementation passes only when the integration gate requires it.
 
 ## Pass A
 
-Engineer A implements the behavior and unit tests, runs the slice's unit verification command, and writes an Engineer A report.
+Engineer A implements the behavior and unit tests following the shared TDD protocol (or justified non-behavior path). For behavior changes, Engineer A records Red evidence, runs the slice's test-bearing unit verification command, runs static verification in addition to tests, and writes an Engineer A report containing structured verification evidence.
 
 ## Pass B
 

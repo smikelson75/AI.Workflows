@@ -66,6 +66,7 @@ describe("git_restore tool", () => {
       await fixture.cleanup();
     });
 
+    // @qa-p03-007 @integration
     it("reverts working tree modifications for an explicit path to the last indexed state", async () => {
       const filePath = path.join(fixture.path, "README.md");
       await fs.writeFile(filePath, "modified content");
@@ -80,6 +81,7 @@ describe("git_restore tool", () => {
       assert.equal(content, "initial");
     });
 
+    // @qa-p03-008 @integration
     it("rejects a broad or wildcard-only path request without confirm", async () => {
       await fs.writeFile(path.join(fixture.path, "README.md"), "modified again");
 

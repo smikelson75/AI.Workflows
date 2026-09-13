@@ -42,7 +42,13 @@ Do not read application source code, implementation tests, generated output, or 
 2. Trace every PRD and phase acceptance signal relevant to the phase into one or more observable scenarios.
 3. Assign each scenario one unique scenario ID and exactly one verification-level tag: `@unit`, `@integration`, or `@e2e`.
 4. Give each scenario one triggering action and one primary behavior so failures identify the broken contract. Split scenarios when later actions depend on earlier assertions or when one failure could prevent another behavior from being evaluated.
-5. Cover the primary workflow, meaningful alternate paths, failures, authorization boundaries, and externally observable state changes without naming implementation details.
+5. Apply a systematic outcome-partition pass for each applicable requirement:
+   - consider success, invalid request, unmet precondition, safety rejection, dependency/environment failure, state preservation after rejection, and continued service usability;
+   - select only materially distinct observable contracts;
+   - assign the cheapest test level (`@unit`, `@integration`, `@e2e`) that proves each contract;
+   - use `@e2e` when public protocol error shape, process lifecycle, transport framing, or final external state is material;
+   - do not use one broad scenario as a substitute for independently meaningful failures;
+   - do not inspect source code or tests, and do not attempt to cover internal implementation branches.
 6. Use `@e2e` for independently valuable journeys through the assembled public interface. Do not bundle unrelated behaviors merely to reduce E2E count; retain a multi-action journey only when the complete sequence is itself a required user workflow, and do not use it as a substitute for focused scenarios needed for behavioral clarity.
 7. Write or revise `acceptance.feature` using the format reference.
 8. Report requirement gaps separately. A missing or contradictory required behavior blocks approval and routes to `prd-writer`; a phase boundary, sequencing, or test-environment gap routes to `work-planner`.

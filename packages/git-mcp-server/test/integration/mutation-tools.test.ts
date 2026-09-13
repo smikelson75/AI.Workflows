@@ -43,10 +43,6 @@ function parseToolResult(result: unknown): unknown {
   return JSON.parse(textItem.text) as unknown;
 }
 
-function statusPaths(status: GitStatusResult): string[] {
-  return status.entries.map((entry) => entry.path).sort();
-}
-
 describe("Mutation tools over stdio", () => {
   let client: Client;
   let transport: StdioClientTransport;
@@ -86,136 +82,253 @@ describe("Mutation tools over stdio", () => {
     }
   });
 
-  // @qa-p03-012: End-to-end stage, unstage, restore, and commit workflow over stdio
-  it("drives stage -> unstage -> restore -> commit and reflects each status transition", async () => {
-    const repo = await createFixtureRepo("mutation-e2e-workflow-");
+  // @qa-p03-012 @e2e
+  it("stages selected paths through the assembled server (@qa-p03-012)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-stage-");
     try {
-      await writeFile(repo.path, "README.md", "# Fixture\n");
-      await writeFile(repo.path, "tracked.txt", "original\n");
+      await writeFile(repo.path, "file-a.txt", "initial a\n");
+      await writeFile(repo.path, "file-b.txt", "initial b\n");
       await git(repo.path, ["add", "."]);
       await git(repo.path, ["commit", "-m", "Initial commit"]);
 
-      await writeFile(repo.path, "README.md", "# Fixture\nupdated\n");
-      await writeFile(repo.path, "tracked.txt", "original\nunstaged\n");
-      await writeFile(repo.path, "untracked.txt", "new file\n");
+      await writeFile(repo.path, "file-a.txt", "modified a\n");
+      await writeFile(repo.path, "file-b.txt", "modified b\n");
 
-      const stage = parseToolResult(
-        await client.callTool({
-          name: "git_stage",
-          arguments: { repo_path: repo.path, paths: ["README.md", "untracked.txt"] },
-        }),
-      ) as GitStageResult;
-      assert.deepEqual(stage.staged_paths, ["README.md", "untracked.txt"]);
+      const result = await client.callTool({
+        name: "git_stage",
+        arguments: { repo_path: repo.path, paths: ["file-a.txt"] },
+      });
+      assert.equal(result.isError, undefined);
+      const stage = parseToolResult(result) as GitStageResult;
+      assert.deepEqual(stage.staged_paths, ["file-a.txt"]);
 
-      let status = parseToolResult(
+      const status = parseToolResult(
         await client.callTool({ name: "git_status", arguments: { repo_path: repo.path } }),
       ) as GitStatusResult;
-      assert.deepEqual(statusPaths(status), ["README.md", "tracked.txt", "untracked.txt"]);
-      assert.equal(
-        status.entries.find((entry) => entry.path === "README.md")?.staged_status,
-        "modified",
-      );
-      assert.equal(
-        status.entries.find((entry) => entry.path === "tracked.txt")?.unstaged_status,
-        "modified",
-      );
-      assert.equal(
-        status.entries.find((entry) => entry.path === "untracked.txt")?.staged_status,
-        "added",
-      );
 
-      const unstage = parseToolResult(
-        await client.callTool({
-          name: "git_unstage",
-          arguments: { repo_path: repo.path, paths: ["untracked.txt"] },
-        }),
-      ) as GitUnstageResult;
-      assert.deepEqual(unstage.unstaged_paths, ["untracked.txt"]);
-
-      status = parseToolResult(
-        await client.callTool({ name: "git_status", arguments: { repo_path: repo.path } }),
-      ) as GitStatusResult;
-      assert.equal(
-        status.entries.find((entry) => entry.path === "README.md")?.staged_status,
-        "modified",
-      );
-      assert.equal(
-        status.entries.find((entry) => entry.path === "untracked.txt")?.staged_status,
-        "untracked",
-      );
-
-      const restore = parseToolResult(
-        await client.callTool({
-          name: "git_restore",
-          arguments: { repo_path: repo.path, paths: ["tracked.txt"] },
-        }),
-      ) as GitRestoreResult;
-      assert.deepEqual(restore.restored_paths, ["tracked.txt"]);
-      assert.equal(
-        (await fs.readFile(path.join(repo.path, "tracked.txt"), "utf8")).replace(/\r\n/g, "\n"),
-        "original\n",
-      );
-
-      const commit = parseToolResult(
-        await client.callTool({
-          name: "git_commit",
-          arguments: {
-            repo_path: repo.path,
-            subject: "feat: update fixture",
-            body: "Keep the staged change.\nAcross multiple lines.",
-            footers: ["Refs: #123"],
-          },
-        }),
-      ) as GitCommitResult;
-      assert.equal(commit.subject, "feat: update fixture");
-      assert.match(commit.commit_sha, /^[0-9a-f]{40}$/);
-
-      status = parseToolResult(
-        await client.callTool({ name: "git_status", arguments: { repo_path: repo.path } }),
-      ) as GitStatusResult;
-      assert.deepEqual(statusPaths(status), ["untracked.txt"]);
-      assert.equal(status.entries[0].staged_status, "untracked");
-      assert.equal(
-        await git(repo.path, ["log", "-1", "--format=%B"]),
-        "feat: update fixture\n\nKeep the staged change.\nAcross multiple lines.\n\nRefs: #123\n\n",
-      );
+      const entryA = status.entries.find((e) => e.path === "file-a.txt");
+      const entryB = status.entries.find((e) => e.path === "file-b.txt");
+      assert.ok(entryA, "file-a.txt should exist in status entries");
+      assert.ok(entryB, "file-b.txt should exist in status entries");
+      assert.equal(entryA.staged_status, "modified");
+      assert.equal(entryA.unstaged_status, "unmodified");
+      assert.equal(entryB.staged_status, "unmodified");
+      assert.equal(entryB.unstaged_status, "modified");
     } finally {
       await repo.cleanup();
     }
   });
 
-  it("rejects traversal and unsafe wildcard inputs without mutating the repository", async () => {
-    const repo = await createFixtureRepo("mutation-e2e-safety-");
+  // @qa-p03-013 @e2e
+  it("unstages a selected path through the assembled server (@qa-p03-013)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-unstage-");
     try {
-      await writeFile(repo.path, "README.md", "# Fixture\n");
+      await writeFile(repo.path, "file-a.txt", "initial a\n");
       await git(repo.path, ["add", "."]);
       await git(repo.path, ["commit", "-m", "Initial commit"]);
-      await writeFile(repo.path, "README.md", "# Fixture\nmodified\n");
-      const before = await git(repo.path, ["status", "--porcelain"]);
 
-      for (const request of [
-        { name: "git_stage", arguments: { repo_path: repo.path, paths: ["../outside.txt"] } },
-        { name: "git_unstage", arguments: { repo_path: repo.path, paths: ["../outside.txt"] } },
-        { name: "git_restore", arguments: { repo_path: repo.path, paths: ["*"] } },
-        {
-          name: "git_commit",
-          arguments: {
-            repo_path: path.join(repo.path, "..", "missing-*"),
-            subject: "feat: unsafe",
-          },
-        },
-      ]) {
-        const result = await client.callTool(request);
-        assert.equal(result.isError, true, `${request.name} must reject unsafe input`);
-      }
+      await writeFile(repo.path, "file-a.txt", "modified a\n");
+      await git(repo.path, ["add", "file-a.txt"]);
 
-      assert.equal(await git(repo.path, ["status", "--porcelain"]), before);
-      assert.equal(
-        await fs.readFile(path.join(repo.path, "README.md"), "utf8"),
-        "# Fixture\nmodified\n",
-      );
+      const result = await client.callTool({
+        name: "git_unstage",
+        arguments: { repo_path: repo.path, paths: ["file-a.txt"] },
+      });
+      assert.equal(result.isError, undefined);
+      const unstage = parseToolResult(result) as GitUnstageResult;
+      assert.deepEqual(unstage.unstaged_paths, ["file-a.txt"]);
+
+      const status = parseToolResult(
+        await client.callTool({ name: "git_status", arguments: { repo_path: repo.path } }),
+      ) as GitStatusResult;
+
+      const entryA = status.entries.find((e) => e.path === "file-a.txt");
+      assert.ok(entryA, "file-a.txt should exist in status entries");
+      assert.equal(entryA.staged_status, "unmodified");
+      assert.equal(entryA.unstaged_status, "modified");
+      const content = await fs.readFile(path.join(repo.path, "file-a.txt"), "utf8");
+      assert.equal(content, "modified a\n");
     } finally {
       await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-014 @e2e
+  it("restores a selected path through the assembled server (@qa-p03-014)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-restore-");
+    try {
+      await writeFile(repo.path, "file-a.txt", "indexed content\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+
+      await writeFile(repo.path, "file-a.txt", "dirty content\n");
+
+      const result = await client.callTool({
+        name: "git_restore",
+        arguments: { repo_path: repo.path, paths: ["file-a.txt"] },
+      });
+      assert.equal(result.isError, undefined);
+      const restore = parseToolResult(result) as GitRestoreResult;
+      assert.deepEqual(restore.restored_paths, ["file-a.txt"]);
+
+      const content = await fs.readFile(path.join(repo.path, "file-a.txt"), "utf8");
+      assert.equal(content.replace(/\r\n/g, "\n"), "indexed content\n");
+    } finally {
+      await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-015 @e2e
+  it("commits staged changes through the assembled server (@qa-p03-015)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-commit-");
+    try {
+      await writeFile(repo.path, "file-a.txt", "initial\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "Initial commit"]);
+
+      await writeFile(repo.path, "file-a.txt", "staged update\n");
+      await git(repo.path, ["add", "file-a.txt"]);
+
+      const result = await client.callTool({
+        name: "git_commit",
+        arguments: {
+          repo_path: repo.path,
+          subject: "feat: add discrete commit",
+          body: "Extended commit body description.",
+          footers: ["Refs: #456"],
+        },
+      });
+      assert.equal(result.isError, undefined);
+      const commit = parseToolResult(result) as GitCommitResult;
+      assert.equal(commit.subject, "feat: add discrete commit");
+      assert.match(commit.commit_sha, /^[0-9a-f]{40}$/);
+
+      const logOutput = await git(repo.path, ["log", "-1", "--format=%B"]);
+      assert.ok(logOutput.includes("feat: add discrete commit"));
+      assert.ok(logOutput.includes("Extended commit body description."));
+      assert.ok(logOutput.includes("Refs: #456"));
+    } finally {
+      await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-016 @e2e
+  it("rejects malformed mutation input with InvalidParams protocol error (@qa-p03-016)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-malformed-");
+    try {
+      await writeFile(repo.path, "README.md", "hello\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "init"]);
+      const porcelainBefore = await git(repo.path, ["status", "--porcelain"]);
+
+      await assert.rejects(
+        async () => {
+          await client.callTool({
+            name: "git_stage",
+            arguments: { repo_path: repo.path, paths: "invalid-not-array" as unknown as string[] },
+          });
+        },
+        (err: unknown) => {
+          assert.ok(err instanceof Error);
+          const errorWithCode = err as { code?: number; message?: string };
+          assert.ok(
+            errorWithCode.code === -32602 ||
+              (errorWithCode.message && errorWithCode.message.includes("Invalid arguments")),
+            `Expected InvalidParams error, got: ${String(err)}`,
+          );
+          return true;
+        },
+      );
+
+      const porcelainAfter = await git(repo.path, ["status", "--porcelain"]);
+      assert.equal(porcelainAfter, porcelainBefore);
+    } finally {
+      await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-017 @e2e
+  it("rejects unsafe restore without changing repository contents (@qa-p03-017)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-unsafe-restore-");
+    try {
+      await writeFile(repo.path, "README.md", "original\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "init"]);
+
+      await writeFile(repo.path, "README.md", "modified content\n");
+      const porcelainBefore = await git(repo.path, ["status", "--porcelain"]);
+
+      const result = await client.callTool({
+        name: "git_restore",
+        arguments: { repo_path: repo.path, paths: ["*"] },
+      });
+      assert.equal(result.isError, true);
+      const textItem = (result.content as TextContentItem[]).find((item) => item.type === "text");
+      assert.ok(textItem?.text.includes("confirm: true"));
+
+      const porcelainAfter = await git(repo.path, ["status", "--porcelain"]);
+      assert.equal(porcelainAfter, porcelainBefore);
+      const content = await fs.readFile(path.join(repo.path, "README.md"), "utf8");
+      assert.equal(content, "modified content\n");
+    } finally {
+      await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-018 @e2e
+  it("rejects empty commit without changing repository history (@qa-p03-018)", async () => {
+    const repo = await createFixtureRepo("mutation-e2e-empty-commit-");
+    try {
+      await writeFile(repo.path, "README.md", "original\n");
+      await git(repo.path, ["add", "."]);
+      await git(repo.path, ["commit", "-m", "init"]);
+
+      const headBefore = (await git(repo.path, ["rev-parse", "HEAD"])).trim();
+
+      const result = await client.callTool({
+        name: "git_commit",
+        arguments: { repo_path: repo.path, subject: "feat: should fail without changes" },
+      });
+      assert.equal(result.isError, true);
+      const textItem = (result.content as TextContentItem[]).find((item) => item.type === "text");
+      assert.ok(textItem?.text.includes("No staged changes are present"));
+
+      const headAfter = (await git(repo.path, ["rev-parse", "HEAD"])).trim();
+      assert.equal(headAfter, headBefore);
+    } finally {
+      await repo.cleanup();
+    }
+  });
+
+  // @qa-p03-019 @e2e
+  it("handles invalid repository requests without terminating the server (@qa-p03-019)", async () => {
+    const tmpNonGit = path.join(packageRoot, "temp-non-git-dir");
+    await fs.mkdir(tmpNonGit, { recursive: true });
+    try {
+      const result = await client.callTool({
+        name: "git_stage",
+        arguments: { repo_path: tmpNonGit, paths: ["any.txt"] },
+      });
+      assert.equal(result.isError, true);
+      const textItem = (result.content as TextContentItem[]).find((item) => item.type === "text");
+      assert.ok(textItem && textItem.text.length > 0);
+
+      // Verify server remains responsive for subsequent valid tool call
+      const repo = await createFixtureRepo("mutation-e2e-healthy-subsequent-");
+      try {
+        await writeFile(repo.path, "subsequent.txt", "content\n");
+        const validResult = await client.callTool({
+          name: "git_stage",
+          arguments: { repo_path: repo.path, paths: ["subsequent.txt"] },
+        });
+        assert.equal(validResult.isError, undefined);
+        const stage = parseToolResult(validResult) as GitStageResult;
+        assert.deepEqual(stage.staged_paths, ["subsequent.txt"]);
+      } finally {
+        await repo.cleanup();
+      }
+    } finally {
+      await fs.rm(tmpNonGit, { recursive: true, force: true });
     }
   });
 });

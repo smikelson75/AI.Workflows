@@ -79,14 +79,12 @@ For multi-step tasks, state a brief plan:
 ## 5. Subagent Protocol for Coding & Testing
 **When subagents are invoked to perform coding or testing tasks, they must adhere to these specific instructions:**
 
-- **Verification First**: Before suggesting a solution, ensure the logic can be verified by running existing tests or creating new ones that cover the edge cases of the change.
-- **TDD Workflow**: When implementing features or bug fixes:
-  1. Identify/create a failing test.
-  2. Implement the minimum code to pass.
-  3. Refactor if necessary while maintaining test passes.
+- **Verification First**: Before suggesting a solution, ensure the logic can be verified by running existing tests or creating new ones that cover the edge cases and adverse outcomes of the change.
+- **TDD Workflow**: For behavior-changing slices, load the stack TDD adapter (e.g. `tdd-csharp`, `tdd-typescript`) and follow the shared [TDD Protocol](../skills/tdd/protocol.md).
+- **Non-Behavior Changes**: Non-behavior edits (documentation, workflow contracts, mechanical formatting, build config) follow the non-behavior exception rules defined in the shared TDD protocol.
 - **No Speculation**: Subagents should not guess intent for unclear requirements; they must surface these questions before providing code.
 - **Isolated Changes**: Only modify files necessary for the specific task assigned by the primary agent.
-- **Reporting**: Write the Pass A report to `out/engineer-a-report.json` and Pass B report to `out/engineer-b-report.json` using the matching template in `.github/skills/deterministic-verification/templates/`. Pass A must include `sliceId`, `changedFiles`, `boundaryChanges`, `unitVerificationCommand`, `unitVerificationResult`, `integrationTargetsSuggested`, and `risks`. Pass B must include `sliceId`, `integrationTestsChanged`, `harnessChanges`, `integrationVerificationCommands`, `integrationVerificationResult`, and `remainingRisks`. Validate it with `.github/skills/deterministic-verification/scripts/validate-report.sh` (on Windows, default to Git Bash first: `& "C:\Program Files\Git\bin\bash.exe"`, never bare `bash`) before handing back to `Orchestrator`.
+- **Reporting**: Populate `out/engineer-a-report.json` (Pass A) or `out/engineer-b-report.json` (Pass B) from the matching template in `.github/skills/deterministic-verification/templates/`. Validate the report with `.github/skills/deterministic-verification/scripts/validate-report.sh` (on Windows, default to Git Bash first: `& "C:\Program Files\Git\bin\bash.exe"`, never bare `bash`) before handing back to `Orchestrator`.
 
 ---
 

@@ -94,3 +94,27 @@ Feature: Git MCP Server Staging and Mutation Tools
     Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with staged changes
     When the client calls git_commit with a Conventional Commit subject
     Then the call returns a structured response matching the git_commit output schema and the repository contains the new commit
+
+  @qa-p03-016 @e2e
+  Scenario: Malformed mutation input is rejected through the assembled server
+    Given an MCP client connected over standard input and output to the Git MCP Server
+    When the client calls a mutation tool with malformed required arguments
+    Then the client receives an invalid-parameters protocol error and no Git command is executed
+
+  @qa-p03-017 @e2e
+  Scenario: Unsafe restore is rejected without changing repository contents
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with unstaged modifications
+    When the client calls git_restore with a broad path and no explicit confirmation
+    Then the call returns an actionable error and all working-tree modifications remain unchanged
+
+  @qa-p03-018 @e2e
+  Scenario: Empty commit is rejected without changing repository history
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with no staged changes
+    When the client calls git_commit without an empty-commit override
+    Then the call returns an actionable error and no commit is created
+
+  @qa-p03-019 @e2e
+  Scenario: Invalid repository requests do not terminate the server
+    Given an MCP client connected over standard input and output to the Git MCP Server
+    When the client calls a mutation tool for a directory that is not a Git repository
+    Then the call returns an actionable repository error and the server accepts a subsequent valid tool call

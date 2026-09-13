@@ -69,13 +69,14 @@ Ordinary slices may proceed while QA review is pending. Before the final integra
 
 For local deterministic integration gating, invoke `/deterministic-verification`. After Pass A, `Orchestrator` validates the structured report and runs the gate. The gate derives the changed-file set from Git, so an uncommitted slice is supported; a mismatch blocks completion until the user commits or isolates other work, supplies a known baseline, or intentionally reconciles a combined scope. A required Pass B is dispatched to the existing `Engineer` role with integration-only scope; it is not a separate agent. Phase-end E2E remains a separate final validation step.
 
-For C# behavior changes, apply `/tdd-csharp` inside this implementation stage:
+For behavior changes, apply the shared TDD protocol ([`tdd/protocol.md`](../.github/skills/tdd/protocol.md) and [`tdd/test-design.md`](../.github/skills/tdd/test-design.md)) using the matching stack adapter (e.g. `/tdd-csharp` or `/tdd-typescript`) inside this implementation stage:
 
-1. Red: add one failing test for one behavior.
+1. Red: add or update one focused test for one behavior or outcome partition, observe the expected failure, and record Red evidence.
 2. Green: make the smallest production change that passes.
-3. Refactor: improve the design while keeping tests green.
-4. Repeat for the remaining behavior.
-5. Finish with the full `dotnet test` suite.
+3. Refactor: improve design or readability while keeping tests green.
+4. Repeat for the remaining behaviors.
+5. Finish with the full project/package test suite.
+6. Run static verification in addition to tests, never instead of tests.
 
 A phase's **final integration slice** additionally applies `/stryker-dotnet` or `/stryker-js` (or another matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared (mutation testing does not receive a dedicated slice; it is wired into this final verification command). Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 

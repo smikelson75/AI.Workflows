@@ -1,16 +1,22 @@
 # Slice 03 - Mutation tools integration & E2E verification
 
-- **User-visible outcome:** An MCP client connected over stdio can drive the full stage -> unstage -> restore -> commit loop across `git_stage`, `git_unstage`, `git_restore`, and `git_commit` against real fixture repositories, proving Phase 03's mutation tools operate end-to-end against the phase acceptance contract.
+- **User-visible outcome:** An MCP client connected over stdio can drive focused positive mutation workflows (`git_stage`, `git_unstage`, `git_restore`, `git_commit`) and observe structured error rejections with state preservation across all approved Phase 03 scenarios.
 - **Backend/data slice:** `packages/git-mcp-server/test/integration/mutation-tools.test.ts`.
-- **UI/workflow slice:** Stdio client dispatch of all four mutation tools, exercising tool listing (`ListToolsRequestSchema`) and tool calling (`CallToolRequestSchema`) sequentially against live fixture repositories.
+- **UI/workflow slice:** Stdio client dispatch of all four mutation tools, exercising tool listing and discrete tool calls (`qa-p03-012` through `qa-p03-019`) sequentially against isolated live fixture repositories.
 - **Files/modules in scope:**
   - `packages/git-mcp-server/src/server.ts`
   - `packages/git-mcp-server/test/integration/mutation-tools.test.ts`
   - `docs/plans/phases/phase-03/acceptance.feature`
-- **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
+- **Verification command:** `npm --prefix packages/git-mcp-server test && npm --prefix packages/git-mcp-server run verify`
 - **Acceptance checks:**
   - `ListToolsRequestSchema` lists all 4 mutation tools with descriptions and schema definitions.
-  - Integration suite executes a stage -> unstage -> restore -> commit sequence against fixtures with staged, unstaged, and untracked changes, confirming `git_status` reflects each transition.
-  - Path-traversal and unsafe-wildcard inputs are rejected across all four tools without mutating the fixture repository.
-  - All non-excepted `@e2e` scenarios in `phases/phase-03/acceptance.feature` pass, and all `@unit` and `@integration` scenario IDs map to executable tests.
-- **Useful-if-stopped statement:** Closes Phase 03 with full end-to-end verification of safe Git mutation capabilities.
+  - Dedicated stdio test for `@qa-p03-012`: staging a selected file produces expected output and leaves other files unstaged.
+  - Dedicated stdio test for `@qa-p03-013`: unstaging a selected file leaves file modified in working tree.
+  - Dedicated stdio test for `@qa-p03-014`: restoring a modified file restores indexed contents.
+  - Dedicated stdio test for `@qa-p03-015`: committing staged changes creates new Conventional Commit.
+  - Dedicated stdio test for `@qa-p03-016`: malformed arguments yield MCP `InvalidParams` protocol error without executing Git subprocesses.
+  - Dedicated stdio test for `@qa-p03-017`: broad restore without confirmation is rejected with actionable error and leaves working-tree modifications unchanged.
+  - Dedicated stdio test for `@qa-p03-018`: empty commit without override is rejected with actionable error and leaves commit history unchanged.
+  - Dedicated stdio test for `@qa-p03-019`: calling mutation tool on non-git directory returns actionable error and server remains healthy for a subsequent valid call.
+  - Complete scenario-ID mapping for all Phase 03 scenarios (`@qa-p03-001` through `@qa-p03-019`).
+- **Useful-if-stopped statement:** Closes Phase 03 with full end-to-end verification of safe Git mutation capabilities across positive workflows and adverse contracts.

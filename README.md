@@ -10,7 +10,7 @@ The repository separates decisions by ownership:
 - **Current-state truth**: `work-planner` records the implementation gap, sequencing, statuses, and execution-ready slices.
 - **Implementation**: `Orchestrator` dispatches approved slices to `Engineer`.
 - **QA design**: `QA` applies `qa-design` to produce requirement-based phase Gherkin for human review while ordinary slices proceed.
-- **Behavior verification**: `tdd-csharp` supplies the Red-Green-Refactor rules for C# work.
+- **Behavior verification**: shared TDD protocol defines Red-Green-Refactor rules; `tdd-csharp` and `tdd-typescript` are the C#/.NET and TypeScript/JavaScript adapters.
 - **Code style**: `code-style/protocol.md` defines stack-agnostic enforcement; `dotnet-editorconfig` and `ts-eslint` are the C#/.NET and TypeScript/Node adapters.
 - **Mutation testing**: `mutation-testing/protocol.md` defines stack-agnostic cadence and scope; `stryker-dotnet` and `stryker-js` are the C#/.NET and TypeScript/JavaScript adapters.
 - **Repository guidance**: `agent-instructions` maintains durable `AGENTS.md` instructions.
@@ -44,6 +44,10 @@ Run `/onboard-project`. It acts as a thin classifier and router: it detects whet
 ### C# behavior change
 
 Use `/tdd-csharp` before implementation. Load its required references, write a failing xUnit test first, make the smallest change that passes, refactor only after green, and finish with the full `dotnet test` suite.
+
+### TypeScript / JavaScript behavior change
+
+Use `/tdd-typescript` before implementation. Load its required references, discover the repository's configured test runner, write a failing focused test first (recording Red evidence), make the smallest change that passes, refactor only after green, and finish with the full package test suite plus static verification (`verify`).
 
 ### C#/.NET code style setup
 

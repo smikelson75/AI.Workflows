@@ -50,6 +50,7 @@ describe("git_unstage tool", () => {
       await fixture.cleanup();
     });
 
+    // @qa-p03-006 @integration
     it("removes a staged file from the index without discarding working tree changes", async () => {
       const filePath = path.join(fixture.path, "tracked.txt");
       await fs.writeFile(filePath, "content");

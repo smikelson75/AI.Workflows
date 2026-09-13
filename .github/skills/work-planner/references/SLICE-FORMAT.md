@@ -26,6 +26,8 @@ The orchestrator gates dispatch on the user-visible outcome, files in scope, ver
 - state success as something runnable, not as a description of intent
 - name the scope boundary so the subagent makes isolated changes
 - include `acceptance.feature` in the final slice's files/modules in scope and make complete scenario-ID traceability an acceptance check
+- in the final integration/E2E slice, distinguish positive workflows from caller-visible failure contracts (safety rejections, validation, precondition failures), including exact response assertions and state-preservation checks for rejected operations
+- distinguish unit, integration, E2E, static, and mutation verification commands where applicable rather than collapsing them into a single command
 - carry no status field; the main plan is the single status record
 - do not restate phase-level invariants; link to the phase document instead
 - retain completed slice documents as planning baseline after the phase completes

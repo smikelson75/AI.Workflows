@@ -1,15 +1,157 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["sliceId", "changedFiles", "boundaryChanges", "unitVerificationCommand", "unitVerificationResult", "integrationTargetsSuggested", "risks"],
+  "required": [
+    "sliceId",
+    "changeKind",
+    "changedFiles",
+    "boundaryChanges",
+    "unitVerificationKind",
+    "unitVerificationCommand",
+    "unitVerificationResult",
+    "integrationTargetsSuggested",
+    "risks"
+  ],
   "properties": {
-    "sliceId": { "type": "string", "minLength": 1 },
-    "changedFiles": { "type": "array", "items": { "type": "string" } },
-    "boundaryChanges": { "type": "array", "items": { "type": "string" } },
-    "unitVerificationCommand": { "type": "string" },
-    "unitVerificationResult": { "type": "string" },
-    "integrationTargetsSuggested": { "type": "array", "items": { "type": "string" } },
-    "risks": { "type": "array", "items": { "type": "string" } }
+    "sliceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changeKind": {
+      "type": "string",
+      "enum": [
+        "behavior",
+        "non_behavior"
+      ]
+    },
+    "changedFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "boundaryChanges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "redVerification": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "command",
+        "expectedFailure",
+        "observedFailure"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedFailure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observedFailure": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "unitVerificationKind": {
+      "type": "string",
+      "enum": [
+        "test",
+        "static",
+        "other"
+      ]
+    },
+    "unitVerificationCommand": {
+      "type": "string",
+      "minLength": 1
+    },
+    "unitVerificationResult": {
+      "type": "string",
+      "minLength": 1
+    },
+    "staticVerificationCommand": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "staticVerificationResult": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "tddNotApplicableReason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "integrationTargetsSuggested": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "changeKind": {
+            "const": "behavior"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "redVerification"
+        ],
+        "properties": {
+          "redVerification": {
+            "type": "object"
+          },
+          "unitVerificationKind": {
+            "const": "test"
+          },
+          "tddNotApplicableReason": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "tddNotApplicableReason"
+        ],
+        "properties": {
+          "redVerification": {
+            "type": "null"
+          },
+          "tddNotApplicableReason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

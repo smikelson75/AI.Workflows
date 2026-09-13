@@ -28,6 +28,8 @@ Purpose: a compact target-state specification that extends `CONTEXT.md` and give
 - keep sections compact and bullet-first
 - organize requirements by workflow or capability area
 - use capability/behavior bullets, not story format
+- include externally observable adverse contracts (input rejection, safety boundaries, unmet preconditions, dependency diagnostic categories, state preservation, service recovery); do not include internal implementation exceptions, source-code branches, test cases, or framework-specific error types
+- ensure acceptance signals cover both positive outcomes and externally critical adverse contracts (especially for destructive operations, validation, or security/safety boundaries)
 - assumptions must be safe for `work-planner` to treat as settled
 - keep architecture direction at the level of boundaries, layers, and fixed platform choices
 - omit `Open decisions` entirely when empty
