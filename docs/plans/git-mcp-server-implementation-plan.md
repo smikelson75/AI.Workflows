@@ -36,4 +36,4 @@
 |---|-------|--------|--------|
 | 01 | Package and toolchain setup | completed | [detail](phases/phase-01/slice-01-package-toolchain-setup.md) |
 | 02 | GitExecutor engine & error handling | completed | [detail](phases/phase-01/slice-02-git-executor-engine.md) |
-| 03 | Server bootstrap & execution verification (integration/E2E) | planned | [detail](phases/phase-01/slice-03-server-bootstrap-integration.md) |
+| 03 | Server bootstrap & execution verification (integration/E2E) | in progress | [detail](phases/phase-01/slice-03-server-bootstrap-integration.md) |
