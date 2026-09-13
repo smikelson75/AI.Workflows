@@ -36,7 +36,7 @@
 |---|-------|--------|--------|
 | 01 | git_stage & git_unstage tools | completed | [detail](phases/phase-03/slice-01-stage-unstage-tools.md) |
 | 02 | git_restore & git_commit tools | completed | [detail](phases/phase-03/slice-02-restore-commit-tools.md) |
-| 03 | Mutation tools integration & E2E verification (integration/E2E) | planned | [detail](phases/phase-03/slice-03-mutation-integration.md) |
+| 03 | Mutation tools integration & E2E verification (integration/E2E) | in progress | [detail](phases/phase-03/slice-03-mutation-integration.md) |
 
 ## Slice status - Phase 02 (completed)
 

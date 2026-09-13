@@ -72,7 +72,25 @@ Feature: Git MCP Server Staging and Mutation Tools
     Then the previous commit is replaced with one reflecting the updated staged changes and message
 
   @qa-p03-012 @e2e
-  Scenario: End-to-end stage, unstage, restore, and commit workflow over stdio
-    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with staged, unstaged, and untracked changes
-    When the client drives a sequence calling git_stage, git_unstage, git_restore, and git_commit
-    Then each tool call returns a structured response matching its output schema and the repository's final state reflects the applied sequence
+  Scenario: Staging selected paths through the assembled server
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with multiple modified files
+    When the client calls git_stage for one modified file
+    Then the call returns a structured response matching the git_stage output schema and only that file is staged
+
+  @qa-p03-013 @e2e
+  Scenario: Unstaging a selected path through the assembled server
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with a staged file modification
+    When the client calls git_unstage for the staged file
+    Then the call returns a structured response matching the git_unstage output schema and the file remains modified but unstaged
+
+  @qa-p03-014 @e2e
+  Scenario: Restoring a selected path through the assembled server
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with an unstaged file modification
+    When the client calls git_restore for the modified file
+    Then the call returns a structured response matching the git_restore output schema and the file matches its indexed contents
+
+  @qa-p03-015 @e2e
+  Scenario: Committing staged changes through the assembled server
+    Given an MCP client connected over standard input and output to the Git MCP Server, and a repository with staged changes
+    When the client calls git_commit with a Conventional Commit subject
+    Then the call returns a structured response matching the git_commit output schema and the repository contains the new commit
