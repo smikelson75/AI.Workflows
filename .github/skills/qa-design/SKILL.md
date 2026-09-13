@@ -41,10 +41,12 @@ Do not read application source code, implementation tests, generated output, or 
 1. Confirm the phase plan is stable enough to expose its intended user-visible behavior and that the main plan's QA review state is `pending`.
 2. Trace every PRD and phase acceptance signal relevant to the phase into one or more observable scenarios.
 3. Assign each scenario one unique scenario ID and exactly one verification-level tag: `@unit`, `@integration`, or `@e2e`.
-4. Cover the primary workflow, meaningful alternate paths, failures, authorization boundaries, and externally observable state changes without naming implementation details.
-5. Write or revise `acceptance.feature` using the format reference.
-6. Report requirement gaps separately. A missing or contradictory required behavior blocks approval and routes to `prd-writer`; a phase boundary, sequencing, or test-environment gap routes to `work-planner`.
-7. Ask the human to review the Gherkin. Do not record approval yourself; after approval, direct the user to `Orchestrator` to record it in the main plan.
+4. Give each scenario one triggering action and one primary behavior so failures identify the broken contract. Split scenarios when later actions depend on earlier assertions or when one failure could prevent another behavior from being evaluated.
+5. Cover the primary workflow, meaningful alternate paths, failures, authorization boundaries, and externally observable state changes without naming implementation details.
+6. Use `@e2e` for independently valuable journeys through the assembled public interface. Do not bundle unrelated behaviors merely to reduce E2E count; retain a multi-action journey only when the complete sequence is itself a required user workflow, and do not use it as a substitute for focused scenarios needed for behavioral clarity.
+7. Write or revise `acceptance.feature` using the format reference.
+8. Report requirement gaps separately. A missing or contradictory required behavior blocks approval and routes to `prd-writer`; a phase boundary, sequencing, or test-environment gap routes to `work-planner`.
+9. Ask the human to review the Gherkin. Do not record approval yourself; after approval, direct the user to `Orchestrator` to record it in the main plan.
 
 Drafting runs asynchronously with ordinary implementation slices. The final integration/E2E slice remains blocked until the main plan records QA review as `approved`.
 
@@ -61,6 +63,7 @@ Finish when the phase feature:
 
 - accounts for every applicable acceptance signal;
 - uses canonical domain language and observable behavior;
+- keeps each scenario independently diagnosable around one primary behavior;
 - gives every scenario a unique ID and one verification-level tag;
 - contains no unresolved requirement ambiguity;
 - is ready for human review.

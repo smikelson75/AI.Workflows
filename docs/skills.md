@@ -42,7 +42,7 @@ Invoke with `/work-planner` after context and PRD are current. It owns the imple
 
 ### `qa-design`
 
-Invoke with `/qa-design` after the active phase is planned. It derives implementation-independent Gherkin from context, PRD acceptance signals, phase invariants, and slice outcomes, then writes `docs/plans/phases/phase-XX/acceptance.feature` for human review. Drafting may run alongside ordinary implementation slices; `Orchestrator` blocks the final integration/E2E slice until approval is recorded in the main plan.
+Invoke with `/qa-design` after the active phase is planned. It derives implementation-independent Gherkin from context, PRD acceptance signals, phase invariants, and slice outcomes, then writes `docs/plans/phases/phase-XX/acceptance.feature` for human review. Scenarios isolate one primary behavior for clear failure diagnosis; multi-action E2E journeys are retained only when the complete sequence is itself required. Drafting may run alongside ordinary implementation slices; `Orchestrator` blocks the final integration/E2E slice until approval is recorded in the main plan.
 
 ### `tdd-csharp`
 

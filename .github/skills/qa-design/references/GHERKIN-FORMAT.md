@@ -26,6 +26,8 @@ Feature: <phase user-visible capability>
 - Give each scenario exactly one verification-level tag: `@unit`, `@integration`, or `@e2e`.
 - Describe behavior and outcomes, not selectors, methods, classes, database tables, transport calls, or test-framework mechanics.
 - Keep `Given` clauses to externally meaningful state, `When` clauses to one action or event, and `Then` clauses to observable outcomes.
+- Give each scenario one primary behavior and enough isolated setup to run independently. Split a scenario when it contains separately meaningful behaviors, when later actions depend on earlier assertions, or when one failure could hide whether another behavior works.
+- A multi-action scenario is appropriate only when the complete sequence is itself a required user journey. It supplements rather than replaces focused scenarios for independently required behaviors.
 - Use `Background` only for a prerequisite shared by most scenarios.
 - Use `Scenario Outline` only when examples represent materially distinct acceptance cases.
 - Preserve scenario IDs during revisions. Add new IDs rather than renumbering existing scenarios.
@@ -37,7 +39,7 @@ Feature: <phase user-visible capability>
 - `@integration`: behavior crosses a process, service, persistence, messaging, or external-system boundary but does not require the complete user workflow.
 - `@e2e`: behavior proves a critical user journey across the assembled system through a public interface.
 
-The verification-level tag selects the cheapest test boundary that proves the behavior. Gherkin does not make every scenario an E2E test.
+The verification-level tag selects the cheapest test boundary that proves the behavior. Gherkin does not make every scenario an E2E test. Limit E2E coverage by selecting critical system-boundary behaviors, not by combining independently meaningful behaviors into one scenario.
 
 ## Exceptions
 
