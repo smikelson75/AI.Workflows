@@ -18,7 +18,7 @@
 
 ## Active work
 - **Current phase:** [Phase 04 - Branch, Stash & E2E Validation](phases/phase-04/phase.md)
-- **Next slice:** [Slice 01 - git_branch tool](phases/phase-04/slice-01-git-branch-tool.md)
+- **Next slice:** [Slice 02 - git_stash tool](phases/phase-04/slice-02-git-stash-tool.md)
 - **Blockers:** None.
 
 ## Phase plan
@@ -42,7 +42,7 @@
 
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
-| 01 | git_branch tool | in progress | [detail](phases/phase-04/slice-01-git-branch-tool.md) |
+| 01 | git_branch tool | completed | [detail](phases/phase-04/slice-01-git-branch-tool.md) |
 | 02 | git_stash tool | planned | [detail](phases/phase-04/slice-02-git-stash-tool.md) |
 | 03 | Workspace tools integration & full-lifecycle E2E verification (integration/E2E) | planned | [detail](phases/phase-04/slice-03-workspace-e2e-integration.md) |
 

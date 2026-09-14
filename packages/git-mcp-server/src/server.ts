@@ -21,6 +21,8 @@ import {
   GitStageInputSchema,
   GitUnstageInputSchema,
 } from "./models/mutation.js";
+import { GitBranchInputSchema } from "./models/workspace.js";
+import { executeGitBranch, GIT_BRANCH_TOOL_DEFINITION } from "./tools/branch/branch.js";
 import { executeGitDiff, GIT_DIFF_TOOL_DEFINITION } from "./tools/inspection/diff.js";
 import { executeGitInfo, GIT_INFO_TOOL_DEFINITION } from "./tools/inspection/info.js";
 import { executeGitLog, GIT_LOG_TOOL_DEFINITION } from "./tools/inspection/log.js";
@@ -73,6 +75,7 @@ export class GitMcpServer {
           GIT_UNSTAGE_TOOL_DEFINITION,
           GIT_RESTORE_TOOL_DEFINITION,
           GIT_COMMIT_TOOL_DEFINITION,
+          GIT_BRANCH_TOOL_DEFINITION,
         ],
       };
     });
@@ -307,6 +310,37 @@ export class GitMcpServer {
           }
           try {
             const result = await executeGitCommit(this.executor, parseResult.data);
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: JSON.stringify(result, null, 2),
+                },
+              ],
+              structuredContent: result as unknown as Record<string, unknown>,
+            };
+          } catch (error) {
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text: error instanceof Error ? error.message : String(error),
+                },
+              ],
+            };
+          }
+        }
+        case "git_branch": {
+          const parseResult = GitBranchInputSchema.safeParse(args ?? {});
+          if (!parseResult.success) {
+            throw new McpError(
+              ErrorCode.InvalidParams,
+              `Invalid arguments for git_branch: ${parseResult.error.message}`,
+            );
+          }
+          try {
+            const result = await executeGitBranch(this.executor, parseResult.data);
             return {
               content: [
                 {

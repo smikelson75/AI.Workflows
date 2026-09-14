@@ -62,6 +62,7 @@ describe("Inspection tools end-to-end integration", () => {
       const { tools } = await client.listTools();
       const names = tools.map((tool) => tool.name).sort();
       assert.deepEqual(names, [
+        "git_branch",
         "git_commit",
         "git_diff",
         "git_info",
