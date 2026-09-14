@@ -58,7 +58,7 @@ describe("Inspection tools end-to-end integration", () => {
 
   // @qa-p02-009: End-to-end repository inspection workflow over stdio
   describe("tool discovery", () => {
-    it("lists all 4 inspection tools with descriptions and input schemas", async () => {
+    it("lists all inspection and workspace tools with descriptions and input schemas", async () => {
       const { tools } = await client.listTools();
       const names = tools.map((tool) => tool.name).sort();
       assert.deepEqual(names, [
@@ -69,6 +69,7 @@ describe("Inspection tools end-to-end integration", () => {
         "git_log",
         "git_restore",
         "git_stage",
+        "git_stash",
         "git_status",
         "git_unstage",
       ]);
