@@ -17,8 +17,8 @@
 - Assumptions: Host system has `git` CLI available on PATH. Ephemeral test repositories can be created in temporary directories.
 
 ## Active work
-- **Current phase:** [Phase 04 - Branch, Stash & E2E Validation](phases/phase-04/phase.md)
-- **Next slice:** [Slice 02 - git_stash tool](phases/phase-04/slice-02-git-stash-tool.md)
+- **Current phase:** Complete
+- **Status:** All phases completed successfully
 - **Blockers:** None.
 
 ## Phase plan
@@ -28,7 +28,7 @@
 | 01 | Scaffolding & Git Execution Engine | completed | approved | `phases/phase-01/acceptance.feature` | Runnable TypeScript package with safe `GitExecutor` and stdio server harness | [detail](phases/phase-01/phase.md) |
 | 02 | Inspection & Read-Only Tools | completed | approved | `phases/phase-02/acceptance.feature` | `git_status`, `git_diff`, `git_log`, and `git_info` tools registered with structured models | [detail](phases/phase-02/phase.md) |
 | 03 | Staging & Mutation Tools | completed | approved | `phases/phase-03/acceptance.feature` | `git_stage`, `git_unstage`, `git_restore`, and `git_commit` tools with safety safeguards | [detail](phases/phase-03/phase.md) |
-| 04 | Branch, Stash & E2E Validation | in progress | approved | `phases/phase-04/acceptance.feature` | `git_branch`, `git_stash`, and end-to-end agent workflow verification | [detail](phases/phase-04/phase.md) |
+| 04 | Branch, Stash & E2E Validation | completed | approved | `phases/phase-04/acceptance.feature` | `git_branch`, `git_stash`, and end-to-end agent workflow verification | [detail](phases/phase-04/phase.md) |
 
 ## Slice status - Phase 03
 
@@ -43,8 +43,8 @@
 | # | Slice | Status | Detail |
 |---|-------|--------|--------|
 | 01 | git_branch tool | completed | [detail](phases/phase-04/slice-01-git-branch-tool.md) |
-| 02 | git_stash tool | planned | [detail](phases/phase-04/slice-02-git-stash-tool.md) |
-| 03 | Workspace tools integration & full-lifecycle E2E verification (integration/E2E) | planned | [detail](phases/phase-04/slice-03-workspace-e2e-integration.md) |
+| 02 | git_stash tool | completed | [detail](phases/phase-04/slice-02-git-stash-tool.md) |
+| 03 | Workspace tools integration & full-lifecycle E2E verification (integration/E2E) | completed | [detail](phases/phase-04/slice-03-workspace-e2e-integration.md) |
 
 ## Slice status - Phase 02 (completed)
 
