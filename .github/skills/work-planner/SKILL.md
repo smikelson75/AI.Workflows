@@ -32,16 +32,16 @@ In mature codebases, `work-planner` directly assesses the existing E2E test harn
 
 Record the command, observed result, and specific affected journey for every readiness conclusion. Legacy E2E debt does not automatically block unrelated phase work; scope blocking remediation strictly to journeys required by the active phase and sequence other verified gaps into future phases.
 
-Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, `docs/prd/<artifact-slug>-prd.md`, the existing main plan and phase/slice artifacts; write the main plan and required phase/slice artifacts.
+Defaults: read `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md` if present, `.workflow/prd/<artifact-slug>-prd.md`, the existing main plan and phase/slice artifacts; write the main plan and required phase/slice artifacts.
 
 ## Artifact Naming
 
-- Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md` when present.
-- If the ubiquitous language does not settle a project name, derive `<artifact-slug>` from the product name in `CONTEXT.md`.
+- Derive `<artifact-slug>` from the canonical project, product, or system name in `.workflow/UBIQUITOUS-LANGUAGE.md` when present.
+- If the ubiquitous language does not settle a project name, derive `<artifact-slug>` from the product name in `.workflow/CONTEXT.md`.
 - Use lowercase kebab-case, keep the slug short and domain-specific, and preserve the same slug across PRD and plan artifacts.
 - If neither source settles the name, ask for the project artifact slug before writing.
-- PRD path: `docs/prd/<artifact-slug>-prd.md`.
-- Main plan path: `docs/plans/<artifact-slug>-implementation-plan.md`.
+- PRD path: `.workflow/prd/<artifact-slug>-prd.md`.
+- Main plan path: `.workflow/plans/<artifact-slug>-implementation-plan.md`.
 
 ## Consumer Contract
 
@@ -60,7 +60,7 @@ A slice must carry strong enough success criteria for a subagent to loop indepen
 - The PRD is the target state; this skill owns all current-state truth: repo maturity, architecture in place, implemented/in-progress/absent areas, readiness, and status.
 - Plan the gap: sequence work from current repo reality toward the PRD target.
 - If context or PRD is missing, stale, or contradictory, stop and ask for the prerequisite to be fixed.
-- Never edit `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, or the PRD. Record implementation discoveries in plan artifacts; if a discovery changes the target, redirect to `prd-writer`, or to `brain-storm` when domain, users, workflow, or vocabulary change.
+- Never edit `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, or the PRD. Record implementation discoveries in plan artifacts; if a discovery changes the target, redirect to `prd-writer`, or to `brain-storm` when domain, users, workflow, or vocabulary change.
 - Resolve conflicts among user direction, context, PRD, plan, repo evidence, and statuses before writing.
 - Do not reopen product discovery settled in context or PRD; ask only what changes sequencing, dependencies, phase status, active slices, or planning assumptions.
 - Inspect repo evidence only where it affects implementation status or sequencing.
@@ -72,8 +72,8 @@ Before finalizing, check any newly settled sequencing or implementation-architec
 
 ## Plan Rules
 
-- Main plan: `docs/plans/<artifact-slug>-implementation-plan.md`; always the compact current-truth entry point.
-- Every phase: retained `docs/plans/phases/phase-01/phase.md` style detail document.
+- Main plan: `.workflow/plans/<artifact-slug>-implementation-plan.md`; always the compact current-truth entry point.
+- Every phase: retained `.workflow/plans/phases/phase-01/phase.md` style detail document.
 - Slices: only under the single current `in progress` phase unless explicitly directed; use `slice-01-<slug>.md`.
 - Use zero-padded numbering and relative links.
 - Use only phase/slice statuses `planned`, `in progress`, `completed`; normally one phase is `in progress`.

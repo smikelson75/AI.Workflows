@@ -15,13 +15,13 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 
 | Artifact | Owner | Purpose |
 | --- | --- | --- |
-| `CONTEXT.md` | `brain-storm` | Problem, users, workflow, scope, constraints, and success |
-| `UBIQUITOUS-LANGUAGE.md` | `brain-storm` | Canonical domain terms and banned synonyms |
-| `docs/prd/<artifact-slug>-prd.md` | `prd-writer` | Stable v1 target state and acceptance signals |
-| `docs/plans/<artifact-slug>-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
-| `docs/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
-| `docs/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
-| `docs/plans/phases/phase-XX/acceptance.feature` | `qa-design` | Human-reviewed black-box acceptance scenarios and test-level traceability for one phase |
+| `.workflow/CONTEXT.md` | `brain-storm` | Problem, users, workflow, scope, constraints, and success |
+| `.workflow/UBIQUITOUS-LANGUAGE.md` | `brain-storm` | Canonical domain terms and banned synonyms |
+| `.workflow/prd/<artifact-slug>-prd.md` | `prd-writer` | Stable v1 target state and acceptance signals |
+| `.workflow/plans/<artifact-slug>-implementation-plan.md` | `work-planner` and `Orchestrator` | Routing table, current-state gap, and the only status record |
+| `.workflow/plans/phases/phase-XX/phase.md` | `work-planner` | Cross-slice invariants and phase detail |
+| `.workflow/plans/phases/phase-XX/slice-XX-<slug>.md` | `work-planner` | Self-contained execution brief for one vertical behavior |
+| `.workflow/plans/phases/phase-XX/acceptance.feature` | `qa-design` | Human-reviewed black-box acceptance scenarios and test-level traceability for one phase |
 | `AGENTS.md` | `agent-instructions` | Stable repository-wide coding guidance |
 | `docs/adr/NNNN-<slug>.md` | `adr-writer` | Point-in-time record of a hard-to-reverse technical decision, gated from within `prd-writer`/`work-planner` |
 
@@ -29,7 +29,7 @@ The workflow keeps context and diffs small by treating artifacts as references, 
 
 - `out/engineer-a-report.json` and `out/engineer-b-report.json`: transient execution handoff reports owned by `deterministic-verification`. They provide machine-checkable structured inputs for integration gate evaluation during slice execution. They are disposable and should be cleaned up between slices (or via `clean-reports`).
 
-Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `CONTEXT.md`; if neither source settles it, ask before writing artifacts.
+Derive `<artifact-slug>` from the canonical project, product, or system name in `.workflow/UBIQUITOUS-LANGUAGE.md`. If the glossary does not settle a name, use the product name in `.workflow/CONTEXT.md`; if neither source settles it, ask before writing artifacts.
 
 ## Status Rules
 
@@ -45,7 +45,7 @@ Derive `<artifact-slug>` from the canonical project, product, or system name in 
 ## Plan Shape
 
 ```text
-docs/plans/
+.workflow/plans/
   <artifact-slug>-implementation-plan.md
   phases/
     phase-01/

@@ -21,7 +21,7 @@ If any is missing, skip it. Routine or easily-reversed choices do not get an ADR
 
 ## Contract
 
-- Distinct from `CONTEXT.md`: `CONTEXT.md` is domain/business vocabulary and is corrected in place as understanding sharpens. An ADR is a technical/architecture decision and is never rewritten in place.
+- Distinct from `.workflow/CONTEXT.md`: `.workflow/CONTEXT.md` is domain/business vocabulary and is corrected in place as understanding sharpens. An ADR is a technical/architecture decision and is never rewritten in place.
 - ADRs are point-in-time. Never edit an accepted ADR's body to reflect new understanding; write a new ADR that supersedes it.
 - Lazy creation: do not create `docs/adr/` or a numbered file until a real decision needs recording.
 - Keep it short: context, decision, alternatives considered and why rejected, consequences.

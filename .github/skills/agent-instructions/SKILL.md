@@ -36,9 +36,9 @@ When invoked directly without an onboarding envelope, follow the standard read o
 Read only the sources that exist and are relevant:
 
 1. Existing `AGENTS.md`, if present.
-2. `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`, if present, for stable domain terminology and boundaries.
-3. The PRD, normally `docs/prd/<artifact-slug>-prd.md`, for target architecture and hard constraints. Derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when needed.
-4. The main implementation plan and targeted phase or slice artifacts, normally under `docs/plans/`, only to identify durable repository conventions or required commands.
+2. `.workflow/CONTEXT.md` and `.workflow/UBIQUITOUS-LANGUAGE.md`, if present, for stable domain terminology and boundaries.
+3. The PRD, normally `.workflow/prd/<artifact-slug>-prd.md`, for target architecture and hard constraints. Derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when needed.
+4. The main implementation plan and targeted phase or slice artifacts, normally under `.workflow/plans/`, only to identify durable repository conventions or required commands.
 5. Targeted repository evidence: manifests, project files, formatter/linter configuration, CI workflows, test projects, and representative source files.
 
 Do not survey the entire repository when targeted evidence is sufficient.
@@ -76,7 +76,7 @@ Include only sections that have verified, project-specific value:
 
 Exclude:
 
-- product requirements already owned by `CONTEXT.md` or the PRD
+- product requirements already owned by `.workflow/CONTEXT.md` or the PRD
 - implementation phases, slices, task lists, readiness, or completion status
 - temporary workarounds and one-off task instructions
 - speculative future architecture

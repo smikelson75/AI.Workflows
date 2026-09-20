@@ -29,7 +29,7 @@ Read-only inspection per [references/DISCOVERY-CHECKLIST.md](references/DISCOVER
 | Manifest present, but source is only default template or generator boilerplate | `scaffold` |
 | Manifest present with real source and/or tests | `mature` |
 
-**Artifact maturity** — presence and apparent currency of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, and `AGENTS.md`.
+**Artifact maturity** — presence and apparent currency of `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, `.workflow/prd/`, `.workflow/plans/`, and `AGENTS.md`.
 
 **Detected stacks** — record detected manifests and languages.
 
@@ -59,9 +59,9 @@ All handoffs to downstream skills and agents are conducted in-memory using the e
 
 **`empty`** — the stack is unknown, so no stack-specific adapters can run:
 
-1. `brain-storm` — interview to establish product context; outputs `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
-2. `prd-writer` — settle target architecture, stack, and constraints; outputs `docs/prd/PRD.md`.
-3. `work-planner` — plan Phase 0 as a scaffolding phase; outputs `docs/plans/PLAN.md`.
+1. `brain-storm` — interview to establish product context; outputs `.workflow/CONTEXT.md` and `.workflow/UBIQUITOUS-LANGUAGE.md`.
+2. `prd-writer` — settle target architecture, stack, and constraints; outputs `.workflow/prd/PRD.md`.
+3. `work-planner` — plan Phase 0 as a scaffolding phase; outputs `.workflow/plans/PLAN.md`.
 4. Establish clean Git baseline containing onboarding artifacts created so far.
 5. Execute scaffolding slice via `Orchestrator` (run as active agent mode, never through a subagent tool; dispatches implementation to `Engineer`).
 6. Code-style protocol / matching adapter (see Rule 4), now that a manifest exists.
@@ -107,7 +107,7 @@ The mutation-testing adapter self-assesses test framework readiness, guides root
 
 ## Rule 6: `agent-instructions` Runs After Conventions And Plans Exist
 
-`agent-instructions` requires durable context (`CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`), PRD, plan, and confirmed repository conventions to generate or update `AGENTS.md`. It runs near the end of the routing sequence.
+`agent-instructions` requires durable context (`.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`), PRD, plan, and confirmed repository conventions to generate or update `AGENTS.md`. It runs near the end of the routing sequence.
 
 ## Rule 7: Route Deterministic Verification Idempotently
 
@@ -116,7 +116,7 @@ Route explicitly to `deterministic-verification`, passing `onboarding_mode` and 
 
 ## Boundaries
 
-- Never write `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style/mutation configs directly. Always delegate to the owning skill.
+- Never write `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, the PRD, plan artifacts, `AGENTS.md`, or style/mutation configs directly. Always delegate to the owning skill.
 - Never write an onboarding status file, TODO artifact, or checklist in the repository. Canonical plans remain the sole record of project progress.
 - Never delegate `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions`, or code-style/mutation-testing adapters to `Engineer` or any other subagent. Run each directly in the primary conversation with the user.
 - Do not inspect test code, assert test-suite adequacy, design acceptance scenarios, or evaluate E2E harness readiness in this skill. `work-planner` owns E2E discovery and slice planning; `qa-design` / `QA` owns requirement-based scenario design.

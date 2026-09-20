@@ -1,6 +1,6 @@
 # PRD Format
 
-Purpose: a compact target-state specification that extends `CONTEXT.md` and gives `work-planner` enough durable input to sequence work without reopening discovery. It describes what the product and repo should look like once v1 coding is done, never where they are now.
+Purpose: a compact target-state specification that extends `.workflow/CONTEXT.md` and gives `work-planner` enough durable input to sequence work without reopening discovery. It describes what the product and repo should look like once v1 coding is done, never where they are now.
 
 ## Include Always
 - target outcome
@@ -17,12 +17,12 @@ Purpose: a compact target-state specification that extends `CONTEXT.md` and give
 - repo maturity, implemented/in-progress/absent areas, readiness, or any current-state assessment
 - phase plans, slices, and implementation task lists
 - user-story backlogs
-- restatement of problem, users, workflow, scope guardrails, or glossary entries already in `CONTEXT.md`
+- restatement of problem, users, workflow, scope guardrails, or glossary entries already in `.workflow/CONTEXT.md`
 - speculative architecture detail beyond the target direction and constraints
 - amendment history or stale superseded discussion
 
 ## Rules
-- reference `CONTEXT.md` as the canonical domain artifact and link rather than duplicate
+- reference `.workflow/CONTEXT.md` as the canonical domain artifact and link rather than duplicate
 - state the target in the present tense of the finished system
 - write current truth only
 - keep sections compact and bullet-first
@@ -57,7 +57,7 @@ Do not include tentative guesses.
 # Product Requirements Document
 
 ## Relationship To Context
-- `CONTEXT.md` remains the canonical domain-language artifact for problem, users, workflow, and vocabulary.
+- `.workflow/CONTEXT.md` remains the canonical domain-language artifact for problem, users, workflow, and vocabulary.
 - This document defines the target state to build; it does not describe current repo state.
 
 ## Target Outcome
@@ -99,6 +99,6 @@ Do not include tentative guesses.
 ```
 
 ## Quality Bar
-- `work-planner` should be able to derive the gap between repo reality and this target using this file plus `CONTEXT.md`
+- `work-planner` should be able to derive the gap between repo reality and this target using this file plus `.workflow/CONTEXT.md`
 - a human operator should be able to see what is settled versus what remains open
 - nothing in this file should need editing because code was written or a phase completed

@@ -1,7 +1,7 @@
 # Product Requirements Document
 
 ## Relationship To Context
-- [CONTEXT.md](../../CONTEXT.md) remains the canonical domain-language artifact for problem, users, workflow, and vocabulary.
+- [CONTEXT.md](../CONTEXT.md) remains the canonical domain-language artifact for problem, users, workflow, and vocabulary.
 - This document defines the target state to build; it does not describe current repo state.
 
 ## Target Outcome

@@ -1,6 +1,6 @@
 # Phase Format
 
-Purpose: define the retained phase detail document at `docs/plans/phases/phase-01/phase.md`.
+Purpose: define the retained phase detail document at `.workflow/plans/phases/phase-01/phase.md`.
 
 The phase document exists to hold what no single slice can own: the objective, the boundaries, and the invariants that hold across every slice in the phase. The orchestrator loads it once per phase to keep slice briefs consistent. It is not a summary of its slices.
 

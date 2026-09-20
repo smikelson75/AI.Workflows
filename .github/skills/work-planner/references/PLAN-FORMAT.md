@@ -1,6 +1,6 @@
 # Plan Format
 
-Purpose: a living implementation plan set that carries current repo state and sequences work toward the target defined by `CONTEXT.md` and `docs/prd/<artifact-slug>-prd.md`. It keeps the main plan compact, stores full phase detail in separate phase documents, and carries slice detail only for the current in-progress phase.
+Purpose: a living implementation plan set that carries current repo state and sequences work toward the target defined by `.workflow/CONTEXT.md` and `.workflow/prd/<artifact-slug>-prd.md`. It keeps the main plan compact, stores full phase detail in separate phase documents, and carries slice detail only for the current in-progress phase.
 
 The artifact set serves the `orchestrator` agent, which dispatches engineers governed by `.github/agents/engineer.agent.md`. The main plan routes, the phase document constrains, the slice document is dispatched.
 
@@ -23,11 +23,11 @@ The artifact set serves the `orchestrator` agent, which dispatches engineers gov
 
 ## Rules
 - write current truth only
-- plan artifacts absorb implementation reality; never edit `CONTEXT.md` or the PRD to record progress or discoveries
+- plan artifacts absorb implementation reality; never edit `.workflow/CONTEXT.md` or the PRD to record progress or discoveries
 - use `Slice`, never `Step`
 - keep the main plan compact and phase-oriented
 - record every status in the main plan only, so a status transition is a one-file write
-- keep full phase detail in `docs/plans/phases/phase-01/phase.md` style documents
+- keep full phase detail in `.workflow/plans/phases/phase-01/phase.md` style documents
 - only one `in progress` phase should normally carry slices
 - retain completed phase and slice artifacts instead of collapsing or deleting them
 - future phases must be detailed enough to support later slice generation
@@ -42,11 +42,11 @@ Status is recorded only in the main plan.
 - QA review gate: `pending`, `approved`
 
 ## Artifact Layout
-- artifact slug: derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when the glossary has no project name
-- main plan: `docs/plans/<artifact-slug>-implementation-plan.md`
-- phase detail document: `docs/plans/phases/phase-01/phase.md`
-- slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
-- phase acceptance feature: `docs/plans/phases/phase-01/acceptance.feature`, owned by `qa-design`
+- artifact slug: derive `<artifact-slug>` from the settled project or product name in `.workflow/UBIQUITOUS-LANGUAGE.md`, falling back to `.workflow/CONTEXT.md` only when the glossary has no project name
+- main plan: `.workflow/plans/<artifact-slug>-implementation-plan.md`
+- phase detail document: `.workflow/plans/phases/phase-01/phase.md`
+- slice detail document: `.workflow/plans/phases/phase-01/slice-01-<slug>.md`
+- phase acceptance feature: `.workflow/plans/phases/phase-01/acceptance.feature`, owned by `qa-design`
 
 Use zero-padded numbering. Do not include a slug in the phase folder name. Do not repeat the phase number in the slice filename.
 

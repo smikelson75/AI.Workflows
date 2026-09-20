@@ -9,20 +9,20 @@ user-invocable: true
 
 After `brain-storm`, turn settled domain context into a planner-ready PRD that describes the target state: what the product and repo should look like once v1 coding is done.
 
-Defaults: read `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md` if present, derive `<artifact-slug>` from the settled project or product name in the ubiquitous language, and write `docs/prd/<artifact-slug>-prd.md`.
+Defaults: read `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md` if present, derive `<artifact-slug>` from the settled project or product name in the ubiquitous language, and write `.workflow/prd/<artifact-slug>-prd.md`.
 
 ## Artifact Naming
 
-- Derive `<artifact-slug>` from the canonical project, product, or system name in `UBIQUITOUS-LANGUAGE.md` when present.
-- If the ubiquitous language does not settle a project name, derive `<artifact-slug>` from the product name in `CONTEXT.md`.
+- Derive `<artifact-slug>` from the canonical project, product, or system name in `.workflow/UBIQUITOUS-LANGUAGE.md` when present.
+- If the ubiquitous language does not settle a project name, derive `<artifact-slug>` from the product name in `.workflow/CONTEXT.md`.
 - Use lowercase kebab-case, keep the slug short and domain-specific, and preserve the same slug across PRD and plan artifacts.
 - If neither source settles the name, ask for the project artifact slug before writing.
-- PRD path: `docs/prd/<artifact-slug>-prd.md`.
+- PRD path: `.workflow/prd/<artifact-slug>-prd.md`.
 
 ## Contract
 
 - The PRD describes target state only. It never records repo maturity, implemented/in-progress/absent areas, readiness, progress, or plan status; `work-planner` owns all of that.
-- Treat `CONTEXT.md` as canonical. Reference it; do not restate problem, users, workflow, scope guardrails, or glossary entries already settled there.
+- Treat `.workflow/CONTEXT.md` as canonical. Reference it; do not restate problem, users, workflow, scope guardrails, or glossary entries already settled there.
 - Add only what context lacks: required behaviors, target architecture direction, hard constraints, acceptance signals, and planner-safe assumptions.
 - If context is missing or stale, stop and redirect to `brain-storm`.
 - Write current truth only; remove superseded discussion, not an amendment log.
@@ -43,11 +43,11 @@ Before finalizing, check any newly settled target architecture direction or hard
 
 ## Read Order
 
-1. `CONTEXT.md`
-2. `UBIQUITOUS-LANGUAGE.md`, if present
-3. existing `docs/prd/<artifact-slug>-prd.md`, if present
+1. `.workflow/CONTEXT.md`
+2. `.workflow/UBIQUITOUS-LANGUAGE.md`, if present
+3. existing `.workflow/prd/<artifact-slug>-prd.md`, if present
 
-Do not survey the repo for maturity or progress, and do not read `docs/plans/`. Read code only to confirm a hard constraint the target must respect, such as an architecture direction or platform the user states is fixed.
+Do not survey the repo for maturity or progress, and do not read `.workflow/plans/`. Read code only to confirm a hard constraint the target must respect, such as an architecture direction or platform the user states is fixed.
 
 ## Workflow
 
@@ -63,14 +63,14 @@ Do not survey the repo for maturity or progress, and do not read `docs/plans/`. 
    - Must the service remain usable after a failed request?
    Acceptance signals must include externally important adverse outcomes when requirements mention safety, validation, diagnostics, timeout, authorization, or destructive operations. Do not add implementation exceptions, source branches, test cases, or framework error types to the PRD.
 5. Resolve contradictions among user direction, context, glossary, and existing PRD before writing.
-6. Write/update `docs/prd/<artifact-slug>-prd.md` using [references/PRD-FORMAT.md](references/PRD-FORMAT.md).
+6. Write/update `.workflow/prd/<artifact-slug>-prd.md` using [references/PRD-FORMAT.md](references/PRD-FORMAT.md).
 7. Apply the ADR Gate to any newly settled architecture direction or hard constraint.
 
 Ask one focused question at a time; use 2-4 only when coupled. Push vague answers, request real examples, and ask what `work-planner` would get wrong about the target.
 
 ## PRD Must Include
 
-- A pointer to `CONTEXT.md` as the canonical domain artifact.
+- A pointer to `.workflow/CONTEXT.md` as the canonical domain artifact.
 - Target outcome: what is true once v1 coding is done.
 - Requirements as behaviors grouped by workflow/capability.
 - Scope refinements and non-goals that context does not already state.

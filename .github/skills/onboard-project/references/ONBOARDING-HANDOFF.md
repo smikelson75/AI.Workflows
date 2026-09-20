@@ -19,7 +19,7 @@ The onboarding envelope is:
 | `onboarding_mode` | Enum: `empty`, `scaffold`, `mature` | Manifest presence and source code inspection | All recipients | Never omitted in routed handoffs. When omitted (direct invocation), recipient runs local mode detection. |
 | `repository_scope` | String (path or `.`) | User prompt argument or confirmed subtree | All recipients | Never omitted in routed handoffs (defaults to `.`). Recipient scopes inspection to this path. |
 | `detected_stacks` | Array of objects: `{ name, manifest, language }` | Discovered project/package manifests (`*.sln`, `*.csproj`, `package.json`, `pyproject.toml`, `go.mod`, etc.) | Code-style protocol/adapters, mutation-testing protocol/adapters, `deterministic-verification`, `agent-instructions` | Omitted when stack is unknown (`empty` before scaffolding) or irrelevant to the recipient (e.g., `brain-storm`, `qa-design`/`QA`). |
-| `workflow_artifacts` | Object: key-value map of canonical artifact path to status (`present`, `missing`, `stale`) | File existence check of `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/`, `docs/plans/`, `AGENTS.md` | `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions` | Omitted when irrelevant to the recipient (e.g., code-style and mutation-testing adapters). |
+| `workflow_artifacts` | Object: key-value map of canonical artifact path to status (`present`, `missing`, `stale`) | File existence check of `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, `.workflow/prd/`, `.workflow/plans/`, `AGENTS.md` | `brain-storm`, `prd-writer`, `work-planner`, `agent-instructions` | Omitted when irrelevant to the recipient (e.g., code-style and mutation-testing adapters). |
 | `competing_instructions` | Enum: `none`, `resolved` | Root instruction file check (`AGENT.md`, `AGENTS.md`, `.github/copilot-instructions.md`) | `agent-instructions` | Omitted after normalization or when irrelevant to the recipient. |
 | `git_condition` | Object: `{ initialized: boolean, clean: boolean, baseline_established: boolean }` | `git status` and `.git` directory presence | `Orchestrator`, `deterministic-verification` | Omitted when Git status is not required by the recipient. |
 | `unresolved_contradictions` | Array of strings | Surface-level repository contradictions discovered during classification | `brain-storm`, `prd-writer` | Omitted when empty or irrelevant to recipient. |
@@ -51,10 +51,10 @@ onboarding_handoff:
   onboarding_mode: mature
   repository_scope: "."
   workflow_artifacts:
-    CONTEXT.md: present
-    UBIQUITOUS-LANGUAGE.md: present
-    docs/prd/PRD.md: present
-    docs/plans/PLAN.md: missing
+    .workflow/CONTEXT.md: present
+    .workflow/UBIQUITOUS-LANGUAGE.md: present
+    .workflow/prd/PRD.md: present
+    .workflow/plans/PLAN.md: missing
     AGENTS.md: present
   unresolved_contradictions: []
 ```

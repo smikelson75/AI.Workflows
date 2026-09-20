@@ -22,8 +22,8 @@ If discovery contradicts the stated product purpose or behavior, surface the con
 
 If the repository is already known to be onboarded, start here directly with `/brain-storm` for a new idea or an unsettled product direction. It asks focused questions about the problem, users, desired outcome, workflow branches, scope, constraints, success, and vocabulary. When complete, it writes:
 
-- `CONTEXT.md`: current product and domain truth.
-- `UBIQUITOUS-LANGUAGE.md`: canonical terms and banned synonyms.
+- `.workflow/CONTEXT.md`: current product and domain truth.
+- `.workflow/UBIQUITOUS-LANGUAGE.md`: canonical terms and banned synonyms.
 
 Do not proceed to the PRD while product decisions remain unresolved.
 
@@ -36,7 +36,7 @@ Use `/prd-writer` after context is current. The PRD describes the target state o
 - target architecture direction and hard constraints;
 - acceptance signals and planner-safe assumptions.
 
-The default PRD path is `docs/prd/<artifact-slug>-prd.md`, where `<artifact-slug>` comes from the settled project or product name in `UBIQUITOUS-LANGUAGE.md` and falls back to `CONTEXT.md` only when needed. The PRD must not contain progress, readiness, phases, slices, or implementation status.
+The default PRD path is `.workflow/prd/<artifact-slug>-prd.md`, where `<artifact-slug>` comes from the settled project or product name in `.workflow/UBIQUITOUS-LANGUAGE.md` and falls back to `.workflow/CONTEXT.md` only when needed. The PRD must not contain progress, readiness, phases, slices, or implementation status.
 
 Before finalizing, `prd-writer` checks any newly settled target architecture direction or hard constraint against the ADR test (hard to reverse, surprising without context, real trade-off among genuine alternatives) and hands off to `adr-writer` when it holds.
 
@@ -55,7 +55,7 @@ Before finalizing, `work-planner` applies the same ADR test to any newly settled
 
 ### 4.5 Design phase acceptance
 
-After the active phase is planned, run `QA` or `/qa-design` to derive `docs/plans/phases/phase-XX/acceptance.feature` from product context, PRD acceptance signals, phase invariants, and slice outcomes. QA does not read application source code or implementation tests. It tags every scenario with a stable ID and exactly one test level: `@unit`, `@integration`, or `@e2e`.
+After the active phase is planned, run `QA` or `/qa-design` to derive `.workflow/plans/phases/phase-XX/acceptance.feature` from product context, PRD acceptance signals, phase invariants, and slice outcomes. QA does not read application source code or implementation tests. It tags every scenario with a stable ID and exactly one test level: `@unit`, `@integration`, or `@e2e`.
 
 QA drafting proceeds asynchronously with ordinary implementation slices. Human review may happen at any time before the final integration/E2E slice. `Orchestrator` records explicit approval in the main plan; it does not infer approval from file presence. Requirement gaps return to `prd-writer`, while phase boundary or test-environment gaps return to `work-planner`.
 
@@ -96,7 +96,7 @@ If a session ends mid-work (cleared context, new chat, restart), reconstruct sta
 
 1. `git status` and `git diff` — free, ground-truth answer for any uncommitted change in progress. Check this before asking anything.
 2. Ask `Orchestrator` to continue (e.g. "run the next slice"). It reads only the main plan, active phase invariants, and next slice file — the minimum payload needed to resume, and the only path that knows the plan's status field is authoritative.
-3. Only if no plan exists yet, ask the general chat agent to look around. It has no contract pointing it at `docs/plans/`, so it will search broadly (files, git log, code) to guess at state. This is the most expensive and least reliable option, and should be a last resort, not a habit.
+3. Only if no plan exists yet, ask the general chat agent to look around. It has no contract pointing it at `.workflow/plans/`, so it will search broadly (files, git log, code) to guess at state. This is the most expensive and least reliable option, and should be a last resort, not a habit.
 
 Do not write a separate "session status" artifact to make step 3 cheaper: it would add a durable-write cost to every slice to save tokens on an infrequent event, and a written note can drift from the code while `git diff` cannot.
 

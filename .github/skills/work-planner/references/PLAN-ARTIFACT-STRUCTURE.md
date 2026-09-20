@@ -3,12 +3,12 @@
 Purpose: define the canonical file layout and naming rules for the `work-planner` skill so planning context stays small while completed detail remains durable.
 
 ## Canonical Files
-- artifact slug: derive `<artifact-slug>` from the settled project or product name in `UBIQUITOUS-LANGUAGE.md`, falling back to `CONTEXT.md` only when the glossary has no project name
-- main plan: `docs/plans/<artifact-slug>-implementation-plan.md`
-- phase detail root: `docs/plans/phases/`
-- phase detail document: `docs/plans/phases/phase-01/phase.md`
-- slice detail document: `docs/plans/phases/phase-01/slice-01-<slug>.md`
-- phase acceptance feature: `docs/plans/phases/phase-01/acceptance.feature`, created by `qa-design`
+- artifact slug: derive `<artifact-slug>` from the settled project or product name in `.workflow/UBIQUITOUS-LANGUAGE.md`, falling back to `.workflow/CONTEXT.md` only when the glossary has no project name
+- main plan: `.workflow/plans/<artifact-slug>-implementation-plan.md`
+- phase detail root: `.workflow/plans/phases/`
+- phase detail document: `.workflow/plans/phases/phase-01/phase.md`
+- slice detail document: `.workflow/plans/phases/phase-01/slice-01-<slug>.md`
+- phase acceptance feature: `.workflow/plans/phases/phase-01/acceptance.feature`, created by `qa-design`
 
 ## Naming Rules
 - use zero-padded two-digit numbering for phases: `phase-01`, `phase-02`
@@ -39,7 +39,7 @@ Purpose: define the canonical file layout and naming rules for the `work-planner
 ## Example Layout
 
 ```text
-docs/plans/
+.workflow/plans/
   <artifact-slug>-implementation-plan.md
   phases/
     phase-01/

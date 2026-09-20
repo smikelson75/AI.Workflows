@@ -12,7 +12,7 @@ Purpose: a point-in-time record of a hard-to-reverse technical decision, so a fu
 
 ## Exclude
 
-- domain vocabulary or business rules; that belongs in `CONTEXT.md`/`UBIQUITOUS-LANGUAGE.md`
+- domain vocabulary or business rules; that belongs in `.workflow/CONTEXT.md`/`.workflow/UBIQUITOUS-LANGUAGE.md`
 - implementation task lists, sequencing, or status content; that belongs in plan artifacts
 - speculative future decisions not yet made
 

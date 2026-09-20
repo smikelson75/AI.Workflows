@@ -1,6 +1,6 @@
 # Phase Acceptance Gherkin Format
 
-Purpose: define the human-reviewable acceptance contract at `docs/plans/phases/phase-XX/acceptance.feature`.
+Purpose: define the human-reviewable acceptance contract at `.workflow/plans/phases/phase-XX/acceptance.feature`.
 
 ## Required Shape
 

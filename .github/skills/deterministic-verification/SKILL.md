@@ -38,7 +38,7 @@ Do not create a second agent for Pass B. It is the existing `Engineer` role oper
 5. Validate the Engineer B report and run its integration verification command.
 6. Allow `Orchestrator` to mark the slice complete only after all required checks pass.
 7. Require approved phase Gherkin, then run `.github/skills/deterministic-verification/scripts/run-phase-e2e.sh` only for the phase-final E2E slice and verify scenario-ID traceability across all test levels.
-8. The `pre-commit` hook also runs `.github/skills/deterministic-verification/scripts/check-role-scope.sh`, which fails closed if an Engineer report is present alongside a changed `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, `docs/prd/**`, `docs/plans/phases/**`, or `AGENTS.md` file. This does not replace the `Engineer`/`onboard-project` scope boundaries; it is a backstop for the case where a report exists but scope was still violated. It cannot detect an Engineer dispatch that skipped the report protocol entirely.
+8. The `pre-commit` hook also runs `.github/skills/deterministic-verification/scripts/check-role-scope.sh`, which fails closed if an Engineer report is present alongside a changed `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, `.workflow/prd/**`, `.workflow/plans/phases/**`, or `AGENTS.md` file. This does not replace the `Engineer`/`onboard-project` scope boundaries; it is a backstop for the case where a report exists but scope was still violated. It cannot detect an Engineer dispatch that skipped the report protocol entirely.
 
 ## Script Execution On Windows
 

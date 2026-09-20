@@ -1,6 +1,6 @@
 # Slice Format
 
-Purpose: define the retained slice detail document at `docs/plans/phases/phase-01/slice-01-<slug>.md`.
+Purpose: define the retained slice detail document at `.workflow/plans/phases/phase-01/slice-01-<slug>.md`.
 
 A slice is the payload the `orchestrator` agent turns into a brief for an engineer governed by `.github/agents/engineer.agent.md`. The orchestrator copies slice content verbatim and adds only the phase's cross-slice invariants, so the slice must stand alone: a subagent given only this content plus the repo must be able to work to completion without asking for missing intent.
 

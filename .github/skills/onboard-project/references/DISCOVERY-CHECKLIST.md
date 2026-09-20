@@ -19,10 +19,10 @@ Product intent, user identification, architecture inference, and glossary drafti
 ## 3. Workflow Artifact Presence
 
 Check presence and apparent currency of canonical workflow files:
-- `CONTEXT.md`
-- `UBIQUITOUS-LANGUAGE.md`
-- `docs/prd/`
-- `docs/plans/`
+- `.workflow/CONTEXT.md`
+- `.workflow/UBIQUITOUS-LANGUAGE.md`
+- `.workflow/prd/`
+- `.workflow/plans/`
 - `AGENTS.md`
 
 ## 4. Root Instruction Files

@@ -23,7 +23,7 @@ The repository separates decisions by ownership:
 ### New idea
 
 1. Run `/brain-storm` and answer its focused product questions.
-2. Confirm the resulting `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md`.
+2. Confirm the resulting `.workflow/CONTEXT.md` and `.workflow/UBIQUITOUS-LANGUAGE.md`.
 3. Run `/prd-writer` to create or update the target PRD. It hands off to `adr-writer` when a settled target-architecture choice is hard to reverse, surprising, and a real trade-off.
 4. Run `/work-planner` to create the implementation plan and active slices. It applies the same `adr-writer` gate to sequencing/implementation-architecture decisions.
 5. Start `QA` or `/qa-design` to draft the active phase's Gherkin; this may run alongside ordinary slice implementation.
@@ -87,9 +87,9 @@ flowchart LR
     B -->|No context or plan| C[onboard-project]
     B -->|New product idea| D[brain-storm]
     C --> D
-    D --> E[CONTEXT.md + UBIQUITOUS-LANGUAGE.md]
+    D --> E[.workflow/CONTEXT.md + .workflow/UBIQUITOUS-LANGUAGE.md]
     E --> F[prd-writer]
-    F --> G[docs/prd/&lt;artifact-slug&gt;-prd.md]
+    F --> G[.workflow/prd/&lt;artifact-slug&gt;-prd.md]
     G --> H[work-planner]
     H --> I[Main plan + phase + slice artifacts]
     I --> Q[QA drafts acceptance.feature]
