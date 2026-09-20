@@ -27,7 +27,7 @@ Before changing a skill or agent:
 - identify the artifact owner and downstream consumers;
 - preserve explicit stop and escalation rules;
 - update examples and catalogs in the same change;
-- run a Markdown link and whitespace check.
+- run a Markdown link and whitespace check via `.github/skills/workflow-audit/scripts/check-markdown-links.sh` (owned by `workflow-audit`).
 
 Changes to artifact paths, statuses, or handoff payloads are workflow changes, not cosmetic documentation changes. Describe the compatibility impact clearly and update every contract that depends on the old shape.
 

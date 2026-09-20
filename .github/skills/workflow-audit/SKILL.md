@@ -63,7 +63,7 @@ In repair mode:
 - update catalogs or links when a source contract changes;
 - do not rewrite durable product or planning artifacts;
 - do not add a running audit log or audit artifact unless explicitly requested;
-- validate Markdown, frontmatter, links, and whitespace after editing.
+- validate Markdown, frontmatter, links, and whitespace after editing via `.github/skills/workflow-audit/scripts/check-markdown-links.sh`.
 
 If a proposed repair changes product truth, target truth, implementation sequencing, or status ownership, stop and route it to `brain-storm`, `prd-writer`, or `work-planner` instead of applying it here.
 
