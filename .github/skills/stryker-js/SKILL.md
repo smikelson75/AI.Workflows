@@ -75,14 +75,28 @@ Ask one focused question at a time, offering a sensible default so the user can 
 
 Propose `high`, `low`, and `break` values from the answers and StrykerJS's typical default bands; confirm with the user before writing `stryker.config.json`. Do not silently pick values. If this is the first enabled phase (measure-only), omit `break` (or set `break: 0`) so the run measures and reports scores and survivors without failing the verification command; `break` is configured only after the survivor backlog is cleared.
 
+## Run Completeness Signals
+
+Apply the protocol's Run Completeness rules using these StrykerJS-specific signals. Scan the run output for each before reporting a score.
+
+- **Compile/type-check errors in volume** — mutants dropped as `CompileError`. Almost always a missing or misconfigured `@stryker-mutator/typescript-checker`, or a `tsconfig` the checker cannot resolve. Suggest fixing the checker configuration; do not report the remaining score as the file's score.
+- **`No tests were executed` / runner reported zero tests** for files in mutate scope — the runner plugin does not match the repository's actual runner. Re-confirm the runner from repository config.
+- **Runner plugin crash or missing plugin** — the run produced no score at all; report the plugin error.
+- **Empty or near-empty mutate scope** — either the glob is wrong, or the logic genuinely lives in components and templates. The second case is the protocol's architecture-boundary signal, and is escalated, not ignored.
+- **Timeout mutants in volume** — report separately from survivors; usually an unbounded loop mutant or a fake-timer setup, not weak tests.
+- **Stale `--incremental` cache** producing implausibly few mutants — suggest deleting `reports/stryker-incremental.json` and rerunning before trusting the result.
+
+Report compile-error, timeout, and ignored mutant counts separately from survivors in every run summary.
+
 ## Verification
 
 Run and report:
 
 - `npx stryker run` (scoped per the incremental/baseline rule above) — reports the mutation score and survived mutants.
+- The completeness check above. A run with dropped files, zero discovered tests, or an empty mutate scope has not passed, regardless of the reported score or a green unit-test run.
 - If `break` is set and the score falls below it, the command exits non-zero; treat that as any other failed verification per the protocol's survivor remediation rule.
-- Report compile-error and timeout mutant counts separately from survivors. A large compile-error count usually means the TypeScript checker is missing or misconfigured, not that tests are weak.
+- On an unexplained failure, rerun with `npx stryker run --logLevel trace --fileLogLevel trace` before escalating, and quote the specific error rather than the whole log.
 
 ## Exit Conditions
 
-Done when `stryker.config.json` exists at the root with recorded runner, scope, and threshold decisions, the verification command has been run and reported, survivors have been routed per the protocol (fixed inline or handed to `work-planner`), and — if this was the first run on the repository — the repository maturity path taken has been stated in the exit brief.
+Done when `stryker.config.json` exists at the root with recorded runner, scope, and threshold decisions, the verification command has been run **to completion** and reported, any incompleteness was escalated to the user with named causes and proposed fixes and then resolved, survivors have been routed per the protocol (fixed inline or handed to `work-planner`), and — if this was the first run on the repository — the repository maturity path taken has been stated in the exit brief.

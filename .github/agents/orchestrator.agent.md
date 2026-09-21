@@ -91,6 +91,7 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 9. Halt autonomous execution when:
    - The phase reaches the final integration/E2E slice (requires human QA review gate approval).
    - All planned slices in the phase are complete.
+   - The final integration slice's mutation-testing run did not complete over its intended scope.
    - An unresolvable blocker occurs (triggering Tier 2 Decision Menu).
 
 ## Status Recording
@@ -154,6 +155,7 @@ When the workflow cannot proceed autonomously (due to gate mismatch, missing req
 ```
 
 - subagent reports the slice was wrong or infeasible: present decision menu or route to `work-planner`
+- Engineer reports an incomplete mutation-testing run on the final integration slice: never accept it as a pass and never accept a green test suite in its place. Present a decision menu that names the affected methods/files and carries the adapter's suggested fix as an option, alongside the option to route the fix to `work-planner` as a remediation slice. The phase stays open until the run completes.
 - the work implies a changed target, constraint, or architecture direction: route to `prd-writer`
 - the work implies changed domain, users, workflow, or vocabulary: route to `brain-storm`
 

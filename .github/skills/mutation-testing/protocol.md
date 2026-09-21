@@ -53,6 +53,29 @@ First-run behavior depends on two independent facts: code maturity (empty/scaffo
 - **Mature codebase, no test suite at all** — blocked. Mutation testing cannot run without tests to kill mutants. Hand this to `work-planner` as a required prerequisite phase (write a baseline test suite) before any mutation-testing phase can start.
 - **Mature codebase, existing test suite** — no prior phase boundary exists yet to scope an incremental diff against. Offer a one-time, **opt-in, cost-flagged** full-repository baseline run: non-blocking, reporting score and survivor hotspots to `work-planner` as backlog. Do not run this automatically the way a cheap linter runs automatically — the cost can be large, and the user should choose to pay it. After the baseline (or if declined), the incremental per-phase cadence takes over from the next phase forward.
 
+## Run Completeness
+
+A mutation run must **complete and produce a score over the intended scope**. An incomplete or silently narrowed run is a blocker, not a warning — it inflates the apparent score by removing exactly the code the tooling could not handle.
+
+Treat any of the following as an incomplete run:
+
+- The tool could not start or crashed (missing runtime, tool not installed, environment/OS policy block, build failure).
+- Mutants failed to compile or type-check, causing the tool to drop mutants — and especially when it drops **all** mutants in an enclosing method, class, or file.
+- Mutants timed out in volume, or the run was cut short by a time or token limit.
+- The effective `mutate` scope resolved to zero files, or to far less than the phase diff.
+- No tests were discovered for a project inside the mutate scope.
+
+Required handling:
+
+1. **Do not report a score from an incomplete run** as if it were a result. Report the score alongside an explicit completeness statement: what was dropped, where, and why.
+2. **Never substitute a passing test suite for a missing mutation run.** If the mutation command in the final integration slice did not execute to completion, the slice's verification has not passed.
+3. **Surface it to the user** through the caller's decision menu, with the affected symbols named and a concrete proposed fix for each cause — not a generic "mutation testing failed".
+4. **Propose a fix, do not apply one unilaterally.** Dropped-mutant causes are usually code-shape or tool-configuration problems whose fix touches files outside the current slice. Fixes inside the slice's own scope may be applied inline; anything wider is routed to `work-planner` as a remediation slice after the user chooses.
+5. **Excluding the affected code is not a fix** unless the user records the decision explicitly, per non-negotiable 4.
+6. The run is re-executed after the fix. The phase does not close on an incomplete mutation run.
+
+Adapters supply the stack-specific detection signals (tool output strings, exit codes, log patterns) and the corresponding suggested fixes.
+
 ## Survivor Remediation After A Run
 
 - Survivors inside the current slice's own file scope: fix inline. This is the same as any other failed verification — the slice stays `in progress` until repaired and rerun. No plan edit needed.
@@ -66,6 +89,7 @@ First-run behavior depends on two independent facts: code maturity (empty/scaffo
 4. A low score is resolved by writing a better test or by an explicit, recorded scope decision — never by silently weakening a test or lowering a threshold to pass.
 5. Config changes are their own commit, never mixed with behavior changes.
 6. Mutation testing does not get its own phase or slice; it runs as part of the phase-final integration/E2E slice's verification command (except for prerequisite test-writing or survivor remediation backlogs).
+7. The run must complete over its intended scope. An incomplete run (see Run Completeness) is escalated to the user with named causes and proposed fixes, and is never reported as a pass or replaced by a passing test suite.
 
 ## Boundaries For Every Adapter
 

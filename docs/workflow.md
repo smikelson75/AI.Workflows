@@ -84,6 +84,8 @@ For behavior changes, apply the shared TDD protocol ([`tdd/protocol.md`](../.git
 
 A phase's **final integration slice** additionally applies `/stryker-dotnet` or `/stryker-js` (or another matching stack adapter) per [`mutation-testing/protocol.md`](../.github/skills/mutation-testing/protocol.md): an incremental mutation-testing run scoped to the phase's diff, unit tests only, measure-only until a backlog is cleared (mutation testing does not receive a dedicated slice; it is wired into this final verification command). Survivors inside the current slice's scope are fixed inline like any failed verification; survivors outside that scope, or a large batch, escalate to `work-planner` as remediation slices.
 
+That run must complete over its intended scope. If the tool is blocked, drops mutants (for example whole methods discarded after a mutant compile error), discovers no tests, or resolves an empty mutate scope, `Orchestrator` halts the phase and escalates to the user with the affected methods or files named and the adapter's suggested fix offered as a decision-menu option. A passing test suite never substitutes for a mutation run that did not finish, and narrowing mutation scope to make the run pass requires an explicit recorded decision.
+
 ### 6. Record and commit
 
 After a successful slice, `Orchestrator` records status in the main plan:
