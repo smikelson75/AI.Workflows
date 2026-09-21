@@ -6,7 +6,7 @@
 - **Files/modules in scope:**
   - `packages/git-mcp-server/src/server.ts`
   - `packages/git-mcp-server/test/integration/inspection-tools.test.ts`
-  - `docs/plans/phases/phase-02/acceptance.feature`
+  - `.workflow/plans/phases/phase-02/acceptance.feature`
 - **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
 - **Acceptance checks:**
   - `ListToolsRequestSchema` lists all 4 inspection tools with descriptions and schema definitions.

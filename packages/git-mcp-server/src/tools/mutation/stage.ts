@@ -11,8 +11,7 @@ export const GIT_STAGE_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       paths: {
         type: "array",
@@ -24,6 +23,7 @@ export const GIT_STAGE_TOOL_DEFINITION = {
         description: "When true, stages all modified and untracked files instead of using paths.",
       },
     },
+    required: ["repo_path"],
   },
 };
 

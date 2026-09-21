@@ -6,7 +6,7 @@
 - **Files/modules in scope:**
   - `packages/git-mcp-server/src/server.ts`
   - `packages/git-mcp-server/test/integration/mutation-tools.test.ts`
-  - `docs/plans/phases/phase-03/acceptance.feature`
+  - `.workflow/plans/phases/phase-03/acceptance.feature`
 - **Verification command:** `npm --prefix packages/git-mcp-server test && npm --prefix packages/git-mcp-server run verify`
 - **Acceptance checks:**
   - `ListToolsRequestSchema` lists all 4 mutation tools with descriptions and schema definitions.

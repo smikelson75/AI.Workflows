@@ -12,7 +12,7 @@ Create a black-box acceptance contract from settled requirements and plans while
 ## Onboarding Input
 
 When invoked following `work-planner` after active phase creation:
-- Derive scenarios solely from settled target requirements (`docs/prd/`) and active phase scope (`phase.md`).
+- Derive scenarios solely from settled target requirements (`.workflow/prd/`) and active phase scope (`phase.md`).
 - Never inspect, execute, or reverse-engineer existing unit, integration, or E2E tests, and never read implementation code.
 - Draft asynchronously in the primary conversation; human review may remain pending when onboarding completes its routing brief. The phase-final integration/E2E slice remains blocked until the gate records explicit human approval.
 - Return a concise scenario brief; never write or update an onboarding status artifact.
@@ -21,8 +21,8 @@ When invoked directly without an onboarding envelope, follow the standard read o
 
 ## Inputs And Read Order
 
-1. `CONTEXT.md` and `UBIQUITOUS-LANGUAGE.md` for user intent and canonical terms.
-2. `docs/prd/<artifact-slug>-prd.md` for required behavior and acceptance signals.
+1. `.workflow/CONTEXT.md` and `.workflow/UBIQUITOUS-LANGUAGE.md` for user intent and canonical terms.
+2. `.workflow/prd/<artifact-slug>-prd.md` for required behavior and acceptance signals.
 3. The main plan for the active phase and its QA review state.
 4. The active `phase.md` and all of its slice documents for phase boundaries, outcomes, and test checkpoints.
 5. [`references/GHERKIN-FORMAT.md`](references/GHERKIN-FORMAT.md) for the output contract.
@@ -31,7 +31,7 @@ Do not read application source code, implementation tests, generated output, or 
 
 ## Ownership
 
-- `qa-design` owns `docs/plans/phases/phase-XX/acceptance.feature`.
+- `qa-design` owns `.workflow/plans/phases/phase-XX/acceptance.feature`.
 - `work-planner` creates the phase's QA review gate in the main plan.
 - `Orchestrator` records explicit human approval or invalidation in that gate and blocks only the final integration/E2E slice while approval is absent.
 - `Engineer` implements and executes tests. It does not edit the approved Gherkin contract.

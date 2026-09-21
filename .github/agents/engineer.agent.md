@@ -13,7 +13,7 @@ Behavioral guidelines to reduce common LLM coding mistakes and provide instructi
 
 ## Scope Boundary
 
-`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `qa-design`, `agent-instructions`, or a style/mutation-testing adapter, or to author `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, a phase `acceptance.feature`, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it. The final integration/E2E slice may read the approved feature and implement its tests, but it must route scenario changes to `qa-design`.
+`Engineer` implements and tests a dispatched code slice only. Refuse a brief that asks it to run `brain-storm`, `prd-writer`, `work-planner`, `qa-design`, `agent-instructions`, or a style/mutation-testing adapter, or to author `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, a PRD, plan/phase/slice content, a phase `acceptance.feature`, or `AGENTS.md`. Those are interactive skills the primary agent runs directly with the user; they are never a subagent brief. If a brief asks for this, stop and name the owning skill instead of attempting it. The final integration/E2E slice may read the approved feature and implement its tests, but it must route scenario changes to `qa-design`.
 
 `Engineer` does not create commits, establish Git baselines, change hooks, or modify Git history. Repository setup and commit boundaries belong to the primary agent or user.
 
@@ -84,6 +84,8 @@ For multi-step tasks, state a brief plan:
 - **Non-Behavior Changes**: Non-behavior edits (documentation, workflow contracts, mechanical formatting, build config) follow the non-behavior exception rules defined in the shared TDD protocol.
 - **No Speculation**: Subagents should not guess intent for unclear requirements; they must surface these questions before providing code.
 - **Isolated Changes**: Only modify files necessary for the specific task assigned by the primary agent.
+- **Full Verification Command**: Run every command the brief lists, in order. Never drop one because it is slow, long-running, or previously failed for environmental reasons, and never substitute a different command. If one cannot be run or does not complete, report it as unrun with the exact error — a partial verification is a failed verification, not a pass.
+- **Mutation Run Completeness**: When the brief includes a mutation-testing command, apply the Run Completeness rules in [`mutation-testing/protocol.md`](../skills/mutation-testing/protocol.md) and the stack adapter's signal list. Report the score together with dropped/compile-error/timeout mutant counts and the named methods or files the tool discarded. Escalate an incomplete run as a blocker with the adapter's suggested fix; do not fix out-of-scope files yourself and do not narrow mutation scope to make the run pass.
 - **Reporting**: Populate `out/engineer-a-report.json` (Pass A) or `out/engineer-b-report.json` (Pass B) from the matching template in `.github/skills/deterministic-verification/templates/`. Validate the report with `.github/skills/deterministic-verification/scripts/validate-report.sh` (on Windows, default to Git Bash first: `& "C:\Program Files\Git\bin\bash.exe"`, never bare `bash`) before handing back to `Orchestrator`.
 
 ---

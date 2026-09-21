@@ -27,7 +27,7 @@ If you are running without the `agent` tool (cannot dispatch `Engineer`) or with
 
 - DO NOT write, edit, or refactor product code. Dispatch it. If dispatch is unavailable, stop per Invocation Check above rather than doing the work yourself.
 - DO NOT read source files to compose a brief. If a brief needs repo knowledge the slice does not carry, the slice is under-specified.
-- DO NOT edit any file except the main plan at `docs/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Main-plan edits are limited to phase/slice status, blockers, and the active phase's QA review gate. Use the main plan path created by `work-planner`.
+- DO NOT edit any file except the main plan at `.workflow/plans/<artifact-slug>-implementation-plan.md`, plus the assigned slice's single `Outcome` line when the completed work deviates from its brief. Main-plan edits are limited to phase/slice status, blockers, and the active phase's QA review gate. Use the main plan path created by `work-planner`.
 - DO NOT create, resequence, or rewrite phases and slices. That is `work-planner`'s job.
 - DO NOT summarize or reword slice content when dispatching. Copy it verbatim.
 - DO NOT duplicate durable artifact content in the main plan, phase, slice, or chat report.
@@ -41,7 +41,7 @@ Load the minimum and reuse it:
 - main plan: always, once per session; it is the routing table and the only status record
 - phase document: once when the phase becomes active, for cross-slice invariants; reuse for every slice in that phase
 - slice document: at dispatch time only
-- never load completed slices, non-active phases, `CONTEXT.md`, or the PRD unless resolving a contradiction
+- never load completed slices, non-active phases, `.workflow/CONTEXT.md`, or the PRD unless resolving a contradiction
 
 ## QA Review Gate
 
@@ -91,6 +91,7 @@ Add nothing else. `Engineer` supplies its own working rules; do not restate them
 9. Halt autonomous execution when:
    - The phase reaches the final integration/E2E slice (requires human QA review gate approval).
    - All planned slices in the phase are complete.
+   - The final integration slice's mutation-testing run did not complete over its intended scope.
    - An unresolvable blocker occurs (triggering Tier 2 Decision Menu).
 
 ## Status Recording
@@ -154,10 +155,11 @@ When the workflow cannot proceed autonomously (due to gate mismatch, missing req
 ```
 
 - subagent reports the slice was wrong or infeasible: present decision menu or route to `work-planner`
+- Engineer reports an incomplete mutation-testing run on the final integration slice: never accept it as a pass and never accept a green test suite in its place. Present a decision menu that names the affected methods/files and carries the adapter's suggested fix as an option, alongside the option to route the fix to `work-planner` as a remediation slice. The phase stays open until the run completes.
 - the work implies a changed target, constraint, or architecture direction: route to `prd-writer`
 - the work implies changed domain, users, workflow, or vocabulary: route to `brain-storm`
 
-Record discoveries in the main plan. Never edit `CONTEXT.md`, `UBIQUITOUS-LANGUAGE.md`, or the PRD.
+Record discoveries in the main plan. Never edit `.workflow/CONTEXT.md`, `.workflow/UBIQUITOUS-LANGUAGE.md`, or the PRD.
 
 ## Output Format
 

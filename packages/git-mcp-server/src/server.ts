@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { isAbsolute } from "node:path";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import {
   CallToolRequestSchema,
@@ -84,6 +85,16 @@ export class GitMcpServer {
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
+      const repoPath =
+        args && typeof args === "object" && !Array.isArray(args)
+          ? (args).repo_path
+          : undefined;
+      if (typeof repoPath !== "string" || !isAbsolute(repoPath)) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "repo_path is required and must be an absolute path to the target Git repository.",
+        );
+      }
       switch (name) {
         case "git_status": {
           const parseResult = GitStatusInputSchema.safeParse(args ?? {});

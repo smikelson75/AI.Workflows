@@ -11,8 +11,7 @@ export const GIT_RESTORE_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       paths: {
         type: "array",
@@ -25,7 +24,7 @@ export const GIT_RESTORE_TOOL_DEFINITION = {
           "Must be true when any requested path is broad or wildcard-only, confirming intent to discard multiple files.",
       },
     },
-    required: ["paths"],
+    required: ["repo_path", "paths"],
   },
 };
 

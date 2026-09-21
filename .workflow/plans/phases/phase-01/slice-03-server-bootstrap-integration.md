@@ -7,7 +7,7 @@
   - `packages/git-mcp-server/src/server.ts`
   - `packages/git-mcp-server/src/index.ts`
   - `packages/git-mcp-server/test/integration/server.test.ts`
-  - `docs/plans/phases/phase-01/acceptance.feature`
+  - `.workflow/plans/phases/phase-01/acceptance.feature`
 - **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
 - **Acceptance checks:**
   - Server successfully starts and establishes communication over `StdioServerTransport`.

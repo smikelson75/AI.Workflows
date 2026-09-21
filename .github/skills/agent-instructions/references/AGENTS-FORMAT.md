@@ -13,7 +13,7 @@ Purpose: a concise project-wide operating guide for engineers. It applies to the
 
 ## Exclude
 
-- product discovery, users, workflow, scope, or glossary content owned by `CONTEXT.md`
+- product discovery, users, workflow, scope, or glossary content owned by `.workflow/CONTEXT.md`
 - target-state requirements owned by the PRD
 - current-state summaries, readiness, phase status, or implementation progress owned by the plan
 - task lists, active slices, and one-off instructions

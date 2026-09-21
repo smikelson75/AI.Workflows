@@ -7,7 +7,7 @@
   - `packages/git-mcp-server/src/server.ts`
   - `packages/git-mcp-server/test/integration/workspace-tools.test.ts`
   - `packages/git-mcp-server/test/e2e/workflow.test.ts`
-  - `docs/plans/phases/phase-04/acceptance.feature`
+  - `.workflow/plans/phases/phase-04/acceptance.feature`
 - **Verification command:** `npm --prefix packages/git-mcp-server run verify && npm --prefix packages/git-mcp-server test`
 - **Acceptance checks:**
   - `ListToolsRequestSchema` lists all 10 registered tools with descriptions and schema definitions.

@@ -1,6 +1,6 @@
 # CONTEXT.md Format
 
-Purpose: compact domain context for later AI planning, with ubiquitous-language summary that points to the companion glossary.
+Purpose: compact domain context at `.workflow/CONTEXT.md` for later AI planning, with ubiquitous-language summary that points to the companion glossary at `.workflow/UBIQUITOUS-LANGUAGE.md`.
 
 ## Include Only
 - problem
@@ -21,7 +21,7 @@ Purpose: compact domain context for later AI planning, with ubiquitous-language 
 ## Rules
 - bullet-first; no narrative
 - each term gets 1 line when possible
-- keep `CONTEXT.md` compact; store the expanded glossary in `UBIQUITOUS-LANGUAGE.md` beside it
+- keep `.workflow/CONTEXT.md` compact; store the expanded glossary in `UBIQUITOUS-LANGUAGE.md` beside it
 - prefer canonical term + meaning + avoid-synonyms
 - default canonical term shape: singular domain noun (`Page`, `Invoice`, `Session`) unless another form carries different rules
 - prefer one word when it preserves meaning; use multi-word terms only for a distinct domain concept, not for a process step label

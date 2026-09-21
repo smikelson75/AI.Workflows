@@ -10,10 +10,10 @@ export const GIT_INFO_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
     },
+    required: ["repo_path"],
   },
 };
 

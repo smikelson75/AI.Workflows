@@ -11,8 +11,7 @@ export const GIT_UNSTAGE_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       paths: {
         type: "array",
@@ -20,7 +19,7 @@ export const GIT_UNSTAGE_TOOL_DEFINITION = {
         description: "Explicit file or directory paths to remove from the index.",
       },
     },
-    required: ["paths"],
+    required: ["repo_path", "paths"],
   },
 };
 

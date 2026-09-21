@@ -96,6 +96,16 @@ If you are using the package globally or have installed it through the bin entry
 
 ## Available Git operations
 
+Every MCP tool call must include `repo_path` as an absolute path to the target repository. The server rejects omitted or relative paths because an MCP client may launch it from an unrelated working directory.
+
+Example:
+
+```json
+{
+  "repo_path": "C:/Projects/Scheduler"
+}
+```
+
 The server provides structured Git tooling for:
 
 - inspection (status, diff, log, info)

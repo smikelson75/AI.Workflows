@@ -11,8 +11,7 @@ export const GIT_LOG_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       max_count: {
         type: "number",
@@ -57,6 +56,7 @@ export const GIT_LOG_TOOL_DEFINITION = {
         description: "Whether to produce compact log records.",
       },
     },
+    required: ["repo_path"],
   },
 };
 
