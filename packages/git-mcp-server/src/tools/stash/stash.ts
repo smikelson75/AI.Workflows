@@ -15,8 +15,7 @@ export const GIT_STASH_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       action: {
         type: "string",
@@ -32,7 +31,7 @@ export const GIT_STASH_TOOL_DEFINITION = {
         description: "Stash index (0-based) for 'pop' and 'drop' actions. Defaults to 0.",
       },
     },
-    required: ["action"],
+    required: ["repo_path", "action"],
   },
 };
 

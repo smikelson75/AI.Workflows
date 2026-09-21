@@ -171,6 +171,23 @@ describe("git_info tool", () => {
       assert.equal(parsedResult.is_clean, true);
     });
 
+    it("rejects MCP calls without an absolute repo_path", async () => {
+      await assert.rejects(
+        async () => {
+          await client.callTool({
+            name: "git_info",
+            arguments: {},
+          });
+        },
+        (err: unknown) => {
+          assert.ok(err instanceof McpError);
+          assert.equal(err.code, ErrorCode.InvalidParams);
+          assert.match(err.message, /repo_path is required/);
+          return true;
+        },
+      );
+    });
+
     it("rejects call with invalid parameters with McpError InvalidParams", async () => {
       await assert.rejects(
         async () => {

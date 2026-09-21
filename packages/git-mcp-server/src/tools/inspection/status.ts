@@ -15,8 +15,7 @@ export const GIT_STATUS_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       untracked_files: {
         type: "string",
@@ -28,6 +27,7 @@ export const GIT_STATUS_TOOL_DEFINITION = {
         description: "Whether to include ignored files in the status output.",
       },
     },
+    required: ["repo_path"],
   },
 };
 

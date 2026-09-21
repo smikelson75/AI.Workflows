@@ -10,8 +10,7 @@ export const GIT_COMMIT_TOOL_DEFINITION = {
     properties: {
       repo_path: {
         type: "string",
-        description:
-          "Path to the repository root or working directory. Defaults to the server default directory.",
+        description: "Absolute path to the target Git repository.",
       },
       subject: {
         type: "string",
@@ -35,7 +34,7 @@ export const GIT_COMMIT_TOOL_DEFINITION = {
         description: "When true, allows creating a commit with no staged changes.",
       },
     },
-    required: ["subject"],
+    required: ["repo_path", "subject"],
   },
 };
 
