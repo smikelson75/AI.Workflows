@@ -35,6 +35,37 @@ test("reads a well-formed phase artifact and returns its declared fields", async
   }
 });
 
+test("does not match a file that shares the slice prefix but is not a .md file", async () => {
+  const root = await createArtifactFixtureRoot();
+  try {
+    // Sorts before the real ".md" file so a broadened match would pick this one first.
+    await writeArtifactFile(root.path, "phase-05", "slice-03-a-notes.txt", "not a real artifact");
+    await writeArtifactFile(
+      root.path,
+      "phase-05",
+      "slice-03-z-real.md",
+      frontmatterDocument({
+        sliceId: "slice-03",
+        phaseId: "phase-05",
+        kind: "behavior",
+        filesInScope: ["src/artifacts/artifact-reader.ts"],
+        unitVerificationCommand: "npm test",
+        integrationVerificationCommand: "npm run test:integration",
+        acceptanceChecks: ["qa-p05-010"],
+      }),
+    );
+
+    const artifact = await readSliceArtifact({ path: root.path }, "phase-05", "slice-03");
+
+    assert.equal(
+      artifact.path,
+      path.join(root.path, ".workflow", "plans", "phases", "phase-05", "slice-03-z-real.md"),
+    );
+  } finally {
+    await root.cleanup();
+  }
+});
+
 test("reads a well-formed slice artifact and returns its declared fields", async () => {
   const root = await createArtifactFixtureRoot();
   try {

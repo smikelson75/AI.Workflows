@@ -34,6 +34,19 @@ test("rejects a document that does not open with a frontmatter delimiter", () =>
   );
 });
 
+test("rejects an empty document the same way as a document with no opening delimiter", () => {
+  assert.throws(
+    () => splitFrontmatter("", "artifact.md"),
+    (error: unknown) => {
+      assert.ok(error instanceof VerificationError);
+      assert.equal(error.code, ERROR_CODES.ARTIFACT_FRONTMATTER_MISSING);
+      assert.equal(error.message, "Artifact has no YAML frontmatter block: artifact.md");
+      assert.deepEqual(error.details, { artifactPath: "artifact.md" });
+      return true;
+    },
+  );
+});
+
 test("rejects a document whose frontmatter block is never closed", () => {
   assert.throws(
     () => splitFrontmatter("---\nphaseId: phase-05\nBody line.\n", "artifact.md"),
