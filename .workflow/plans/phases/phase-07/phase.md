@@ -1,0 +1,26 @@
+# Phase 07 - Verification Runner, Integration Gate & Review Reporting
+
+- **Phase objective:** Complete the policy core by executing the project-supplied `Verification Command` with captured evidence, reconciling changed files through the `Integration Gate`, and emitting a `Review Report` whose status is derived rather than asserted.
+- **User-visible outcome:** A caller supplying a slice and its verification command gets back captured evidence, a gate result stating whether `Pass B` is required, and a written `Review Report` carrying server-derived status and the recorded outcome.
+- **Backend/data scope:** The runner (direct executable invocation with argument arrays, bounded timeout, exit-code and output capture, evidence attribution to command, `Slice`, and `Pass`), the gate reconciliation against the Git change set, and `Review Report` derivation and writing through the Phase 05 artifact layer.
+- **UI/workflow scope:** None.
+- **Cross-slice invariants:**
+  - Only the runner executes external commands, and never through a shell string.
+  - An absent `Verification Command` is an error; the runner never invents, substitutes, or defaults one.
+  - Timeout is a distinct diagnostic category from non-zero exit.
+  - Evidence and outcome status are captured or derived; any attempt to supply them as input is rejected.
+  - A blocked gate leaves every repository artifact other than the `Review Report` unchanged.
+  - `Pass B` scope is limited to the gate's integration targets.
+- **Prerequisites:** Phases 05 and 06 complete.
+- **Acceptance checks:**
+  - A changed-file mismatch blocks with a stable identifier naming both files missing from the report and files not in the working tree.
+  - A command that exceeds the bounded timeout produces a timeout diagnostic distinct from a failing command.
+  - Captured evidence identifies the exact command, slice, and pass that produced it.
+  - A caller-supplied evidence or status field is rejected, and the resulting `Review Report` still carries server-derived status.
+  - After a blocked gate, the working tree and all workflow artifacts except the `Review Report` are byte-identical to their prior state.
+- **Useful-if-stopped statement:** The repository gains a complete, callable deterministic verification core even before any transport exposes it.
+- **Risks and mitigations:**
+  - Risk: cross-platform differences in process spawning and exit-code reporting. Mitigation: argument-array invocation only, and tests asserting behavior on both Windows and POSIX paths.
+  - Risk: partial writes leave the repository in an ambiguous state on failure. Mitigation: derive the full `Review Report` before writing, and write it as the single mutation of the operation.
+- **Test checkpoints:** Unit tests for runner, gate, and derivation in isolation; integration tests over temporary Git repositories with real commands in the final slice; phase-scoped mutation testing in the final slice.
+- **Definition of done:** Verify, unit, and integration gates pass; every non-excepted `@e2e` scenario in `acceptance.feature` is implemented; every `@unit` and `@integration` scenario ID maps to an executable test; the phase-scoped mutation-testing run meets its threshold.

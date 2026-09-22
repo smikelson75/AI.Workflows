@@ -1,0 +1,25 @@
+# Phase 09 - Command-Line Surface & Parity
+
+- **Phase objective:** Expose the same policy core through a command-line surface for Git hooks, continuous integration, and editor tasks, and prove it produces outcomes identical to both the MCP surface and the bash scripts it will replace.
+- **User-visible outcome:** A hook, a continuous-integration job, or a VS Code task runs the same deterministic verification an agent runs, fails closed with a non-zero exit, and explains its arguments through `--help`.
+- **Backend/data scope:** Command-line entry points over the Phase 06-08 core, argument parsing, `--help` output, exit-code mapping, and a parity test suite comparing command-line, MCP, and legacy-script outcomes over shared fixtures.
+- **UI/workflow scope:** Rewired `.vscode/tasks.json` entries and the `pre-commit` and `pre-push` hooks under `.github/skills/deterministic-verification/hooks/` pointing at the command-line surface.
+- **Cross-slice invariants:**
+  - The command-line surface contains no policy decisions; it is a thin shell over the same core the MCP tools use.
+  - Every entry point supports `--help` describing its arguments.
+  - Any blocked or failed outcome exits non-zero; a blocked outcome is never a zero exit with a warning.
+  - Error identifiers are byte-identical across the MCP and command-line surfaces.
+  - The bash scripts still exist during this phase and remain the parity reference; they are not modified here.
+- **Prerequisites:** Phase 08 complete.
+- **Acceptance checks:**
+  - For every parity fixture, the command-line surface, the MCP surface, and the legacy script produce the same outcome and the same error identifier.
+  - Every entry point prints usage for `--help` and exits zero for that invocation.
+  - Every blocked or failed scenario exits non-zero.
+  - Hooks and tasks invoke the command-line surface with no bash policy logic remaining in their bodies.
+  - Parity holds on both Windows and POSIX hosts.
+- **Useful-if-stopped statement:** Hooks and continuous integration gain the typed implementation without waiting for artifact migration, and the parity evidence needed to authorize retirement exists.
+- **Risks and mitigations:**
+  - Risk: parity is asserted rather than measured. Mitigation: parity is a test suite comparing real outputs over shared fixtures, and it is the authorization gate for Phase 10.
+  - Risk: Windows hook invocation regresses. Mitigation: explicit Windows coverage in the parity suite before retirement.
+- **Test checkpoints:** Unit tests for argument parsing and exit-code mapping; the cross-surface parity suite; end-to-end hook and task invocation in the final slice; phase-scoped mutation testing in the final slice.
+- **Definition of done:** Verify, unit, integration, parity, and end-to-end gates pass on both host families; every non-excepted `@e2e` scenario in `acceptance.feature` is implemented; every `@unit` and `@integration` scenario ID maps to an executable test; the phase-scoped mutation-testing run meets its threshold.

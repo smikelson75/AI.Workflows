@@ -1,0 +1,26 @@
+# Phase 10 - Artifact Migration & Script Retirement
+
+- **Phase objective:** Complete the cutover: add YAML frontmatter to existing phase and slice artifacts by hand, delete the bash scripts and their JSON Schemas as the executable contract, update the owning workflow contracts to point at the server, and prove the full agent loop runs with zero bash invocation.
+- **User-visible outcome:** A `Coding Agent` drives a real slice in this repository end to end through typed tool calls, the server names the legal `Next Action` at each position, and no verification bash script remains to invoke.
+- **Backend/data scope:** Hand migration of `.workflow/plans/phases/**` artifacts to frontmatter, deletion of `.github/skills/deterministic-verification/scripts/**` and the superseded `schemas/**`, and removal of the corresponding `Makefile` and task entries.
+- **UI/workflow scope:** Updated `deterministic-verification` skill contract, `OWNERSHIP.md`, the policy documents under `policies/`, `docs/workflow.md`, `docs/skills.md`, `docs/agents.md`, `docs/artifacts.md`, and `docs/deterministic-verification-user-guide.md` to describe tool calls and the command-line surface instead of script invocation, including installation and per-client MCP registration.
+- **Cross-slice invariants:**
+  - Retirement is authorized only by the Phase 09 parity evidence; no script is deleted before its typed equivalent passes parity.
+  - Migration is manual and bounded to existing artifacts; no migration tooling is built (ADR 0003).
+  - After retirement, exactly one implementation of the policy exists (ADR 0002); no document may instruct a reader to run a retired script.
+  - The `Engineer` report protocol and fail-closed rules keep the same externally visible identifiers across the cutover.
+- **Prerequisites:** Phase 09 complete with passing parity evidence on both host families.
+- **Blockers:** Retirement must not land before the server is installable and registered in this repository's MCP client configuration.
+- **Acceptance checks:**
+  - Every phase and slice artifact under `.workflow/plans/phases/**` carries valid frontmatter and is readable by the server.
+  - No file under `.github/skills/deterministic-verification/scripts/` remains, and no repository document references one.
+  - A real slice in this repository completes classification, verification, validated report, gate evaluation, and `Review Report` through tool calls only, with zero bash invocations.
+  - Hooks and continuous integration still fail closed after the scripts are gone.
+  - A fresh clone can install and register the server by following the updated documentation alone.
+- **Useful-if-stopped statement:** Frontmatter migration alone already makes artifact reads deterministic; script retirement is the final, separable cutover.
+- **Risks and mitigations:**
+  - Risk: deleting scripts strands a workflow path nobody tested. Mitigation: parity evidence gates deletion, and hooks are exercised post-deletion in this phase.
+  - Risk: documentation keeps a stale script instruction. Mitigation: a repository-wide reference sweep is an explicit acceptance check.
+  - Risk: hand migration misses an artifact. Mitigation: the server's fail-closed frontmatter error makes a missed artifact block loudly rather than pass.
+- **Test checkpoints:** Frontmatter validity across all existing artifacts; post-deletion hook and continuous-integration runs; the full-loop end-to-end run in the final slice; phase-scoped mutation testing in the final slice.
+- **Definition of done:** The full agent loop runs with zero bash invocation; the scripts are gone; documentation and skill contracts describe only the server and its command-line surface; every non-excepted `@e2e` scenario in `acceptance.feature` is implemented; every `@unit` and `@integration` scenario ID maps to an executable test; the phase-scoped mutation-testing run meets its threshold.

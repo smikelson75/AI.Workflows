@@ -1,0 +1,25 @@
+# Phase 06 - Boundary Classification & Engineer Report Validation
+
+- **Phase objective:** Implement the first half of the transport-agnostic policy core: classify the changed files of a `Slice` into a `Boundary Classification`, and validate an `Engineer Report` fail-closed against its contract.
+- **User-visible outcome:** A caller supplying a changed-file set gets an auditable per-file classification and a verdict on whether an integration boundary is crossed; a caller supplying an `Engineer Report` gets either acceptance or a stable error identifier naming the offending location.
+- **Backend/data scope:** Typed `Engineer Report` contracts replacing the JSON Schemas under `.github/skills/deterministic-verification/schemas/`, the classification rules, the validation rules, and the fail-closed identifiers those rules emit.
+- **UI/workflow scope:** None. The policy core stays transport-agnostic and is exercised through its exported functions.
+- **Cross-slice invariants:**
+  - The policy core has no filesystem or process access of its own; it consumes data supplied by the Phase 05 artifact layer.
+  - Unknown or unclassifiable files classify as requiring integration; there is no permissive default.
+  - Validation rejects unknown properties.
+  - A behavior `Slice` missing Red evidence, or whose unit `Verification Command` bears no tests, fails validation; a non-behavior `Slice` without an explicit justification reason fails validation.
+  - Error identifiers remain byte-identical to the identifiers the retired scripts emitted wherever an equivalent rule exists, so parity can be proven in Phase 09.
+  - No evidence or outcome status field may be accepted as caller input.
+- **Prerequisites:** Phase 05 complete.
+- **Acceptance checks:**
+  - Classification reports a per-file basis for every file in the input and requires integration whenever any file is unclassifiable.
+  - A missing, unparsable, or schema-violating `Engineer Report` blocks with a stable error identifier.
+  - An unknown property, missing Red evidence on a behavior slice, and an unjustified non-behavior slice each block with their own stable identifier.
+  - Every rule in the existing fail-closed rule set has a corresponding typed rule and a test asserting the same identifier.
+- **Useful-if-stopped statement:** The repository gains a typed, tested expression of report validation and boundary classification that can be called directly even before any transport exists.
+- **Risks and mitigations:**
+  - Risk: subtle behavior drift from the bash implementation goes unnoticed. Mitigation: derive test cases from the existing schemas and templates and assert identifier equality, not just failure.
+  - Risk: the classification rule set is under-specified for this repository's file layout. Mitigation: treat unclassifiable as integration-required so under-specification fails safe rather than silently passing.
+- **Test checkpoints:** Unit tests per rule and per identifier; an integration test over a realistic report and change set in the final slice; phase-scoped mutation testing in the final slice.
+- **Definition of done:** Verify, unit, and integration gates pass; every non-excepted `@e2e` scenario in `acceptance.feature` is implemented; every `@unit` and `@integration` scenario ID maps to an executable test; the phase-scoped mutation-testing run meets its threshold.

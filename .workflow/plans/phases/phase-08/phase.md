@@ -1,0 +1,25 @@
+# Phase 08 - Workflow Position & MCP Tool Surface
+
+- **Phase objective:** Derive workflow position from repository artifacts, report the single legal `Next Action`, and expose the whole policy core as typed MCP tools over stdio.
+- **User-visible outcome:** An MCP client launches the server, asks where the workflow stands, and drives a complete `Slice` - classification, verification run, report validation, gate evaluation, and `Review Report` - entirely through typed tool calls with zero bash invocation.
+- **Backend/data scope:** Workflow position derivation from `.workflow/` and `out/`, `Next Action` selection, the MCP server and stdio transport lifecycle, and one typed tool per core operation with declared input schemas.
+- **UI/workflow scope:** The tool surface is the workflow surface; tool names, schemas, and returned `Next Action` shape are the contract agents consume in place of skill prose.
+- **Cross-slice invariants:**
+  - Every tool takes an explicit `repo_path` and never infers it from the process working directory.
+  - The server is stateless between calls; position is re-derived every call from artifacts, which remain the only authoritative state.
+  - Malformed or unknown arguments are rejected as protocol-level invalid-parameter errors before any command, read, or write occurs.
+  - Tool handlers contain no policy decisions; they marshal to and from the Phase 06 and 07 core.
+  - Exactly one `Next Action` is reported, or none plus the specific inconsistency when position cannot be determined.
+  - A failed tool call leaves the server usable for subsequent calls.
+- **Prerequisites:** Phases 05, 06, and 07 complete.
+- **Acceptance checks:**
+  - An MCP client completes classification, verification run, validated report, gate evaluation, and `Review Report` using only tool calls.
+  - Mutually inconsistent artifacts produce a refusal to name a `Next Action` plus a named inconsistency, not a guess.
+  - A malformed tool request returns an invalid-parameter protocol error with no subprocess spawned and no file written.
+  - After any failing tool call, the next valid call succeeds.
+- **Useful-if-stopped statement:** Agents can abandon bash invocation for the entire slice loop as soon as this phase lands, even before the command-line surface exists.
+- **Risks and mitigations:**
+  - Risk: position derivation becomes an implicit second policy implementation. Mitigation: it lives in the core alongside gating, not in the tools layer.
+  - Risk: tool granularity mismatches how agents actually work, causing chatty loops. Mitigation: shape tools around the operations named in the context workflow, one tool per named operation.
+- **Test checkpoints:** Unit tests for position derivation and `Next Action` selection; integration tests over the stdio transport; a full-loop end-to-end test in the final slice; phase-scoped mutation testing in the final slice.
+- **Definition of done:** Verify, unit, integration, and end-to-end gates pass; every non-excepted `@e2e` scenario in `acceptance.feature` is implemented; every `@unit` and `@integration` scenario ID maps to an executable test; the phase-scoped mutation-testing run meets its threshold.
