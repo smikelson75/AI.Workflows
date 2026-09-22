@@ -26,7 +26,7 @@
 
 | # | Phase | Status | QA review | Acceptance | Outcome | Detail |
 |---|-------|--------|-----------|------------|---------|--------|
-| 05 | Package Foundation & Artifact Layer | in progress | pending | `phases/phase-05/acceptance.feature` | An installable package that resolves a `repo_path`, reads frontmatter-bearing workflow artifacts, and fails closed with stable error identifiers | [detail](phases/phase-05/phase.md) |
+| 05 | Package Foundation & Artifact Layer | in progress | approved | `phases/phase-05/acceptance.feature` | An installable package that resolves a `repo_path`, reads frontmatter-bearing workflow artifacts, and fails closed with stable error identifiers | [detail](phases/phase-05/phase.md) |
 | 06 | Boundary Classification & Engineer Report Validation | planned | pending | `phases/phase-06/acceptance.feature` | Changed files are classified with per-file basis, and Engineer Reports are validated fail-closed against the report contract | [detail](phases/phase-06/phase.md) |
 | 07 | Verification Runner, Integration Gate & Review Reporting | planned | pending | `phases/phase-07/acceptance.feature` | Verification commands run with captured evidence, the gate reconciles changed files, and Review Reports carry server-derived status | [detail](phases/phase-07/phase.md) |
 | 08 | Workflow Position & MCP Tool Surface | planned | pending | `phases/phase-08/acceptance.feature` | An MCP client drives a full slice over stdio and is told the single legal next action | [detail](phases/phase-08/phase.md) |
