@@ -5,6 +5,8 @@
   "commandRunner": {
     "command": "npm test"
   },
+  "coverageAnalysis": "off",
+  "concurrency": 1,
   "checkers": ["typescript"],
   "typescriptChecker": {
     "prioritizePerformanceOverAccuracy": true

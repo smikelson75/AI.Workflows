@@ -89,3 +89,38 @@ test("resolveRepoRoot integration: success and failure paths across one shared e
     await fs.rm(tmpDir, { recursive: true, force: true });
   }
 });
+
+test("resolveRepoRoot integration: resolution does not depend on the caller's current directory", async () => {
+  const repo = await createFixtureRepo("verification-integration-cwd-");
+  const unrelatedDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), "verification-integration-unrelated-"),
+  );
+  const originalCwd = process.cwd();
+  try {
+    process.chdir(unrelatedDir);
+    const result = await resolveRepoRoot(repo.path);
+    process.chdir(originalCwd);
+    const resultFromInside = await resolveRepoRoot(repo.path);
+
+    assert.equal(result.path, resultFromInside.path);
+  } finally {
+    process.chdir(originalCwd);
+    await repo.cleanup();
+    await fs.rm(unrelatedDir, { recursive: true, force: true });
+  }
+});
+
+test("resolveRepoRoot integration: reports the same normalized root for Windows-style and POSIX-style input", async () => {
+  const repo = await createFixtureRepo("verification-integration-normalize-");
+  try {
+    const posixInput = repo.path.replace(/\\/g, "/");
+    const windowsStyleInput = repo.path.replace(/\//g, "\\");
+
+    const posixResult = await resolveRepoRoot(posixInput);
+    const windowsResult = await resolveRepoRoot(windowsStyleInput);
+
+    assert.equal(posixResult.path, windowsResult.path);
+  } finally {
+    await repo.cleanup();
+  }
+});

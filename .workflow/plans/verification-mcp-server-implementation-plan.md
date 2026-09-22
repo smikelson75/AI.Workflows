@@ -18,16 +18,16 @@
 - Assumptions: Git is on PATH; tests may create ephemeral Git repositories and workflow artifact fixtures in temporary directories; the existing schemas under `.github/skills/deterministic-verification/schemas/` are the authoritative parity reference until cutover.
 
 ## Active work
-- **Current phase:** [Phase 05 - Package Foundation & Artifact Layer](phases/phase-05/phase.md)
-- **Next slice:** [Slice 04 - Artifact layer integration and E2E verification (integration/E2E)](phases/phase-05/slice-04-artifact-layer-integration.md)
-- **Blockers:** No root mutation-testing adapter config exists in this repository. Phase 05 Slice 01 must establish the StrykerJS configuration via the `stryker-js` skill so the phase-final slice can run phase-scoped mutation testing; if that setup is refused, raise it rather than dropping mutation testing silently.
+- **Current phase:** [Phase 06 - Boundary Classification & Engineer Report Validation](phases/phase-06/phase.md)
+- **Next slice:** TBD - see phase-06 slice status table.
+- **Blockers:** none.
 
 ## Phase plan
 
 | # | Phase | Status | QA review | Acceptance | Outcome | Detail |
 |---|-------|--------|-----------|------------|---------|--------|
-| 05 | Package Foundation & Artifact Layer | in progress | approved | `phases/phase-05/acceptance.feature` | An installable package that resolves a `repo_path`, reads frontmatter-bearing workflow artifacts, and fails closed with stable error identifiers | [detail](phases/phase-05/phase.md) |
-| 06 | Boundary Classification & Engineer Report Validation | planned | pending | `phases/phase-06/acceptance.feature` | Changed files are classified with per-file basis, and Engineer Reports are validated fail-closed against the report contract | [detail](phases/phase-06/phase.md) |
+| 05 | Package Foundation & Artifact Layer | completed | approved | `phases/phase-05/acceptance.feature` | An installable package that resolves a `repo_path`, reads frontmatter-bearing workflow artifacts, and fails closed with stable error identifiers | [detail](phases/phase-05/phase.md) |
+| 06 | Boundary Classification & Engineer Report Validation | in progress | pending | `phases/phase-06/acceptance.feature` | Changed files are classified with per-file basis, and Engineer Reports are validated fail-closed against the report contract | [detail](phases/phase-06/phase.md) |
 | 07 | Verification Runner, Integration Gate & Review Reporting | planned | pending | `phases/phase-07/acceptance.feature` | Verification commands run with captured evidence, the gate reconciles changed files, and Review Reports carry server-derived status | [detail](phases/phase-07/phase.md) |
 | 08 | Workflow Position & MCP Tool Surface | planned | pending | `phases/phase-08/acceptance.feature` | An MCP client drives a full slice over stdio and is told the single legal next action | [detail](phases/phase-08/phase.md) |
 | 09 | Command-Line Surface & Parity | planned | pending | `phases/phase-09/acceptance.feature` | Hooks, continuous integration, and editor tasks execute identical policy and fail closed with non-zero exits | [detail](phases/phase-09/phase.md) |
@@ -40,7 +40,7 @@
 | 01 | Package toolchain and verify gate | completed | [detail](phases/phase-05/slice-01-package-toolchain.md) |
 | 02 | Repository root resolution and fail-closed error contract | completed | [detail](phases/phase-05/slice-02-repo-root-and-errors.md) |
 | 03 | Frontmatter artifact reads | completed | [detail](phases/phase-05/slice-03-frontmatter-artifact-reads.md) |
-| 04 | Artifact layer integration and E2E verification (integration/E2E) | in progress | [detail](phases/phase-05/slice-04-artifact-layer-integration.md) |
+| 04 | Artifact layer integration and E2E verification (integration/E2E) | completed | [detail](phases/phase-05/slice-04-artifact-layer-integration.md) |
 
 ## Completed plans in this repository
 - [Git MCP Server implementation plan](git-mcp-server-implementation-plan.md) - Phases 01-04, completed.
