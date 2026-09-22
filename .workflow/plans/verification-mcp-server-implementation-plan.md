@@ -19,7 +19,7 @@
 
 ## Active work
 - **Current phase:** [Phase 05 - Package Foundation & Artifact Layer](phases/phase-05/phase.md)
-- **Next slice:** [Slice 03 - Frontmatter artifact reads](phases/phase-05/slice-03-frontmatter-artifact-reads.md)
+- **Next slice:** [Slice 04 - Artifact layer integration and E2E verification (integration/E2E)](phases/phase-05/slice-04-artifact-layer-integration.md)
 - **Blockers:** No root mutation-testing adapter config exists in this repository. Phase 05 Slice 01 must establish the StrykerJS configuration via the `stryker-js` skill so the phase-final slice can run phase-scoped mutation testing; if that setup is refused, raise it rather than dropping mutation testing silently.
 
 ## Phase plan
@@ -39,7 +39,7 @@
 |---|-------|--------|--------|
 | 01 | Package toolchain and verify gate | completed | [detail](phases/phase-05/slice-01-package-toolchain.md) |
 | 02 | Repository root resolution and fail-closed error contract | completed | [detail](phases/phase-05/slice-02-repo-root-and-errors.md) |
-| 03 | Frontmatter artifact reads | planned | [detail](phases/phase-05/slice-03-frontmatter-artifact-reads.md) |
+| 03 | Frontmatter artifact reads | completed | [detail](phases/phase-05/slice-03-frontmatter-artifact-reads.md) |
 | 04 | Artifact layer integration and E2E verification (integration/E2E) | planned | [detail](phases/phase-05/slice-04-artifact-layer-integration.md) |
 
 ## Completed plans in this repository
