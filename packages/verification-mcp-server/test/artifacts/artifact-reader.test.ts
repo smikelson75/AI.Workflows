@@ -110,6 +110,7 @@ test("rejects an artifact with no frontmatter block, naming the artifact path", 
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_FRONTMATTER_MISSING);
+        assert.equal(error.message, `Artifact has no YAML frontmatter block: ${filePath}`);
         assert.equal(error.details.artifactPath, filePath);
         return true;
       },
@@ -134,6 +135,7 @@ test("rejects an artifact with unparsable YAML frontmatter, naming the artifact 
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_FRONTMATTER_UNPARSABLE);
+        assert.equal(error.message, `Artifact frontmatter is not valid YAML: ${filePath}`);
         assert.equal(error.details.artifactPath, filePath);
         return true;
       },
@@ -161,6 +163,10 @@ test("rejects an artifact missing a required field, naming the artifact and fiel
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_FIELD_INVALID);
+        assert.equal(
+          error.message,
+          `Artifact frontmatter field "sliceIds" is missing or has the wrong type: ${filePath}`,
+        );
         assert.equal(error.details.artifactPath, filePath);
         assert.equal(error.details.field, "sliceIds");
         return true;
@@ -191,6 +197,10 @@ test("rejects an artifact carrying an unknown field, naming the artifact and fie
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_FIELD_UNKNOWN);
+        assert.equal(
+          error.message,
+          `Artifact frontmatter has an unknown field "unexpectedField": ${filePath}`,
+        );
         assert.equal(error.details.artifactPath, filePath);
         assert.equal(error.details.field, "unexpectedField");
         return true;
@@ -201,14 +211,83 @@ test("rejects an artifact carrying an unknown field, naming the artifact and fie
   }
 });
 
+test("rejects a slice whose phase directory does not exist on disk", async () => {
+  const root = await createArtifactFixtureRoot();
+  try {
+    const expectedLabel = path.join(
+      root.path,
+      ".workflow",
+      "plans",
+      "phases",
+      "phase-99",
+      "slice-01-*.md",
+    );
+
+    await assert.rejects(
+      () => readSliceArtifact({ path: root.path }, "phase-99", "slice-01"),
+      (error: unknown) => {
+        assert.ok(error instanceof VerificationError);
+        assert.equal(error.code, ERROR_CODES.ARTIFACT_NOT_FOUND);
+        assert.equal(error.message, `Artifact does not exist: ${expectedLabel}`);
+        assert.deepEqual(error.details, { artifactPath: expectedLabel });
+        return true;
+      },
+    );
+  } finally {
+    await root.cleanup();
+  }
+});
+
+test("ignores an entry that shares the slice prefix but is not a markdown file", async () => {
+  const root = await createArtifactFixtureRoot();
+  try {
+    await writeArtifactFile(
+      root.path,
+      "phase-05",
+      "slice-03-notes.txt",
+      "Not a markdown artifact.\n",
+    );
+    await writeArtifactFile(
+      root.path,
+      "phase-05",
+      "slice-03-frontmatter-artifact-reads.md",
+      frontmatterDocument({
+        sliceId: "slice-03",
+        phaseId: "phase-05",
+        kind: "behavior",
+        filesInScope: ["src/artifacts/artifact-reader.ts"],
+        unitVerificationCommand: "npm test",
+        acceptanceChecks: ["qa-p05-010"],
+      }),
+    );
+
+    const artifact = await readSliceArtifact({ path: root.path }, "phase-05", "slice-03");
+
+    assert.equal(path.basename(artifact.path), "slice-03-frontmatter-artifact-reads.md");
+  } finally {
+    await root.cleanup();
+  }
+});
+
 test("rejects a phase that does not exist on disk", async () => {
   const root = await createArtifactFixtureRoot();
   try {
+    const expectedPath = path.join(
+      root.path,
+      ".workflow",
+      "plans",
+      "phases",
+      "phase-99",
+      "phase.md",
+    );
+
     await assert.rejects(
       () => readPhaseArtifact({ path: root.path }, "phase-99"),
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_NOT_FOUND);
+        assert.equal(error.message, `Artifact does not exist: ${expectedPath}`);
+        assert.deepEqual(error.details, { artifactPath: expectedPath });
         return true;
       },
     );
@@ -231,11 +310,22 @@ test("rejects a slice that does not exist on disk", async () => {
       }),
     );
 
+    const expectedLabel = path.join(
+      root.path,
+      ".workflow",
+      "plans",
+      "phases",
+      "phase-05",
+      "slice-99-*.md",
+    );
+
     await assert.rejects(
       () => readSliceArtifact({ path: root.path }, "phase-05", "slice-99"),
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.ARTIFACT_NOT_FOUND);
+        assert.equal(error.message, `Artifact does not exist: ${expectedLabel}`);
+        assert.deepEqual(error.details, { artifactPath: expectedLabel });
         return true;
       },
     );

@@ -17,8 +17,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --import tsx --test \"test/**/*.test.ts\"",
-    "test:coverage": "node --import tsx --test --experimental-test-coverage \"test/**/*.test.ts\"",
+    "test": "node --experimental-test-module-mocks --test-timeout=10000 --import tsx --test \"test/**/*.test.ts\"",
+    "test:coverage": "node --experimental-test-module-mocks --test-timeout=10000 --import tsx --test --experimental-test-coverage \"test/**/*.test.ts\"",
     "test:mutation": "stryker run",
     "verify": "npm run typecheck && eslint . --max-warnings=0 && prettier --check ."
   },

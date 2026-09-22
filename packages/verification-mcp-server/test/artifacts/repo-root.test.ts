@@ -41,6 +41,7 @@ test("rejects an absent repo_path without resolving", async () => {
     (error: unknown) => {
       assert.ok(error instanceof VerificationError);
       assert.equal(error.code, ERROR_CODES.REPO_PATH_MISSING);
+      assert.equal(error.message, "repo_path is required and must be a non-empty string");
       assert.deepEqual(error.details, { repoPath: null });
       return true;
     },
@@ -53,7 +54,21 @@ test("rejects an empty repo_path", async () => {
     (error: unknown) => {
       assert.ok(error instanceof VerificationError);
       assert.equal(error.code, ERROR_CODES.REPO_PATH_MISSING);
+      assert.equal(error.message, "repo_path is required and must be a non-empty string");
       assert.deepEqual(error.details, { repoPath: "" });
+      return true;
+    },
+  );
+});
+
+test("rejects a whitespace-only repo_path", async () => {
+  await assert.rejects(
+    () => resolveRepoRoot("   "),
+    (error: unknown) => {
+      assert.ok(error instanceof VerificationError);
+      assert.equal(error.code, ERROR_CODES.REPO_PATH_MISSING);
+      assert.equal(error.message, "repo_path is required and must be a non-empty string");
+      assert.deepEqual(error.details, { repoPath: "   " });
       return true;
     },
   );
@@ -66,6 +81,7 @@ test("rejects a non-existent path", async () => {
     (error: unknown) => {
       assert.ok(error instanceof VerificationError);
       assert.equal(error.code, ERROR_CODES.REPO_PATH_NOT_FOUND);
+      assert.equal(error.message, `repo_path does not exist: ${missingPath}`);
       assert.deepEqual(error.details, { repoPath: missingPath });
       return true;
     },
@@ -82,6 +98,7 @@ test("rejects a path that is a file rather than a directory", async () => {
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.REPO_PATH_NOT_A_DIRECTORY);
+        assert.equal(error.message, `repo_path is not a directory: ${filePath}`);
         assert.deepEqual(error.details, { repoPath: filePath });
         return true;
       },
@@ -99,6 +116,7 @@ test("rejects a directory outside any git repository", async () => {
       (error: unknown) => {
         assert.ok(error instanceof VerificationError);
         assert.equal(error.code, ERROR_CODES.REPO_PATH_NOT_A_GIT_REPOSITORY);
+        assert.equal(error.message, `repo_path is not inside a Git repository: ${tmpDir}`);
         assert.deepEqual(error.details, { repoPath: tmpDir });
         return true;
       },
